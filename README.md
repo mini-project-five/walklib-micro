@@ -74,6 +74,26 @@ npm i
 npm run serve
 ```
 
+## Dockerizing
+
+### Dockerizing after Edit
+1. Quick Deploy
+```
+./quick-deploy.sh
+```
+2. or Specific Service Deploy
+```
+./build-and-deploy.sh {Specific_Service_Name}
+```
+3. or Local Test
+```
+./quick-deploy.sh dev
+```
+### Dockerizing after Release
+```
+./build-and-deploy.sh all v{version-tag}
+```
+
 ## Test by UI
 Open a browser to localhost:8088
 

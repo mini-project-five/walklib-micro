@@ -72,22 +72,40 @@ cd ../gateway && mvn clean package -DskipTests
 
 ## 🏃‍♂️ 서비스 실행
 
-### 전체 서비스 실행 (권장)
+### Docker 컨테이너 실행 (운영 환경)
 ```bash
 ./run.sh
 ```
-모든 서비스를 백그라운드에서 실행하며, `Ctrl+C`로 전체 종료 가능
+Docker 이미지로 모든 서비스 실행, 자동으로 인프라(DB, Kafka) 포함
+
+### 로컬 개발 실행
+```bash
+./run-local.sh
+```
+로컬에서 Java 프로세스로 직접 실행, 빠른 개발/테스트용
+
+### 서비스 중지
+```bash
+./stop.sh           # Docker 컨테이너 중지
+./stop-local.sh     # 로컬 프로세스 중지
+```
+
+### Docker 배포
+```bash
+# 개별 서비스 배포
+./build-and-deploy.sh author_management
+
+# 모든 서비스 배포
+./build-and-deploy.sh all
+
+# 빠른 배포 (변경된 서비스 자동 감지)
+./quick-deploy.sh
+```
 
 ### 개별 서비스 실행
 ```bash
 cd <service_name>
 mvn spring-boot:run
-```
-
-### Docker 인프라 실행
-```bash
-cd infra
-docker-compose up
 ```
 
 ## 📦 서비스 목록 및 포트
@@ -174,6 +192,7 @@ sudo lsof -ti:8080 | xargs kill -9
 
 ## 🌟 빠른 시작 요약
 
+### 로컬 개발 환경
 ```bash
 # 1. 프로젝트 클론
 git clone <repository-url> && cd walklib-micro
@@ -181,8 +200,65 @@ git clone <repository-url> && cd walklib-micro
 # 2. 환경 설정 (필수)
 ./setup-environment.sh
 
-# 3. 서비스 실행
+# 3. 로컬 서비스 실행
+./run-local.sh
+```
+
+### Docker 운영 환경
+```bash
+# 1-2. 위와 동일
+
+# 3. Docker 로그인
+docker login
+
+# 4. 전체 서비스 배포
+./build-and-deploy.sh all
+
+# 5. Docker 컨테이너 실행
 ./run.sh
 ```
 
-3단계만으로 전체 마이크로서비스 환경이 구성됩니다!
+## 🚀 배포 스크립트 사용법
+
+### `build-and-deploy.sh` - 메인 배포 스크립트
+```bash
+# 개별 서비스 배포
+./build-and-deploy.sh author_management
+./build-and-deploy.sh author_management v1.0.1  # 버전 지정
+
+# 전체 서비스 배포
+./build-and-deploy.sh all
+./build-and-deploy.sh all v1.1.0  # 버전 지정
+
+# 도움말
+./build-and-deploy.sh --help
+```
+
+### `quick-deploy.sh` - 빠른 배포 스크립트
+```bash
+# 변경된 서비스 자동 감지 및 배포
+./quick-deploy.sh
+
+# 대화형 서비스 선택
+./quick-deploy.sh select
+
+# 로컬 개발 모드 (Docker 없이 재시작)
+./quick-deploy.sh dev
+```
+
+## 📦 Docker 이미지 목록
+
+| 서비스 | Docker 이미지 |
+|--------|---------------|
+| AI System | `buildingbite/walklib_aisystem:v1.0.0` |
+| Author | `buildingbite/walklib_author:v1.0.0` |
+| Book | `buildingbite/walklib_book:v1.0.0` |
+| Content Writing | `buildingbite/walklib_writing:v1.0.0` |
+| Gateway | `buildingbite/walklib_gateway:v1.0.0` |
+| Point | `buildingbite/walklib_point:v1.0.0` |
+| Subscription | `buildingbite/walklib_subscription:v1.0.0` |
+| User | `buildingbite/walklib_user:v1.0.0` |
+| Frontend | `buildingbite/walklib_frontend:v1.0.0` |
+| Infra | `buildingbite/walklib_infra:v1.0.0` |
+
+3단계(로컬) 또는 5단계(Docker)로 전체 마이크로서비스 환경이 구성됩니다!
