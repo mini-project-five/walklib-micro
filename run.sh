@@ -42,17 +42,30 @@ else
     echo -e "${YELLOW}⚠️  infra/docker-compose.yml을 찾을 수 없습니다${NC}"
 fi
 
-# 서비스별 이미지 정의
+# 서비스별 이미지 정의 (latest 태그 사용)
 declare -A SERVICE_IMAGES=(
-    ["gateway"]="buildingbite/walklib_gateway:v1.0.0"
-    ["user_management"]="buildingbite/walklib_user:v1.0.0"
-    ["author_management"]="buildingbite/walklib_author:v1.0.0"
-    ["book_management"]="buildingbite/walklib_book:v1.0.0"
-    ["content_writing_management"]="buildingbite/walklib_writing:v1.0.0"
-    ["point_management"]="buildingbite/walklib_point:v1.0.0"
-    ["subscription_management"]="buildingbite/walklib_subscription:v1.0.0"
-    ["ai_system_management"]="buildingbite/walklib_aisystem:v1.0.0"
-    ["frontend"]="buildingbite/walklib_frontend:v1.0.0"
+    ["gateway"]="buildingbite/walklib_gateway:latest"
+    ["user_management"]="buildingbite/walklib_user:latest"
+    ["author_management"]="buildingbite/walklib_author:latest"
+    ["book_management"]="buildingbite/walklib_book:latest"
+    ["content_writing_management"]="buildingbite/walklib_writing:latest"
+    ["point_management"]="buildingbite/walklib_point:latest"
+    ["subscription_management"]="buildingbite/walklib_subscription:latest"
+    ["ai_system_management"]="buildingbite/walklib_aisystem:latest"
+    ["frontend"]="buildingbite/walklib_frontend:latest"
+)
+
+# latest 태그가 없는 경우 fallback 버전
+declare -A FALLBACK_VERSIONS=(
+    ["gateway"]="v1.0.0"
+    ["user_management"]="v1.0.0"
+    ["author_management"]="v1.0.0"
+    ["book_management"]="v1.0.0"
+    ["content_writing_management"]="v1.0.0"
+    ["point_management"]="v1.0.0"
+    ["subscription_management"]="v1.0.0"
+    ["ai_system_management"]="v1.0.0"
+    ["frontend"]="v1.0.1"
 )
 
 # 서비스별 포트 정의
@@ -77,17 +90,47 @@ for service in "${!SERVICE_IMAGES[@]}"; do
     fi
 done
 
+# 서비스 시작 순서 정의 (의존성 고려)
+SERVICE_ORDER=(
+    "gateway"                      # 1. Gateway 먼저 시작 (다른 서비스들이 참조)
+    "user_management"              # 2. Core 서비스들
+    "author_management"
+    "book_management"
+    "point_management"
+    "subscription_management"
+    "content_writing_management"
+    "ai_system_management"
+    "frontend"                     # 3. Frontend 마지막 (Gateway 의존)
+)
+
 # 서비스 시작
 echo -e "${BLUE}🚀 마이크로서비스 시작 중...${NC}"
-for service in "${!SERVICE_IMAGES[@]}"; do
+for service in "${SERVICE_ORDER[@]}"; do
     image="${SERVICE_IMAGES[$service]}"
     port="${SERVICE_PORTS[$service]}"
     
     echo -e "${YELLOW}Starting $service on port $port...${NC}"
     
-    # Docker 이미지 풀
+    # Docker 이미지 풀 (latest 실패시 fallback 버전 사용)
     if ! docker pull "$image" &> /dev/null; then
-        echo -e "${YELLOW}⚠️  $image 이미지를 풀할 수 없습니다. 로컬 이미지 사용${NC}"
+        # 서비스명에서 실제 이미지명 추출
+        case "$service" in
+            "user_management") fallback_service="user" ;;
+            "author_management") fallback_service="author" ;;
+            "book_management") fallback_service="book" ;;
+            "content_writing_management") fallback_service="writing" ;;
+            "point_management") fallback_service="point" ;;
+            "subscription_management") fallback_service="subscription" ;;
+            "ai_system_management") fallback_service="aisystem" ;;
+            *) fallback_service="$service" ;;
+        esac
+        fallback_image="buildingbite/walklib_$fallback_service:${FALLBACK_VERSIONS[$service]}"
+        echo -e "${YELLOW}⚠️  $image 이미지를 풀할 수 없습니다. $fallback_image 사용${NC}"
+        if docker pull "$fallback_image" &> /dev/null; then
+            image="$fallback_image"
+        else
+            echo -e "${YELLOW}⚠️  $fallback_image도 풀할 수 없습니다. 로컬 이미지 사용${NC}"
+        fi
     fi
     
     # 컨테이너 실행 (frontend는 다른 설정 사용)
@@ -109,11 +152,18 @@ for service in "${!SERVICE_IMAGES[@]}"; do
     
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}✅ $service started successfully${NC}"
+        
+        # Gateway 시작 후 추가 대기 (다른 서비스들이 참조할 수 있도록)
+        if [ "$service" = "gateway" ]; then
+            echo -e "${YELLOW}⏳ Gateway 준비 대기 중...${NC}"
+            sleep 10
+        else
+            sleep 2
+        fi
     else
         echo -e "${RED}❌ Failed to start $service${NC}"
+        sleep 2
     fi
-    
-    sleep 2
 done
 
 

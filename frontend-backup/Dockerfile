@@ -1,4 +1,4 @@
-# Frontend Dockerfile for WalkLib Micro (React + Vite + TypeScript)
+# Frontend Dockerfile for WalkLib Micro (Vue.js + Vite)
 FROM node:18-alpine AS build
 
 # 작업 디렉토리 설정
