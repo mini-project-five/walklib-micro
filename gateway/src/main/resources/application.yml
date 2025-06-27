@@ -90,7 +90,7 @@ spring:
           predicates:
             - Path=/ais/**, 
         - id: frontend
-          uri: http://frontend:8080
+          uri: http://frontend:80
           predicates:
             - Path=/**
       globalcors:

@@ -52,6 +52,7 @@ declare -A SERVICE_IMAGES=(
     ["point_management"]="buildingbite/walklib_point:v1.0.0"
     ["subscription_management"]="buildingbite/walklib_subscription:v1.0.0"
     ["ai_system_management"]="buildingbite/walklib_aisystem:v1.0.0"
+    ["frontend"]="buildingbite/walklib_frontend:v1.0.0"
 )
 
 # 서비스별 포트 정의
@@ -64,6 +65,7 @@ declare -A SERVICE_PORTS=(
     ["point_management"]="8085"
     ["subscription_management"]="8086"
     ["ai_system_management"]="8087"
+    ["frontend"]="80"
 )
 
 # 기존 컨테이너 정리
@@ -88,13 +90,22 @@ for service in "${!SERVICE_IMAGES[@]}"; do
         echo -e "${YELLOW}⚠️  $image 이미지를 풀할 수 없습니다. 로컬 이미지 사용${NC}"
     fi
     
-    # 컨테이너 실행
-    docker run -d \
-        --name "walklib_$service" \
-        --network="infra_default" \
-        -p "$port:$port" \
-        -e SPRING_PROFILES_ACTIVE=docker \
-        "$image"
+    # 컨테이너 실행 (frontend는 다른 설정 사용)
+    if [ "$service" = "frontend" ]; then
+        docker run -d \
+            --name "walklib_$service" \
+            --network="infra_default" \
+            --network-alias="frontend" \
+            -p "$port:80" \
+            "$image"
+    else
+        docker run -d \
+            --name "walklib_$service" \
+            --network="infra_default" \
+            -p "$port:$port" \
+            -e SPRING_PROFILES_ACTIVE=docker \
+            "$image"
+    fi
     
     if [ $? -eq 0 ]; then
         echo -e "${GREEN}✅ $service started successfully${NC}"
@@ -105,28 +116,13 @@ for service in "${!SERVICE_IMAGES[@]}"; do
     sleep 2
 done
 
-# Frontend 실행 (있는 경우)
-if docker pull buildingbite/walklib_frontend:v1.0.0 &> /dev/null; then
-    echo -e "${YELLOW}🎨 Starting frontend...${NC}"
-    docker run -d \
-        --name "walklib_frontend" \
-        --network="infra_default" \
-        -p "3000:3000" \
-        buildingbite/walklib_frontend:v1.0.0
-    
-    if [ $? -eq 0 ]; then
-        echo -e "${GREEN}✅ Frontend started successfully${NC}"
-    else
-        echo -e "${RED}❌ Failed to start frontend${NC}"
-    fi
-fi
 
 echo ""
 echo -e "${GREEN}🎉 모든 서비스가 시작되었습니다!${NC}"
 echo ""
 echo -e "${BLUE}📋 서비스 접속 정보:${NC}"
 echo -e "${BLUE}Gateway:     http://localhost:8080${NC}"
-echo -e "${BLUE}Frontend:    http://localhost:3000${NC}"
+echo -e "${BLUE}Frontend:    http://localhost${NC}"
 echo ""
 echo -e "${BLUE}📊 실행 중인 컨테이너 확인:${NC}"
 echo -e "${YELLOW}docker ps --filter name=walklib_${NC}"
