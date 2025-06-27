@@ -121,3 +121,29 @@ services:
       - ./ai system management:/usr/src
       - ./maven-repo:/root/.m2
       
+  gateway:
+    depends_on: 
+      - kafka
+      - user management
+    image: adoptopenjdk/maven-openjdk11:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    command: mvn spring-boot:run
+    ports:
+      - 8080:8080
+    working_dir: /usr/src
+    volumes:
+      - ./gateway:/usr/src
+      - ./maven-repo:/root/.m2
+      
+  frontend:
+    image: node:16-alpine
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - 3000:3000
+    working_dir: /usr/src
+    volumes:
+      - ./frontend:/usr/src
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8080
+

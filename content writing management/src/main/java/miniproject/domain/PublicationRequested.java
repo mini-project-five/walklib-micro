@@ -12,7 +12,6 @@ import miniproject.infra.AbstractEvent;
 public class PublicationRequested extends AbstractEvent {
 
     private Long eventId;
-    private Date timestamp;
     private Long publicationRequestId;
     private Long manuscriptId;
     private Long authorId;

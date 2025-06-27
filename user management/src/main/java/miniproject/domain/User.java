@@ -22,9 +22,13 @@ public class User {
 
     private String email;
 
-    private Long userPassword;
+    private String userPassword;  // Long -> String으로 변경
 
     private String userName;
+    
+    private String realName;  // 실명
+    
+    private String penName;   // 필명
 
     private Boolean isKtCustomer;
 

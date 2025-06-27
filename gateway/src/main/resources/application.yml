@@ -1,5 +1,5 @@
 server:
-  port: 8088
+  port: 8080
 
 ---
 
@@ -7,12 +7,22 @@ spring:
   profiles: default
   cloud:
     gateway:
+      default-filters:
+        - name: RequestSize
+          args:
+            maxSize: 5000000  # 5MB
 #<<< API Gateway / Routes
       routes:
+        - id: user management auth
+          uri: http://localhost:8082
+          predicates:
+            - Path=/users/auth/**
+          filters:
+            - RewritePath=/users/auth/(?<segment>.*), /auth/$\{segment}
         - id: user management
           uri: http://localhost:8082
           predicates:
-            - Path=/users/**, 
+            - Path=/users/**, /auth/** 
         - id: point management
           uri: http://localhost:8083
           predicates:
@@ -46,12 +56,20 @@ spring:
         corsConfigurations:
           '[/**]':
             allowedOrigins:
-              - "*"
+              - "http://localhost:3000"
+              - "http://localhost:3001"
             allowedMethods:
-              - "*"
+              - "GET"
+              - "POST"
+              - "PUT"
+              - "DELETE"
+              - "OPTIONS"
             allowedHeaders:
-              - "*"
-            allowCredentials: true
+              - "Content-Type"
+              - "Authorization"
+              - "X-Requested-With"
+              - "Accept"
+            allowCredentials: false
 
 
 ---
@@ -97,12 +115,20 @@ spring:
         corsConfigurations:
           '[/**]':
             allowedOrigins:
-              - "*"
+              - "http://localhost:3000"
+              - "http://localhost:3001"
             allowedMethods:
-              - "*"
+              - "GET"
+              - "POST"
+              - "PUT"
+              - "DELETE"
+              - "OPTIONS"
             allowedHeaders:
-              - "*"
-            allowCredentials: true
+              - "Content-Type"
+              - "Authorization"
+              - "X-Requested-With"
+              - "Accept"
+            allowCredentials: false
 
 server:
   port: 8080
