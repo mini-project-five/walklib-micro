@@ -15,7 +15,8 @@ sudo mv /tmp/eksctl /usr/local/bin
 
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 . ~/.nvm/nvm.sh
-nvm install 14.19.0 && nvm use 14.19.0
+# nvm install 14.19.0 && nvm use 14.19.0
+nvm install 18.20.8 && nvm use 18.20.8
 export NODE_OPTIONS=--openssl-legacy-provider
 
 cd infra
