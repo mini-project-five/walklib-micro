@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ModernHeader } from './ModernHeader';
 import { ModernBookCarousel } from './ModernBookCarousel';
 import { Footer } from '@/components/ui/footer';
+import { useUserInfo } from '@/hooks/useUserInfo';
 
 interface Book {
   id: number;
@@ -131,6 +132,7 @@ export const ModernMainLibrary = ({
   onPaymentClick, 
   onLogout 
 }: ModernMainLibraryProps) => {
+  const { userInfo } = useUserInfo();
   const [featuredBooks] = useState(mockBooks.slice(0, 5));
   const [newBooks] = useState(mockBooks.filter(book => book.isNew));
   const [bestSellerBooks] = useState(mockBooks.filter(book => book.isBestseller));
@@ -139,9 +141,9 @@ export const ModernMainLibrary = ({
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-amber-50/30">
       <ModernHeader
-        user={user}
-        coins={coins}
-        isSubscribed={isSubscribed}
+        user={userInfo || user}
+        coins={userInfo?.coins || coins}
+        isSubscribed={userInfo?.isSubscribed || isSubscribed}
         onPaymentClick={onPaymentClick}
         onLogout={onLogout}
       />

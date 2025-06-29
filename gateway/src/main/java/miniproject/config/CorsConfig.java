@@ -15,6 +15,8 @@ public class CorsConfig {
         corsConfig.setAllowCredentials(false);
         corsConfig.addAllowedOrigin("http://localhost:3000");
         corsConfig.addAllowedOrigin("http://localhost:3001");
+        corsConfig.addAllowedOrigin("http://localhost:3002");
+        corsConfig.addAllowedOrigin("http://localhost:3003");
         corsConfig.addAllowedHeader("*");
         corsConfig.addAllowedMethod("GET");
         corsConfig.addAllowedMethod("POST");

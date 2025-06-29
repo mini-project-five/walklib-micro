@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import { useUserInfo, getUserDisplayName, getUserRoleText } from '@/hooks/useUserInfo';
 
 interface PaymentCenterProps {
   user: any;
@@ -15,6 +16,8 @@ interface PaymentCenterProps {
 }
 
 export const PaymentCenter = ({ user, coins, isSubscribed, onBack, onPaymentSuccess }: PaymentCenterProps) => {
+  const { userInfo } = useUserInfo();
+  const currentUser = userInfo || user;
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleCoinPurchase = async (amount: number, price: number) => {
@@ -59,10 +62,15 @@ export const PaymentCenter = ({ user, coins, isSubscribed, onBack, onPaymentSucc
               <ArrowLeft className="h-5 w-5 mr-2" />
               서재로 돌아가기
             </Button>
-            <h1 className="text-xl font-light text-gray-800">코인 충전소</h1>
+            <div className="flex flex-col items-center">
+              <h1 className="text-xl font-light text-gray-800">코인 충전소</h1>
+              <p className="text-xs text-gray-500">
+                {getUserDisplayName(currentUser)} | {getUserRoleText(currentUser)}
+              </p>
+            </div>
             <div className="flex items-center space-x-2 text-sm">
               <span className="text-gray-600">보유 코인:</span>
-              <Badge variant="outline" className="font-medium">🪙 {coins}</Badge>
+              <Badge variant="outline" className="font-medium">{userInfo?.coins || coins}</Badge>
             </div>
           </div>
         </div>
@@ -70,7 +78,7 @@ export const PaymentCenter = ({ user, coins, isSubscribed, onBack, onPaymentSucc
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Premium Subscription Banner */}
-        {!isSubscribed && (
+        {!(userInfo?.isSubscribed || isSubscribed) && (
           <Card className="bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 text-white border-0 overflow-hidden relative">
             <div className="absolute inset-0 bg-black/10"></div>
             <CardContent className="p-8 relative z-10">

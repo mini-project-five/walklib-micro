@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { useUserInfo, getUserDisplayName, getUserRoleText } from '@/hooks/useUserInfo';
 
 interface BookDetailProps {
   book: any;
@@ -25,11 +26,13 @@ export const BookDetail = ({
   onPaymentNeeded,
   onCoinsUpdate 
 }: BookDetailProps) => {
+  const { userInfo } = useUserInfo();
+  const currentUser = userInfo || user;
+  const { toast } = useToast();
   const [isReading, setIsReading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [showRating, setShowRating] = useState(false);
   const [userRating, setUserRating] = useState(0);
-  const { toast } = useToast();
   
   const totalPages = 20;
   const progress = Math.round((currentPage / totalPages) * 100);
@@ -47,10 +50,13 @@ export const BookDetail = ({
   ];
 
   const handleReadBook = () => {
-    if (isSubscribed) {
+    const userCoins = userInfo?.coins || coins;
+    const userSubscribed = userInfo?.isSubscribed || isSubscribed;
+    
+    if (userSubscribed) {
       setIsReading(true);
-    } else if (coins >= 10) {
-      onCoinsUpdate(coins - 10);
+    } else if (userCoins >= 10) {
+      onCoinsUpdate(userCoins - 10);
       setIsReading(true);
     } else {
       onPaymentNeeded();
@@ -302,9 +308,9 @@ export const BookDetail = ({
             onClick={handleReadBook}
             className="w-full bg-amber-700 hover:bg-amber-800 text-white py-4 text-lg font-medium rounded-xl transition-all duration-300 hover:scale-[1.02]"
           >
-            {isSubscribed ? '무제한 열람하기' : `🪙 ${book.price} 코인으로 열람하기`}
+            {(userInfo?.isSubscribed || isSubscribed) ? '무제한 열람하기' : `${book.price} 코인으로 열람하기`}
           </Button>
-          {!isSubscribed && coins < 10 && (
+          {!(userInfo?.isSubscribed || isSubscribed) && (userInfo?.coins || coins) < 10 && (
             <p className="text-center text-sm text-amber-700 mt-2">
               코인이 부족합니다. 충전이 필요해요!
             </p>

@@ -1,123 +1,151 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Plus, Edit, Eye, Trash2, Calendar, BookOpen, FileText, LogOut } from 'lucide-react';
+import { Search, Filter, Edit, Trash2, Eye, Plus, LogOut, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
-
-interface Work {
-  id: string;
-  title: string;
-  genre: string;
-  content: string;
-  coverImage?: string;
-  createdAt: string;
-  updatedAt: string;
-  status: 'draft' | 'published' | 'reviewing';
-  wordCount: number;
-}
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { manuscriptApi, authApi } from '@/lib/api';
+import { useUserInfo, getUserDisplayName, getUserRoleText } from '@/hooks/useUserInfo';
 
 interface AuthorWorksProps {
   user: any;
   onBack: () => void;
-  onNewWork: () => void;
-  onEditWork: (work: Work) => void;
+  onEditWork: (workId: string) => void;
+  onCreateWork: () => void;
 }
 
-export const AuthorWorks = ({ user, onBack, onNewWork, onEditWork }: AuthorWorksProps) => {
-  const [works, setWorks] = useState<Work[]>([]);
+export const AuthorWorks = ({ user, onBack, onEditWork, onCreateWork }: AuthorWorksProps) => {
+  const { userInfo } = useUserInfo();
+  const [works, setWorks] = useState<any[]>([]);
+  const [filteredWorks, setFilteredWorks] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [workToDelete, setWorkToDelete] = useState<any>(null);
 
-  const handleLogout = () => {
-    localStorage.removeItem('walkingLibraryUser');
-    window.location.reload();
-  };
-
-  useEffect(() => {
-    // 로컬 스토리지에서 작품 목록 로드
-    const loadWorks = () => {
-      try {
-        const savedWorks = localStorage.getItem(`authorWorks_${user?.id || 'guest'}`);
-        if (savedWorks) {
-          setWorks(JSON.parse(savedWorks));
-        }
-      } catch (error) {
-        console.error('작품 목록 로드 실패:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadWorks();
-  }, [user?.id]);
-
-  const handleDeleteWork = (workId: string) => {
-    const updatedWorks = works.filter(work => work.id !== workId);
-    setWorks(updatedWorks);
-    localStorage.setItem(`authorWorks_${user?.id || 'guest'}`, JSON.stringify(updatedWorks));
-    
-    toast({
-      title: "작품이 삭제되었습니다",
-      description: "선택한 작품이 영구적으로 삭제되었습니다.",
-    });
-  };
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'draft':
-        return <Badge variant="secondary">초안</Badge>;
-      case 'published':
-        return <Badge variant="default">출간됨</Badge>;
-      case 'reviewing':
-        return <Badge variant="outline">검토중</Badge>;
-      default:
-        return <Badge variant="secondary">초안</Badge>;
+  // 작품 목록 로드
+  const loadWorks = async () => {
+    try {
+      setLoading(true);
+      // 실제 API 호출 시도
+      const response = await manuscriptApi.getManuscripts();
+      const manuscripts = Array.isArray(response) ? response : [];
+      // 현재 사용자의 원고만 필터링
+      const userWorks = manuscripts.filter((ms: any) => ms.authorId === (userInfo?.id || user?.id));
+      setWorks(userWorks);
+    } catch (error) {
+      console.error('API 호출 실패, 로컬 스토리지 사용:', error);
+      // API 실패시 로컬 스토리지에서 로드
+      const savedWorks = JSON.parse(localStorage.getItem(`authorWorks_${userInfo?.id || user?.id || 'guest'}`) || '[]');
+      setWorks(savedWorks);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
+  // 작품 삭제
+  const handleDeleteWork = async (workId: string) => {
+    try {
+      // 실제 API 호출 시도
+      await manuscriptApi.deleteManuscript(workId);
+      // API 성공시 상태 업데이트
+      setWorks(works.filter(work => work.id !== workId));
+    } catch (error) {
+      console.error('API 삭제 실패, 로컬 스토리지에서 삭제:', error);
+      // API 실패시 로컬 스토리지에서 삭제
+      const updatedWorks = works.filter(work => work.id !== workId);
+      setWorks(updatedWorks);
+      localStorage.setItem(`authorWorks_${userInfo?.id || user?.id || 'guest'}`, JSON.stringify(updatedWorks));
+    }
+    
+    setDeleteDialogOpen(false);
+    setWorkToDelete(null);
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 flex items-center justify-center">
-        <div className="text-center">
-          <BookOpen className="h-12 w-12 mx-auto text-purple-500 animate-pulse mb-4" />
-          <p className="text-gray-600">작품 목록을 불러오는 중...</p>
-        </div>
-      </div>
-    );
-  }
+  // 로그아웃 처리
+  const handleLogout = () => {
+    authApi.logout();
+    onBack();
+  };
+
+  // 검색 및 필터링
+  useEffect(() => {
+    let filtered = works;
+
+    if (searchTerm) {
+      filtered = filtered.filter(work => 
+        work.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        work.genre.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(work => work.status === statusFilter);
+    }
+
+    setFilteredWorks(filtered);
+  }, [works, searchTerm, statusFilter]);
+
+  useEffect(() => {
+    loadWorks();
+  }, [userInfo?.id, user?.id]);
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'published': return 'bg-green-100 text-green-800';
+      case 'reviewing': return 'bg-yellow-100 text-yellow-800';
+      case 'draft': return 'bg-gray-100 text-gray-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'published': return '출간됨';
+      case 'reviewing': return '검토중';
+      case 'draft': return '초안';
+      default: return '미정';
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-stone-100">
       {/* Header */}
-      <header className="bg-white/90 backdrop-blur-sm border-b border-gray-200/50 sticky top-0 z-50">
+      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200/50 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <Button 
-              variant="ghost" 
-              onClick={onBack}
-              className="text-gray-600 hover:text-gray-800"
-            >
-              <ArrowLeft className="h-5 w-5 mr-2" />
-              작가 센터로 돌아가기
-            </Button>
-            
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">{user?.penName || user?.name}</span>
+              <Button 
+                variant="ghost" 
+                onClick={onBack}
+                className="text-gray-600 hover:text-gray-800"
+              >
+                ← 작가 센터
+              </Button>
+              <div className="flex flex-col">
+                <h1 className="text-xl font-light text-gray-800">작품 관리</h1>
+                <p className="text-xs text-gray-500">
+                  {getUserDisplayName(userInfo || user)} | {getUserRoleText(userInfo || user)}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-4">
+              <div className="text-right">
+                <p className="text-sm font-medium text-gray-800">
+                  {getUserDisplayName(userInfo || user)}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {(userInfo || user)?.email}
+                </p>
+              </div>
               <Button 
                 variant="ghost" 
                 onClick={handleLogout}
-                className="text-red-600 hover:text-red-700"
+                className="text-gray-600 hover:text-gray-800"
               >
-                <LogOut className="h-4 w-4 mr-2" />
+                <LogOut className="h-5 w-5 mr-2" />
                 로그아웃
               </Button>
             </div>
@@ -125,140 +153,130 @@ export const AuthorWorks = ({ user, onBack, onNewWork, onEditWork }: AuthorWorks
         </div>
       </header>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header Section */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-light text-gray-800 mb-2">내 작품 목록</h1>
-            <p className="text-gray-600">총 {works.length}개의 작품이 있습니다</p>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+        {/* Controls */}
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+          <div className="flex flex-col sm:flex-row gap-4 flex-1">
+            <div className="relative flex-1 max-w-md">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="작품명 또는 장르로 검색..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 bg-white/80 backdrop-blur-sm border-gray-200/50"
+              />
+            </div>
+            
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="px-3 py-2 rounded-md border border-gray-200/50 bg-white/80 backdrop-blur-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            >
+              <option value="all">모든 상태</option>
+              <option value="draft">초안</option>
+              <option value="reviewing">검토중</option>
+              <option value="published">출간됨</option>
+            </select>
           </div>
-          
-          <Button
-            onClick={onNewWork}
-            className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white shadow-lg"
+
+          <Button 
+            onClick={onCreateWork}
+            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white whitespace-nowrap shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
           >
             <Plus className="h-4 w-4 mr-2" />
-            새 작품 집필
+            새 작품 만들기
           </Button>
         </div>
 
         {/* Works Grid */}
-        {works.length === 0 ? (
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">작품 목록을 불러오는 중...</p>
+          </div>
+        ) : filteredWorks.length === 0 ? (
           <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50">
-            <CardContent className="py-16 text-center">
-              <BookOpen className="h-16 w-16 mx-auto text-gray-300 mb-4" />
-              <h3 className="text-xl font-medium text-gray-600 mb-2">아직 작품이 없습니다</h3>
-              <p className="text-gray-500 mb-6">첫 번째 작품을 만들어보세요!</p>
-              <Button
-                onClick={onNewWork}
-                className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                새 작품 집필하기
-              </Button>
+            <CardContent className="text-center py-12">
+              <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-800 mb-2">
+                {works.length === 0 ? '아직 작품이 없습니다' : '검색 결과가 없습니다'}
+              </h3>
+              <p className="text-gray-600 mb-6">
+                {works.length === 0 ? '첫 번째 작품을 만들어보세요!' : '다른 검색어를 시도해보세요.'}
+              </p>
+              {works.length === 0 && (
+                <Button 
+                  onClick={onCreateWork}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  첫 작품 만들기
+                </Button>
+              )}
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {works.map((work) => (
-              <Card 
-                key={work.id} 
-                className="bg-white/80 backdrop-blur-sm border-gray-200/50 hover:shadow-lg transition-all duration-200 group"
-              >
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredWorks.map((work) => (
+              <Card key={work.id} className="bg-white/80 backdrop-blur-sm border-gray-200/50 hover:shadow-lg transition-all duration-300">
                 <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between mb-2">
-                    <CardTitle className="text-lg font-medium text-gray-800 line-clamp-2 group-hover:text-purple-700 transition-colors">
-                      {work.title}
-                    </CardTitle>
-                    {getStatusBadge(work.status)}
-                  </div>
-                  
-                  <div className="flex items-center space-x-4 text-sm text-gray-500">
-                    <div className="flex items-center">
-                      <FileText className="h-3 w-3 mr-1" />
-                      {work.wordCount.toLocaleString()}자
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <CardTitle className="text-lg font-medium text-gray-800 mb-1">
+                        {work.title}
+                      </CardTitle>
+                      <Badge className={`text-xs ${getStatusColor(work.status)}`}>
+                        {getStatusText(work.status)}
+                      </Badge>
                     </div>
-                    <Badge variant="outline" className="text-xs">
-                      {work.genre}
-                    </Badge>
                   </div>
                 </CardHeader>
                 
-                <CardContent className="pt-0">
-                  {/* Cover Preview */}
-                  {work.coverImage ? (
-                    <div className="aspect-[3/4] mb-4 bg-gray-100 rounded-lg overflow-hidden">
-                      <img 
-                        src={work.coverImage} 
-                        alt={work.title}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = 'none';
-                        }}
-                      />
+                <CardContent className="space-y-4">
+                  <div className="space-y-2 text-sm text-gray-600">
+                    <div className="flex justify-between">
+                      <span>장르:</span>
+                      <span className="font-medium">{work.genre}</span>
                     </div>
-                  ) : (
-                    <div className="aspect-[3/4] mb-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center">
-                      <BookOpen className="h-8 w-8 text-gray-400" />
+                    <div className="flex justify-between">
+                      <span>글자 수:</span>
+                      <span className="font-medium">{(work.wordCount || 0).toLocaleString()}자</span>
                     </div>
-                  )}
-                  
-                  {/* Content Preview */}
-                  <p className="text-sm text-gray-600 line-clamp-3 mb-4">
-                    {work.content.length > 100 ? `${work.content.substring(0, 100)}...` : work.content}
-                  </p>
-                  
-                  {/* Dates */}
-                  <div className="space-y-1 mb-4 text-xs text-gray-500">
-                    <div className="flex items-center">
-                      <Calendar className="h-3 w-3 mr-1" />
-                      생성: {formatDate(work.createdAt)}
+                    <div className="flex justify-between">
+                      <span>수정일:</span>
+                      <span className="font-medium">
+                        {new Date(work.updatedAt || work.createdAt).toLocaleDateString('ko-KR')}
+                      </span>
                     </div>
-                    {work.updatedAt !== work.createdAt && (
-                      <div className="flex items-center">
-                        <Calendar className="h-3 w-3 mr-1" />
-                        수정: {formatDate(work.updatedAt)}
+                    {work.views && (
+                      <div className="flex justify-between">
+                        <span>조회수:</span>
+                        <span className="font-medium">{work.views.toLocaleString()}</span>
                       </div>
                     )}
                   </div>
-                  
-                  {/* Actions */}
-                  <div className="flex items-center space-x-2">
+
+                  <div className="flex gap-2 pt-2">
                     <Button
+                      variant="outline"
                       size="sm"
-                      onClick={() => onEditWork(work)}
-                      className="flex-1 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white"
+                      onClick={() => onEditWork(work.id)}
+                      className="flex-1"
                     >
-                      <Edit className="h-3 w-3 mr-1" />
+                      <Edit className="h-4 w-4 mr-1" />
                       편집
                     </Button>
                     
                     <Button
-                      size="sm"
                       variant="outline"
-                      onClick={() => {
-                        // 작품 상세 보기 기능 (향후 구현)
-                        toast({
-                          title: "상세 보기",
-                          description: "작품 상세 보기 기능이 곧 추가됩니다.",
-                        });
-                      }}
-                    >
-                      <Eye className="h-3 w-3" />
-                    </Button>
-                    
-                    <Button
                       size="sm"
-                      variant="outline"
                       onClick={() => {
-                        if (confirm('정말로 이 작품을 삭제하시겠습니까?')) {
-                          handleDeleteWork(work.id);
-                        }
+                        setWorkToDelete(work);
+                        setDeleteDialogOpen(true);
                       }}
-                      className="text-red-600 hover:text-red-700 hover:border-red-300"
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
                     >
-                      <Trash2 className="h-3 w-3" />
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
                 </CardContent>
@@ -266,6 +284,37 @@ export const AuthorWorks = ({ user, onBack, onNewWork, onEditWork }: AuthorWorks
             ))}
           </div>
         )}
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>작품 삭제</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <p className="text-gray-600">
+                "<strong>{workToDelete?.title}</strong>" 작품을 정말로 삭제하시겠습니까?
+              </p>
+              <p className="text-sm text-red-600">
+                이 작업은 되돌릴 수 없습니다.
+              </p>
+              <div className="flex gap-3 justify-end">
+                <Button
+                  variant="outline"
+                  onClick={() => setDeleteDialogOpen(false)}
+                >
+                  취소
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => workToDelete && handleDeleteWork(workToDelete.id)}
+                >
+                  삭제
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

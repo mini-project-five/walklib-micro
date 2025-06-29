@@ -2,7 +2,7 @@
 
 # AI 서비스 실행 스크립트
 
-echo "🚀 Walking Library AI Services 시작"
+echo " Walking Library AI Services 시작"
 echo "======================================"
 
 # API 키 확인
@@ -13,10 +13,10 @@ if [ -z "$OPENAI_API_KEY" ]; then
     echo ""
     echo "또는 .env 파일에서 자동 로드:"
     if [ -f ".env" ]; then
-        echo "✅ .env 파일을 찾았습니다. 환경 변수를 로드합니다..."
+        echo ".env 파일을 찾았습니다. 환경 변수를 로드합니다..."
         export $(cat .env | grep -v '^#' | xargs)
     else
-        echo "❌ .env 파일이 없습니다. .env.example을 참고하여 생성하세요."
+        echo ".env 파일이 없습니다. .env.example을 참고하여 생성하세요."
         exit 1
     fi
 fi
@@ -35,17 +35,17 @@ read -p "선택 (1-4): " choice
 
 case $choice in
     1)
-        echo "🔄 AI 백엔드 서비스 시작..."
+        echo "AI 백엔드 서비스 시작..."
         cd ai-system-management
         mvn spring-boot:run
         ;;
     2)
-        echo "🔄 프론트엔드 시작..."
+        echo "프론트엔드 시작..."
         cd frontend
         npm run dev
         ;;
     3)
-        echo "🔄 모든 서비스 시작..."
+        echo "모든 서비스 시작..."
         # 백그라운드에서 AI 서비스 실행
         cd ai-system-management
         mvn spring-boot:run &
@@ -56,7 +56,7 @@ case $choice in
         npm run dev &
         FRONTEND_PID=$!
         
-        echo "✅ 서비스들이 시작되었습니다:"
+        echo "서비스들이 시작되었습니다:"
         echo "   - AI 서비스: http://localhost:8088"
         echo "   - 프론트엔드: http://localhost:3000"
         echo ""
@@ -67,12 +67,12 @@ case $choice in
         wait
         ;;
     4)
-        echo "🧪 AI 기능 테스트..."
+        echo "AI 기능 테스트..."
         echo "프론트엔드의 AI 테스트 페이지에서 확인하세요:"
         echo "http://localhost:3000/ai-test"
         ;;
     *)
-        echo "❌ 잘못된 선택입니다."
+        echo "잘못된 선택입니다."
         exit 1
         ;;
 esac

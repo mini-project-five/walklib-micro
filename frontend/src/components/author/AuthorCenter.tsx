@@ -1,9 +1,11 @@
 
 import { useState, useEffect } from 'react';
-import { ArrowLeft, BookOpen, TrendingUp, Edit, Users, Plus, Eye } from 'lucide-react';
+import { BookOpen, TrendingUp, Edit, Users, Plus, Eye, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { authorApi, manuscriptApi, authApi } from '@/lib/api';
+import { useUserInfo, getUserDisplayName } from '@/hooks/useUserInfo';
 
 interface AuthorCenterProps {
   user: any;
@@ -13,6 +15,7 @@ interface AuthorCenterProps {
 }
 
 export const AuthorCenter = ({ user, onBack, onWriteClick, onViewWorksClick }: AuthorCenterProps) => {
+  const { userInfo, loading: userLoading, refreshUserInfo } = useUserInfo();
   const [myWorks, setMyWorks] = useState<any[]>([]);
   const [authorStats, setAuthorStats] = useState({
     totalViews: 0,
@@ -22,34 +25,79 @@ export const AuthorCenter = ({ user, onBack, onWriteClick, onViewWorksClick }: A
     followers: 0,
     totalWordCount: 0
   });
+  const [loading, setLoading] = useState(true);
+
+  // 실제 사용자 정보 사용 (userInfo 우선, 없으면 prop으로 받은 user)
+  const currentUser = userInfo || user;
+  const displayName = getUserDisplayName(currentUser);
+
+  // 작가의 원고 목록 가져오기
+  const loadAuthorWorks = async () => {
+    try {
+      setLoading(true);
+      const response = await manuscriptApi.getManuscripts();
+      const manuscripts = Array.isArray(response) ? response : [];
+      // 현재 사용자의 원고만 필터링 (실제로는 API에서 필터링되어야 함)
+      const userManuscripts = manuscripts.filter((ms: any) => ms.authorId === currentUser?.id);
+      setMyWorks(userManuscripts.slice(0, 3)); // 최근 3개만 표시
+      
+      // 통계 계산
+      const totalWorks = userManuscripts.length;
+      const totalWordCount = userManuscripts.reduce((sum: number, work: any) => sum + (work.wordCount || 0), 0);
+      const totalViews = userManuscripts.reduce((sum: number, work: any) => sum + (work.views || 0), 0);
+      
+      setAuthorStats({
+        totalViews: totalViews || Math.floor(Math.random() * 2000) + 500,
+        totalWorks,
+        bestseller: totalWorks >= 3,
+        monthlyEarnings: totalWordCount * 10 + Math.floor(Math.random() * 50000),
+        followers: Math.floor(totalViews / 10) + Math.floor(Math.random() * 100),
+        totalWordCount
+      });
+    } catch (error) {
+      console.error('작품 데이터 로드 실패:', error);
+      // 실패시 로컬 스토리지 폴백
+      const savedWorks = JSON.parse(localStorage.getItem(`authorWorks_${currentUser?.id || 'guest'}`) || '[]');
+      setMyWorks(savedWorks.slice(0, 3));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 로그아웃 처리
+  const handleLogout = () => {
+    authApi.logout();
+    onBack(); // 로그인 화면으로 이동
+  };
 
   useEffect(() => {
-    // 로컬 스토리지에서 작품 목록 로드 및 통계 계산
-    const loadWorksAndStats = () => {
+    if (currentUser?.id) {
+      loadAuthorWorks();
+    } else {
+      // 백업: 로컬 스토리지에서 작품 목록 로드
       try {
-        const savedWorks = JSON.parse(localStorage.getItem(`authorWorks_${user?.id || 'guest'}`) || '[]');
-        setMyWorks(savedWorks.slice(0, 3)); // 최근 3개만 표시
+        const savedWorks = JSON.parse(localStorage.getItem(`authorWorks_${currentUser?.id || 'guest'}`) || '[]');
+        setMyWorks(savedWorks.slice(0, 3));
         
-        // 통계 계산
         const totalWorks = savedWorks.length;
         const totalWordCount = savedWorks.reduce((sum: number, work: any) => sum + (work.wordCount || 0), 0);
         const totalViews = savedWorks.reduce((sum: number, work: any) => sum + (work.views || 0), 0);
         
         setAuthorStats({
-          totalViews: totalViews || Math.floor(Math.random() * 2000) + 500, // 임시 조회수
+          totalViews: totalViews || Math.floor(Math.random() * 2000) + 500,
           totalWorks,
           bestseller: totalWorks >= 3,
-          monthlyEarnings: totalWordCount * 10 + Math.floor(Math.random() * 50000), // 임시 수익
+          monthlyEarnings: totalWordCount * 10 + Math.floor(Math.random() * 50000),
           followers: Math.floor(totalViews / 10) + Math.floor(Math.random() * 100),
           totalWordCount
         });
       } catch (error) {
         console.error('작품 데이터 로드 실패:', error);
+      } finally {
+        setLoading(false);
       }
-    };
-
-    loadWorksAndStats();
-  }, [user?.id]);
+    }
+  }, [currentUser?.id]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-stone-100">
@@ -57,16 +105,15 @@ export const AuthorCenter = ({ user, onBack, onWriteClick, onViewWorksClick }: A
       <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200/50 sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
+            <h1 className="text-xl font-light text-gray-800">작가 센터</h1>
             <Button 
               variant="ghost" 
-              onClick={onBack}
+              onClick={handleLogout}
               className="text-gray-600 hover:text-gray-800"
             >
-              <ArrowLeft className="h-5 w-5 mr-2" />
-              서재로 돌아가기
+              <LogOut className="h-5 w-5 mr-2" />
+              로그아웃
             </Button>
-            <h1 className="text-xl font-light text-gray-800">작가 센터</h1>
-            <div></div>
           </div>
         </div>
       </header>
@@ -74,7 +121,7 @@ export const AuthorCenter = ({ user, onBack, onWriteClick, onViewWorksClick }: A
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {/* Welcome Section */}
         <div className="text-center space-y-4">
-          <h2 className="text-3xl font-light text-gray-800">안녕하세요, {user?.name} 작가님!</h2>
+          <h2 className="text-3xl font-light text-gray-800">안녕하세요, {displayName} 작가님!</h2>
           <p className="text-gray-600">창작의 영감이 가득한 하루 되세요.</p>
         </div>
 
@@ -137,7 +184,7 @@ export const AuthorCenter = ({ user, onBack, onWriteClick, onViewWorksClick }: A
               </div>
               <Button 
                 onClick={onWriteClick}
-                className="bg-amber-600 hover:bg-amber-700 text-white px-6 py-3 font-medium rounded-lg transition-all duration-300 hover:scale-105"
+                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-6 py-3 font-medium rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 새 작품 집필하기
@@ -155,7 +202,7 @@ export const AuthorCenter = ({ user, onBack, onWriteClick, onViewWorksClick }: A
               <Button 
                 onClick={onViewWorksClick}
                 variant="outline"
-                className="px-6 py-3 font-medium rounded-lg border-purple-300 text-purple-700 hover:bg-purple-50 transition-all duration-300"
+                className="px-6 py-3 font-medium rounded-lg border-purple-300 text-purple-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 hover:border-purple-400 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105"
               >
                 <Eye className="h-4 w-4 mr-2" />
                 작품 목록 보기
@@ -188,7 +235,7 @@ export const AuthorCenter = ({ user, onBack, onWriteClick, onViewWorksClick }: A
                 <p className="text-sm mb-4">첫 번째 작품을 만들어보세요!</p>
                 <Button 
                   onClick={onWriteClick}
-                  className="bg-purple-600 hover:bg-purple-700 text-white"
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   첫 작품 집필하기

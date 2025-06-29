@@ -71,6 +71,11 @@ export const AuthorLogin = ({ onLogin, onBack }: AuthorLoginProps) => {
         
         console.log('로그인 응답:', response);
         
+        // 작가 역할 검증
+        if ((response as any).role !== 'AUTHOR') {
+          throw new Error('작가 계정이 아닙니다. 독자 로그인을 이용해주세요.');
+        }
+        
         // 로그인 성공 알림
         alert('로그인 성공! 작가 대시보드로 이동합니다.');
         

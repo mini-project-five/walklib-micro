@@ -68,6 +68,11 @@ export const ReaderLogin = ({ onLogin, onBack }: ReaderLoginProps) => {
         
         console.log('독자 로그인 응답:', response);
         
+        // 독자 역할 검증
+        if ((response as any).role !== 'READER') {
+          throw new Error('독자 계정이 아닙니다. 작가 로그인을 이용해주세요.');
+        }
+        
         // 로그인 성공 알림
         alert('로그인 성공! 독서 세상으로 이동합니다.');
         
