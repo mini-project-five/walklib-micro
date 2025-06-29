@@ -16,7 +16,7 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
-if ! command -v docker-compose &> /dev/null; then
+if ! command -v docker compose &> /dev/null; then
     echo -e "${RED}❌ Docker Compose가 설치되어 있지 않습니다${NC}"
     exit 1
 fi
@@ -31,7 +31,7 @@ fi
 echo -e "${BLUE}🔧 인프라 서비스 시작 중...${NC}"
 if [ -f "infra/docker-compose.yml" ]; then
     cd infra
-    docker-compose up -d
+    docker compose up -d
     echo -e "${GREEN}✅ 인프라 서비스 시작됨${NC}"
     cd ..
     

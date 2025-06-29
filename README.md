@@ -75,7 +75,7 @@ cd walklib-micro
 #### 3. 서비스 실행
 ```bash
 # 모든 서비스 실행 (Docker 기반)
-./run.sh
+sudo ./run.sh
 ```
 
 #### 4. 서비스 중지
