@@ -7,15 +7,17 @@ import { BookDetail } from '@/components/books/BookDetail';
 import { PaymentCenter } from '@/components/payment/PaymentCenter';
 import { AuthorCenter } from '@/components/author/AuthorCenter';
 import { AuthorEditor } from '@/components/author/AuthorEditor';
+import { AuthorWorks } from '@/components/author/AuthorWorks';
 import { ApiTestPanel } from '@/components/debug/ApiTestPanel';
 import { ServiceIntegrationTest } from '@/components/test/ServiceIntegrationTest';
 
-type Screen = 'type-selector' | 'reader-login' | 'author-login' | 'library' | 'book-detail' | 'payment' | 'author' | 'editor' | 'api-test' | 'integration-test';
+type Screen = 'type-selector' | 'reader-login' | 'author-login' | 'library' | 'book-detail' | 'payment' | 'author' | 'editor' | 'works' | 'api-test' | 'integration-test';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('type-selector');
   const [user, setUser] = useState<any>(null);
   const [selectedBook, setSelectedBook] = useState<any>(null);
+  const [editingWork, setEditingWork] = useState<any>(null);
   const [coins, setCoins] = useState(100);
   const [isSubscribed, setIsSubscribed] = useState(false);
 
@@ -164,14 +166,35 @@ const Index = () => {
         <AuthorCenter
           user={user}
           onBack={() => setCurrentScreen('library')}
-          onWriteClick={() => setCurrentScreen('editor')}
+          onWriteClick={() => {
+            setEditingWork(null);
+            setCurrentScreen('editor');
+          }}
+          onViewWorksClick={() => setCurrentScreen('works')}
+        />
+      )}
+      
+      {currentScreen === 'works' && (
+        <AuthorWorks
+          user={user}
+          onBack={() => setCurrentScreen('author')}
+          onNewWork={() => {
+            setEditingWork(null);
+            setCurrentScreen('editor');
+          }}
+          onEditWork={(work) => {
+            setEditingWork(work);
+            setCurrentScreen('editor');
+          }}
         />
       )}
       
       {currentScreen === 'editor' && (
         <AuthorEditor
           user={user}
-          onBack={() => setCurrentScreen('author')}
+          editingWork={editingWork}
+          onBack={() => editingWork ? setCurrentScreen('works') : setCurrentScreen('author')}
+          onSaved={() => setCurrentScreen('works')}
         />
       )}
       

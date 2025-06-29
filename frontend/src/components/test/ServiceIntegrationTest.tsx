@@ -173,11 +173,11 @@ export const ServiceIntegrationTest = ({ onBack }: ServiceTestProps) => {
       
       updateTestResult('data-retrieval', 'success');
       
-      addLog('🎉 모든 테스트가 성공적으로 완료되었습니다!');
+      addLog('모든 테스트가 성공적으로 완료되었습니다!');
       
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류';
-      addLog(`❌ 테스트 실패: ${errorMessage}`);
+      addLog(`테스트 실패: ${errorMessage}`);
       
       // 실패한 테스트 단계 표시
       const currentTests = Object.keys(testResults);

@@ -1,4 +1,15 @@
-# 
+# WalkLib Micro - AI 기반 디지털 도서관 플랫폼
+
+## 🔐 중요: 시작하기 전에
+
+⚠️ **환경 변수 설정이 필요합니다!**
+
+이 프로젝트를 실행하기 전에 반드시 [ENVIRONMENT_SETUP.md](./ENVIRONMENT_SETUP.md) 파일을 읽고 필요한 환경 변수를 설정하세요.
+
+### 필수 환경 변수
+```bash
+export OPENAI_API_KEY=your-openai-api-key-here
+```
 
 ## Model
 www.msaez.io/#/31334541/storming/3efacb35baa219662388e54c2dc76f3b

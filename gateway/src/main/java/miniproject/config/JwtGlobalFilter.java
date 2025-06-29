@@ -35,11 +35,11 @@ public class JwtGlobalFilter implements GlobalFilter, Ordered {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getURI().getPath();
 
-        System.out.println("🔍 Gateway Filter - Method: " + request.getMethod() + ", Path: " + path);
-        System.out.println("🔍 Headers: " + request.getHeaders().toSingleValueMap());
+        System.out.println("Gateway Filter - Method: " + request.getMethod() + ", Path: " + path);
+        System.out.println("Headers: " + request.getHeaders().toSingleValueMap());
 
-        // ⚠️ 임시로 모든 요청을 통과시킴 (JWT 검증 비활성화)
-        System.out.println("⚠️ JWT validation temporarily disabled - allowing all requests");
+        // 임시로 모든 요청을 통과시킴 (JWT 검증 비활성화)
+        System.out.println("JWT validation temporarily disabled - allowing all requests");
         return chain.filter(exchange);
 
         /*
@@ -47,12 +47,12 @@ public class JwtGlobalFilter implements GlobalFilter, Ordered {
         boolean isExcluded = EXCLUDED_PATHS.stream()
             .anyMatch(excludedPath -> {
                 boolean matches = path.startsWith(excludedPath) || path.equals(excludedPath);
-                System.out.println("🔍 Checking path '" + path + "' against '" + excludedPath + "' = " + matches);
+                System.out.println("Checking path '" + path + "' against '" + excludedPath + "' = " + matches);
                 return matches;
             });
 
         if (isExcluded) {
-            System.out.println("✅ Path excluded from JWT validation: " + path);
+            System.out.println("Path excluded from JWT validation: " + path);
             return chain.filter(exchange);
         }
 
@@ -60,35 +60,35 @@ public class JwtGlobalFilter implements GlobalFilter, Ordered {
         String authHeader = request.getHeaders().getFirst("Authorization");
         
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            System.out.println("❌ No Authorization header or invalid format");
+            System.out.println("No Authorization header or invalid format");
             return handleUnauthorized(exchange);
         }
 
         String token = authHeader.substring(7);
-        System.out.println("🔑 JWT Token: " + token.substring(0, 50) + "...");
+        System.out.println("JWT Token: " + token.substring(0, 50) + "...");
         
         // JWT 토큰 검증
         boolean isValid = jwtUtils.validateToken(token);
         boolean isExpired = jwtUtils.isTokenExpired(token);
         
-        System.out.println("🔒 Token valid: " + isValid + ", expired: " + isExpired);
+        System.out.println("Token valid: " + isValid + ", expired: " + isExpired);
         
         if (!isValid || isExpired) {
-            System.out.println("❌ JWT validation failed");
+            System.out.println("JWT validation failed");
             return handleUnauthorized(exchange);
         }
 
         // 사용자 정보를 헤더에 추가 (선택적)
         String username = jwtUtils.getUsernameFromToken(token);
         if (username != null) {
-            System.out.println("👤 User from token: " + username);
+            System.out.println("User from token: " + username);
             ServerHttpRequest modifiedRequest = request.mutate()
                 .header("X-User-Email", username)
                 .build();
             exchange = exchange.mutate().request(modifiedRequest).build();
         }
 
-        System.out.println("✅ JWT validation passed, proceeding to service");
+        System.out.println("JWT validation passed, proceeding to service");
         return chain.filter(exchange);
         */
     }

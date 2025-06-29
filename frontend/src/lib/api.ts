@@ -44,7 +44,7 @@ class ApiClient {
       headers['Authorization'] = `Bearer ${token}`;
     }
     
-    console.log('🚀 API Request:', url, options);
+    console.log('API Request:', url, options);
     
     try {
       const response = await fetch(url, {
@@ -52,11 +52,11 @@ class ApiClient {
         ...options,
       });
 
-      console.log('📡 API Response Status:', response.status, response.statusText);
-      console.log('📡 API Response Headers:', Object.fromEntries(response.headers.entries()));
+      console.log('API Response Status:', response.status, response.statusText);
+      console.log('API Response Headers:', Object.fromEntries(response.headers.entries()));
       
       if (!response.ok) {
-        console.log('❌ Response not OK:', response.status);
+        console.log('Response not OK:', response.status);
         if (response.status === 401) {
           // 토큰이 만료되었거나 유효하지 않은 경우
           clearAuthData();
@@ -68,14 +68,14 @@ class ApiClient {
         let errorMessage = `API request failed: ${response.status} ${response.statusText}`;
         try {
           const errorText = await response.text();
-          console.log('❌ Error Response Text:', errorText);
+          console.log('Error Response Text:', errorText);
           if (errorText.startsWith('Error: ')) {
             errorMessage = errorText.replace('Error: ', '');
           } else if (errorText) {
             errorMessage = errorText;
           }
         } catch (e) {
-          console.log('❌ Error parsing error response:', e);
+          console.log('Error parsing error response:', e);
           // 에러 메시지 파싱 실패시 기본 메시지 사용
         }
         
@@ -83,12 +83,12 @@ class ApiClient {
       }
 
       const responseData = await response.json();
-      console.log('✅ API Success:', responseData);
+      console.log('API Success:', responseData);
       return responseData;
     } catch (error) {
-      console.log('💥 Fetch Error:', error);
+      console.log('Fetch Error:', error);
       if (error instanceof TypeError && error.message === 'Failed to fetch') {
-        console.log('💥 Network Error - 이는 CORS 에러일 가능성이 높습니다');
+        console.log('Network Error - 이는 CORS 에러일 가능성이 높습니다');
       }
       throw error;
     }
@@ -199,7 +199,127 @@ export const manuscriptApi = {
   publishManuscript: (id: string) => apiClient.post(`/manuscripts/${id}/publish`),
 };
 
+// OpenAI API 직접 호출을 위한 클라이언트
+const OPENAI_API_KEY = import.meta.env.VITE_CHAT_API_KEY;
+const OPENAI_API_URL = 'https://api.openai.com/v1';
+
+class OpenAIClient {
+  private async callOpenAI(endpoint: string, payload: any) {
+    if (!OPENAI_API_KEY) {
+      throw new Error('OpenAI API 키가 설정되지 않았습니다.');
+    }
+
+    const response = await fetch(`${OPENAI_API_URL}${endpoint}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${OPENAI_API_KEY}`
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!response.ok) {
+      throw new Error(`OpenAI API 오류: ${response.statusText}`);
+    }
+
+    return response.json();
+  }
+
+  async refineText(originalText: string, options?: {
+    genre?: string;
+    style?: string;
+    targetAudience?: string;
+    instructions?: string;
+  }) {
+    const prompt = `다음 텍스트를 더 매력적이고 읽기 쉽게 다듬어주세요:
+${options?.genre ? `장르: ${options.genre}\n` : ''}${options?.style ? `스타일: ${options.style}\n` : ''}${options?.targetAudience ? `대상 독자: ${options.targetAudience}\n` : ''}${options?.instructions ? `추가 지시사항: ${options.instructions}\n` : ''}
+원본 텍스트: ${originalText}
+
+다듬어진 텍스트만 응답으로 제공해주세요.`;
+
+    const response = await this.callOpenAI('/chat/completions', {
+      model: 'gpt-3.5-turbo',
+      messages: [
+        { role: 'system', content: '당신은 전문적인 텍스트 편집자입니다.' },
+        { role: 'user', content: prompt }
+      ],
+      max_tokens: 2000,
+      temperature: 0.7
+    });
+
+    return response.choices[0]?.message?.content || '텍스트 다듬기에 실패했습니다.';
+  }
+
+  async generateCover(options: {
+    title: string;
+    author?: string;
+    genre?: string;
+    mood?: string;
+    style?: string;
+    colorScheme?: string;
+    description?: string;
+  }) {
+    const prompt = `Create a professional book cover design for:
+Title: ${options.title}
+${options.author ? `Author: ${options.author}\n` : ''}${options.genre ? `Genre: ${options.genre}\n` : ''}${options.mood ? `Mood: ${options.mood}\n` : ''}${options.style ? `Style: ${options.style}\n` : ''}${options.colorScheme ? `Color scheme: ${options.colorScheme}\n` : ''}${options.description ? `Book description: ${options.description}\n` : ''}
+The cover should be modern, eye-catching, and suitable for publication.`;
+
+    const response = await this.callOpenAI('/images/generations', {
+      model: 'dall-e-3',
+      prompt: prompt,
+      n: 1,
+      size: '1024x1024',
+      quality: 'standard'
+    });
+
+    return response.data[0]?.url || '이미지 생성에 실패했습니다.';
+  }
+}
+
+const openAIClient = new OpenAIClient();
+
 export const aiApi = {
+  // 헬스 체크
+  healthCheck: () => apiClient.get('/ais/health'),
+  
+  // 백엔드를 통한 API 호출
+  refineText: (data: {
+    originalText: string;
+    genre?: string;
+    style?: string;
+    targetAudience?: string;
+    instructions?: string;
+  }) => apiClient.post('/ais/refine-text', data),
+  
+  generateCover: (data: {
+    title: string;
+    author?: string;
+    genre?: string;
+    mood?: string;
+    style?: string;
+    colorScheme?: string;
+    description?: string;
+  }) => apiClient.post('/ais/generate-cover', data),
+  
+  // 프론트엔드에서 직접 OpenAI API 호출
+  refineTextDirect: (originalText: string, options?: {
+    genre?: string;
+    style?: string;
+    targetAudience?: string;
+    instructions?: string;
+  }) => openAIClient.refineText(originalText, options),
+  
+  generateCoverDirect: (options: {
+    title: string;
+    author?: string;
+    genre?: string;
+    mood?: string;
+    style?: string;
+    colorScheme?: string;
+    description?: string;
+  }) => openAIClient.generateCover(options),
+  
+  // 기존 API (호환성 유지)
   enhanceContent: (data: any) => apiClient.post('/ai/enhance', data),
   generateSuggestions: (data: any) => apiClient.post('/ai/suggestions', data),
 };

@@ -85,9 +85,9 @@ export const PaymentCenter = ({ user, coins, isSubscribed, onBack, onPaymentSucc
                     월 9,900원으로 모든 작품을 무제한으로 읽어보세요
                   </p>
                   <div className="flex items-center space-x-4 text-sm text-amber-100">
-                    <span>✓ 무제한 작품 열람</span>
-                    <span>✓ 광고 없는 경험</span>
-                    <span>✓ 신작 우선 공개</span>
+                    <span>• 무제한 작품 열람</span>
+                    <span>• 광고 없는 경험</span>
+                    <span>• 신작 우선 공개</span>
                   </div>
                 </div>
                 <Button 

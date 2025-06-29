@@ -23,7 +23,7 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
 
-  user management:
+  user-management:
     depends_on: 
       - kafka
     image: adoptopenjdk/maven-openjdk11:latest
@@ -34,10 +34,10 @@ services:
       - 8082:8082
     working_dir: /usr/src
     volumes:
-      - ./user management:/usr/src
+      - ./user-management:/usr/src
       - ./maven-repo:/root/.m2
       
-  point management:
+  point-management:
     depends_on: 
       - kafka
     image: adoptopenjdk/maven-openjdk11:latest
@@ -48,10 +48,10 @@ services:
       - 8083:8083
     working_dir: /usr/src
     volumes:
-      - ./point management:/usr/src
+      - ./point-management:/usr/src
       - ./maven-repo:/root/.m2
       
-  subscription management:
+  subscription-management:
     depends_on: 
       - kafka
     image: adoptopenjdk/maven-openjdk11:latest
@@ -62,10 +62,10 @@ services:
       - 8084:8084
     working_dir: /usr/src
     volumes:
-      - ./subscription management:/usr/src
+      - ./subscription-management:/usr/src
       - ./maven-repo:/root/.m2
       
-  book management:
+  book-management:
     depends_on: 
       - kafka
     image: adoptopenjdk/maven-openjdk11:latest
@@ -76,10 +76,10 @@ services:
       - 8085:8085
     working_dir: /usr/src
     volumes:
-      - ./book management:/usr/src
+      - ./book-management:/usr/src
       - ./maven-repo:/root/.m2
       
-  author management:
+  author-management:
     depends_on: 
       - kafka
     image: adoptopenjdk/maven-openjdk11:latest
@@ -90,10 +90,10 @@ services:
       - 8086:8086
     working_dir: /usr/src
     volumes:
-      - ./author management:/usr/src
+      - ./author-management:/usr/src
       - ./maven-repo:/root/.m2
       
-  content writing management:
+  content-writing-management:
     depends_on: 
       - kafka
     image: adoptopenjdk/maven-openjdk11:latest
@@ -104,10 +104,10 @@ services:
       - 8087:8087
     working_dir: /usr/src
     volumes:
-      - ./content writing management:/usr/src
+      - ./content-writing-management:/usr/src
       - ./maven-repo:/root/.m2
       
-  ai system management:
+  ai-system-management:
     depends_on: 
       - kafka
     image: adoptopenjdk/maven-openjdk11:latest
@@ -118,13 +118,13 @@ services:
       - 8088:8088
     working_dir: /usr/src
     volumes:
-      - ./ai system management:/usr/src
+      - ./ai-system-management:/usr/src
       - ./maven-repo:/root/.m2
       
   gateway:
     depends_on: 
       - kafka
-      - user management
+      - user-management
     image: adoptopenjdk/maven-openjdk11:latest
     environment:
       - SPRING_PROFILES_ACTIVE=docker

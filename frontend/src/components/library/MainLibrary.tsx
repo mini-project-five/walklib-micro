@@ -27,21 +27,21 @@ export const MainLibrary = ({
 
   // Sample book data
   const recommendedBooks = [
-    { id: 1, title: '바람의 서사시', author: '김서정', cover: '🌊', genre: '판타지', price: 10, isNew: false },
-    { id: 2, title: '도시의 밤', author: '이현우', cover: '🌃', genre: '로맨스', price: 10, isNew: true },
+    { id: 1, title: '바람의 서사시', author: '김서정', cover: 'Cover1', genre: '판타지', price: 10, isNew: false },
+    { id: 2, title: '도시의 밤', author: '이현우', cover: 'Cover2', genre: '로맨스', price: 10, isNew: true },
     { id: 3, title: '시간의 조각들', author: '박미라', cover: '⏰', genre: 'SF', price: 10, isNew: false },
   ];
 
   const bestsellerBooks = [
-    { id: 4, title: '마음의 정원', author: '정수민', cover: '🌸', genre: '힐링', price: 10, isBestseller: true },
-    { id: 5, title: '별빛 카페', author: '송지은', cover: '☕', genre: '일상', price: 10, isBestseller: true },
-    { id: 6, title: '숲속의 비밀', author: '최영호', cover: '🌲', genre: '미스터리', price: 10, isBestseller: true },
+    { id: 4, title: '마음의 정원', author: '정수민', cover: 'Cover4', genre: '힐링', price: 10, isBestseller: true },
+    { id: 5, title: '별빛 카페', author: '송지은', cover: 'Cover5', genre: '일상', price: 10, isBestseller: true },
+    { id: 6, title: '숲속의 비밀', author: '최영호', cover: 'Cover6', genre: '미스터리', price: 10, isBestseller: true },
   ];
 
   const newBooks = [
-    { id: 7, title: '새벽의 약속', author: '한지민', cover: '🌅', genre: '드라마', price: 10, isNew: true },
-    { id: 8, title: '무지개 다리', author: '오성훈', cover: '🌈', genre: '동화', price: 10, isNew: true },
-    { id: 9, title: '겨울 연가', author: '임수진', cover: '❄️', genre: '로맨스', price: 10, isNew: true },
+    { id: 7, title: '새벽의 약속', author: '한지민', cover: 'Cover7', genre: '드라마', price: 10, isNew: true },
+    { id: 8, title: '무지개 다리', author: '오성훈', cover: 'Cover8', genre: '동화', price: 10, isNew: true },
+    { id: 9, title: '겨울 연가', author: '임수진', cover: 'Cover9', genre: '로맨스', price: 10, isNew: true },
   ];
 
   return (
