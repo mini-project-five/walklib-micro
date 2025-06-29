@@ -2,8 +2,11 @@
 
 echo "🚀 Setting up walklib-micro development environment..."
 
+sudo apt install openjdk-21-jdk
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
+
 # Set JAVA_HOME to Java 21 runtime
-export JAVA_HOME=/workspace/.vscode-remote/data/User/globalStorage/pleiades.java-extension-pack-jdk/java/21
+# export JAVA_HOME=/workspace/.vscode-remote/data/User/globalStorage/pleiades.java-extension-pack-jdk/java/21
 echo "✅ Java environment set to: $JAVA_HOME"
 
 # List of all services
@@ -53,6 +56,8 @@ echo "🏗️  Building all services..."
 # Build all services
 build_success=0
 build_total=0
+
+sudo apt install maven
 
 for service in "${services[@]}"; do
     if [ -f "$service/pom.xml" ]; then
