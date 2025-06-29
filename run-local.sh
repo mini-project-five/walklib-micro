@@ -11,7 +11,8 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 # Java 환경 설정
-export JAVA_HOME=/workspace/.vscode-remote/data/User/globalStorage/pleiades.java-extension-pack-jdk/java/21
+# export JAVA_HOME=/workspace/.vscode-remote/data/User/globalStorage/pleiades.java-extension-pack-jdk/java/21
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 
 # Java 버전 확인
 if ! java -version &> /dev/null; then
