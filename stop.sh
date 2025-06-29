@@ -39,7 +39,7 @@ if [[ -f "infra/docker-compose.yml" ]]; then
     if [[ "$response" =~ ^[Yy]$ ]]; then
         echo -e "${BLUE}🔧 인프라 서비스 중지 중...${NC}"
         cd infra
-        docker-compose down
+        docker compose down
         cd ..
         echo -e "${GREEN}✅ 인프라 서비스가 중지되었습니다${NC}"
     else
