@@ -1,0 +1,4 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Mon Jun 30 01:38:31 GMT 2025
+@default-central-https\://repo.maven.apache.org/maven2/.lastUpdated=1751247511459
+https\://repo.maven.apache.org/maven2/.error=Could not transfer artifact com.google.cloud\:google-cloud-talent-bom\:pom\:1.0.3 from/to central (https\://repo.maven.apache.org/maven2)\: /root/.m2/repository/com/google/cloud/google-cloud-talent-bom/1.0.3/google-cloud-talent-bom-1.0.3.pom.part (No such file or directory)

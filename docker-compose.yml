@@ -1,0 +1,165 @@
+volumes:
+  maven-repo:
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "22181:2181"
+
+  kafka:
+    image: confluentinc/cp-kafka:5.5.0
+    depends_on:
+      - zookeeper
+    ports:
+      - "9094:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+
+  user-management:
+    image: adoptopenjdk/maven-openjdk11:latest
+    working_dir: /app
+    volumes:
+      - ./user-management:/app
+      - maven-repo:/root/.m2
+    ports:
+      - "8081:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:29092
+    command: mvn spring-boot:run
+    depends_on:
+      - kafka
+
+  book-management:
+    image: adoptopenjdk/maven-openjdk11:latest
+    working_dir: /app
+    volumes:
+      - ./book-management:/app
+      - maven-repo:/root/.m2
+    ports:
+      - "8082:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:29092
+    command: mvn spring-boot:run
+    depends_on:
+      - kafka
+
+  author-management:
+    image: adoptopenjdk/maven-openjdk11:latest
+    working_dir: /app
+    volumes:
+      - ./author-management:/app
+      - maven-repo:/root/.m2
+    ports:
+      - "8083:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:29092
+    command: mvn spring-boot:run
+    depends_on:
+      - kafka
+
+  content-writing-management:
+    image: adoptopenjdk/maven-openjdk11:latest
+    working_dir: /app
+    volumes:
+      - ./content-writing-management:/app
+      - maven-repo:/root/.m2
+    ports:
+      - "8084:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:29092
+    command: mvn spring-boot:run
+    depends_on:
+      - kafka
+
+  point-management:
+    image: adoptopenjdk/maven-openjdk11:latest
+    working_dir: /app
+    volumes:
+      - ./point-management:/app
+      - maven-repo:/root/.m2
+    ports:
+      - "8085:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:29092
+    command: mvn spring-boot:run
+    depends_on:
+      - kafka
+
+  subscription-management:
+    image: adoptopenjdk/maven-openjdk11:latest
+    working_dir: /app
+    volumes:
+      - ./subscription-management:/app
+      - maven-repo:/root/.m2
+    ports:
+      - "8086:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:29092
+    command: mvn spring-boot:run
+    depends_on:
+      - kafka
+
+  ai-system-management:
+    image: adoptopenjdk/maven-openjdk11:latest
+    working_dir: /app
+    volumes:
+      - ./ai-system-management:/app
+      - maven-repo:/root/.m2
+    ports:
+      - "8087:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:29092
+    command: mvn spring-boot:run
+    depends_on:
+      - kafka
+
+  gateway:
+    image: adoptopenjdk/maven-openjdk11:latest
+    working_dir: /app
+    volumes:
+      - ./gateway:/app
+      - maven-repo:/root/.m2
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    command: mvn spring-boot:run
+    depends_on:
+      - user-management
+      - book-management
+      - author-management
+      - content-writing-management
+      - point-management
+      - subscription-management
+      - ai-system-management
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"

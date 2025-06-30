@@ -1,0 +1,4 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Mon Jun 30 01:38:33 GMT 2025
+@default-central-https\://repo.maven.apache.org/maven2/.lastUpdated=1751247513833
+https\://repo.maven.apache.org/maven2/.error=Could not transfer artifact org.springframework.data\:spring-data-releasetrain\:pom\:Neumann-SR1 from/to central (https\://repo.maven.apache.org/maven2)\: /root/.m2/repository/org/springframework/data/spring-data-releasetrain/Neumann-SR1/spring-data-releasetrain-Neumann-SR1.pom.part (No such file or directory)

@@ -1,0 +1,4 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Mon Jun 30 01:38:29 GMT 2025
+@default-central-https\://repo.maven.apache.org/maven2/.lastUpdated=1751247509838
+https\://repo.maven.apache.org/maven2/.error=Could not transfer artifact com.google.cloud\:google-cloud-document-ai-bom\:pom\:0.3.6 from/to central (https\://repo.maven.apache.org/maven2)\: /root/.m2/repository/com/google/cloud/google-cloud-document-ai-bom/0.3.6/google-cloud-document-ai-bom-0.3.6.pom.part (No such file or directory)

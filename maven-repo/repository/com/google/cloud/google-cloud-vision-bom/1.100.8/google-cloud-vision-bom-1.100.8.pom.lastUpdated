@@ -1,0 +1,4 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Mon Jun 30 01:38:32 GMT 2025
+@default-central-https\://repo.maven.apache.org/maven2/.lastUpdated=1751247512378
+https\://repo.maven.apache.org/maven2/.error=Could not transfer artifact com.google.cloud\:google-cloud-vision-bom\:pom\:1.100.8 from/to central (https\://repo.maven.apache.org/maven2)\: /root/.m2/repository/com/google/cloud/google-cloud-vision-bom/1.100.8/google-cloud-vision-bom-1.100.8.pom.part (No such file or directory)
