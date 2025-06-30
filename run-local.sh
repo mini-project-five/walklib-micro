@@ -30,16 +30,16 @@ sleep 2
 # 서비스 목록 (시작 순서 중요)
 services=("gateway" "user_management" "author_management" "book_management" "content_writing_management" "point_management" "subscription_management" "ai_system_management")
 
-# 서비스별 포트 정의
+# 서비스별 포트 정의 (gateway가 수정된 포트 구성에 맞춤)
 declare -A SERVICE_PORTS=(
-    ["gateway"]="8080"
-    ["user_management"]="8081"
-    ["author_management"]="8082"
-    ["book_management"]="8083"
-    ["content_writing_management"]="8084"
-    ["point_management"]="8085"
-    ["subscription_management"]="8086"
-    ["ai_system_management"]="8087"
+    ["gateway"]="8088"
+    ["user_management"]="8082"
+    ["author_management"]="8086"
+    ["book_management"]="8085"
+    ["content_writing_management"]="8087"
+    ["point_management"]="8083"
+    ["subscription_management"]="8084"
+    ["ai_system_management"]="8089"
 )
 
 echo -e "${BLUE}🚀 로컬 마이크로서비스 시작 중...${NC}"
@@ -63,10 +63,13 @@ for service in "${services[@]}"; do
     
     echo -e "${YELLOW}Starting $service on port $port...${NC}"
     
+    # 로그 디렉토리 생성
+    mkdir -p logs
+    
     # 백그라운드에서 서비스 시작
     cd "$service"
-    mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Dserver.port=$port -Dspring.profiles.active=local" > "../logs/$service.log" 2>&1 &
-    local PID=$!
+    mvn spring-boot:run -Dspring-boot.run.jvmArguments="-Dserver.port=$port -Dspring.profiles.active=default" > "../logs/$service.log" 2>&1 &
+    PID=$!
     PIDS+=($PID)
     cd ..
     
@@ -74,15 +77,16 @@ for service in "${services[@]}"; do
     sleep 3
 done
 
-# 로그 디렉토리 생성
-mkdir -p logs
+# 잠시 대기하여 서비스들이 안정적으로 시작되도록 함
+echo -e "${YELLOW}⏳ 서비스들이 초기화되는 중... (10초 대기)${NC}"
+sleep 10
 
 # Frontend 시작 (있는 경우)
 if [[ -d "frontend" && -f "frontend/package.json" ]]; then
     echo -e "${YELLOW}🎨 Starting frontend...${NC}"
     cd frontend
     npm start > "../logs/frontend.log" 2>&1 &
-    local FRONTEND_PID=$!
+    FRONTEND_PID=$!
     PIDS+=($FRONTEND_PID)
     cd ..
     echo -e "${GREEN}✅ Frontend started (PID: $FRONTEND_PID)${NC}"
@@ -126,7 +130,7 @@ cleanup() {
     
     # 저장된 PID로 프로세스 종료
     if [[ -f .local_pids ]]; then
-        local SAVED_PIDS=$(cat .local_pids)
+        SAVED_PIDS=$(cat .local_pids)
         for pid in $SAVED_PIDS; do
             if kill -0 $pid 2>/dev/null; then
                 kill $pid 2>/dev/null || true

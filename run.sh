@@ -57,15 +57,15 @@ declare -A SERVICE_IMAGES=(
 
 # latest 태그가 없는 경우 fallback 버전
 declare -A FALLBACK_VERSIONS=(
-    ["gateway"]="v1.0.0"
-    ["user_management"]="v1.0.0"
-    ["author_management"]="v1.0.0"
-    ["book_management"]="v1.0.0"
-    ["content_writing_management"]="v1.0.0"
-    ["point_management"]="v1.0.0"
-    ["subscription_management"]="v1.0.0"
-    ["ai_system_management"]="v1.0.0"
-    ["frontend"]="v1.0.1"
+    ["gateway"]="v1.0.2"
+    ["user_management"]="v1.0.2"
+    ["author_management"]="v1.0.2"
+    ["book_management"]="v1.0.2"
+    ["content_writing_management"]="v1.0.2"
+    ["point_management"]="v1.0.2"
+    ["subscription_management"]="v1.0.2"
+    ["ai_system_management"]="v1.0.2"
+    ["frontend"]="v1.0.2"
 )
 
 # 서비스별 포트 정의

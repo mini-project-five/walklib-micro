@@ -1,0 +1,691 @@
+Picked up JAVA_TOOL_OPTIONS: -XX:+UseContainerSupport -XX:ActiveProcessorCount=1
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ------------------< miniproject:ai-system-management >------------------
+[INFO] Building ai-system-management 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:2.3.1.RELEASE:run (default-cli) > test-compile @ ai-system-management >>>
+Downloading from central: https://repo.maven.apache.org/maven2/io/github/cdimascio/dotenv-java/2.2.4/dotenv-java-2.2.4.pom
+Progress (1): 1.4/10.0 kBProgress (1): 2.8/10.0 kBProgress (1): 4.1/10.0 kBProgress (1): 5.5/10.0 kBProgress (1): 6.9/10.0 kBProgress (1): 8.3/10.0 kBProgress (1): 9.7/10.0 kBProgress (1): 10.0 kB                         Downloaded from central: https://repo.maven.apache.org/maven2/io/github/cdimascio/dotenv-java/2.2.4/dotenv-java-2.2.4.pom (10.0 kB at 25 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/io/github/cdimascio/dotenv-java/2.2.4/dotenv-java-2.2.4.jar
+Progress (1): 1.4/15 kBProgress (1): 2.8/15 kBProgress (1): 4.1/15 kBProgress (1): 5.5/15 kBProgress (1): 6.9/15 kBProgress (1): 8.3/15 kBProgress (1): 9.7/15 kBProgress (1): 11/15 kB Progress (1): 12/15 kBProgress (1): 14/15 kBProgress (1): 15/15 kBProgress (1): 15 kB                      Downloaded from central: https://repo.maven.apache.org/maven2/io/github/cdimascio/dotenv-java/2.2.4/dotenv-java-2.2.4.jar (15 kB at 552 kB/s)
+[INFO] 
+[INFO] --- resources:3.1.0:resources (default-resources) @ ai-system-management ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 2 resources
+[INFO] Copying 19 resources
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ ai-system-management ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 17 source files with javac [debug target 11] to target/classes
+[WARNING] system modules path not set in conjunction with -source 11
+[INFO] Annotation processing is enabled because one or more processors were found
+  on the class path. A future release of javac may disable annotation processing
+  unless at least one processor is specified by name (-processor), or a search
+  path is specified (--processor-path, --processor-module-path), or annotation
+  processing is enabled explicitly (-proc:only, -proc:full).
+  Use -Xlint:-options to suppress this message.
+  Use -proc:none to disable annotation processing.
+[WARNING] /workspace/walklib-micro/ai_system_management/src/main/java/miniproject/domain/AiCoverImageGenerated.java:[10,1] Generating equals/hashCode implementation but without a call to superclass, even though this class does not extend java.lang.Object. If this is intentional, add '@EqualsAndHashCode(callSuper=false)' to your type.
+[WARNING] /workspace/walklib-micro/ai_system_management/src/main/java/miniproject/domain/AiProcessingStarted.java:[10,1] Generating equals/hashCode implementation but without a call to superclass, even though this class does not extend java.lang.Object. If this is intentional, add '@EqualsAndHashCode(callSuper=false)' to your type.
+[WARNING] /workspace/walklib-micro/ai_system_management/src/main/java/miniproject/domain/AiSummaryGenerated.java:[10,1] Generating equals/hashCode implementation but without a call to superclass, even though this class does not extend java.lang.Object. If this is intentional, add '@EqualsAndHashCode(callSuper=false)' to your type.
+[WARNING] /workspace/walklib-micro/ai_system_management/src/main/java/miniproject/domain/PublicationRequested.java:[8,1] Generating equals/hashCode implementation but without a call to superclass, even though this class does not extend java.lang.Object. If this is intentional, add '@EqualsAndHashCode(callSuper=false)' to your type.
+[INFO] 
+[INFO] --- resources:3.1.0:testResources (default-testResources) @ ai-system-management ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /workspace/walklib-micro/ai_system_management/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ ai-system-management ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] <<< spring-boot:2.3.1.RELEASE:run (default-cli) < test-compile @ ai-system-management <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:2.3.1.RELEASE:run (default-cli) @ ai-system-management ---
+[INFO] Attaching agents: []
+Picked up JAVA_TOOL_OPTIONS: -XX:+UseContainerSupport -XX:ActiveProcessorCount=1
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::        (v2.3.1.RELEASE)
+
+2025-06-30 07:49:45.396  INFO [ai system management,,,] 142119 --- [           main] m.AiSystemManagementApplication          : The following profiles are active: default
+2025-06-30 07:49:46.098  INFO [ai system management,,,] 142119 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFERRED mode.
+2025-06-30 07:49:46.199  INFO [ai system management,,,] 142119 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 95ms. Found 1 JPA repository interfaces.
+2025-06-30 07:49:46.490 DEBUG [ai system management,,,] 142119 --- [           main] o.s.cloud.context.scope.GenericScope     : Generating bean factory id from names: [$autoCreateChannelCandidates, BindingHandlerAdvise, DefaultConfiguringBeanFactoryPostProcessor, IntegrationConfigurationBeanFactoryPostProcessor, _relProvider, aiController, aiHateoasProcessor, aiRepository, aiSystemManagementApplication, alpsController, alpsConverter, alpsJsonHttpMessageConverter, annotatedEventHandlerInvoker, annotationRelProvider, appListener, applicationAvailability, applicationTaskExecutor, associationLinks, auditableBeanWrapperFactory, backendIdConverterRegistry, backendIdHandlerMethodArgumentResolver, baggagePropagationFactoryBuilder, baseUri, basicErrorController, beanNameHandlerMapping, beanNameViewResolver, binderAwareChannelResolver, binderAwareRouterBeanPostProcessor, binderFactory, binderTypeRegistry, bindersHealthContributor, bindersHealthIndicatorListener, bindingService, bindingsLifecycleController, bootstrapApplicationListener.BootstrapMarkerConfiguration, brave.spring.webmvc.SpanCustomizingAsyncHandlerInterceptor, channelFactory, channelInitializer, characterEncodingFilter, classLoaderMetrics, commonsFeatures, compositeCompatibilityVerifier, compositeDiscoveryClient, compositeMessageChannelConfigurer, configurableEnvironmentConfiguration, configurationPropertiesBeans, configurationPropertiesRebinder, contextRefresher, contextStartAfterRefreshListener, controllerEndpointDiscoverer, controllerEndpointHandlerMapping, controllerExposeExcludePropertyEndpointFilter, conventionErrorViewResolver, converterRegistrar, correlationScopeDecorator, correlationScopeDecoratorBuilder, dataSource, dataSourceInitializedPublisher, dataSourceInitializerPostProcessor, dbHealthContributor, default.miniproject.AiSystemManagementApplication.FeignClientSpecification, defaultConversionService, defaultMessageConverters, defaultMessageSpanCustomizer, defaultRelProvider, defaultServletHandlerMapping, defaultSkipPatternBean, defaultTraceSampler, defaultValidator, defaultViewResolver, delegatingEntityLinks, discoveryClientHealthIndicator, discoveryCompositeHealthContributor, diskSpaceHealthIndicator, dispatcherServlet, dispatcherServletMappingDescriptionProvider, dispatcherServletRegistration, dynamicDestinationsBindable, eTagArgumentResolver, emBeanDefinitionRegistrarPostProcessor, endpointCachingOperationInvokerAdvisor, endpointMediaTypes, endpointOperationParameterMapper, entityLinks, entityLinksPluginRegistry, entityManagerFactory, entityManagerFactoryBootstrapExecutorCustomizer, entityManagerFactoryBuilder, enumTranslator, envInfoContributor, environmentManager, error, errorAttributes, errorPageCustomizer, errorPageRegistrarBeanPostProcessor, errorParser, event-in, event-out, excerptProjector, executorBeanPostProcessor, feign.client-org.springframework.cloud.openfeign.FeignClientProperties, feign.encoder-org.springframework.cloud.openfeign.support.FeignEncoderProperties, feign.httpclient-org.springframework.cloud.openfeign.support.FeignHttpClientProperties, feignBuilder, feignContext, feignContextBeanPostProcessor, feignFeature, feignTargeter, fileDescriptorMetrics, filterMappingDescriptionProvider, formContentFilter, functionBindingRegistrar, functionCatalog, functionInitializer, functionRouter, globalErrorChannelCustomizer, halJacksonHttpMessageConverter, halLinkDisocoverer, halMessageConverterSupportedMediaTypeCustomizer, handlerExceptionResolver, handlerFunctionAdapter, healthAggregator, healthContributorRegistry, healthEndpoint, healthEndpointGroups, healthEndpointGroupsBeanPostProcessor, healthEndpointProperties, healthEndpointWebExtension, healthHttpCodeStatusMapper, healthIndicatorRegistry, healthStatusAggregator, hikariPoolDataSourceMetadataProvider, hooksRefresher, httpHeadersPreparer, httpRequestHandlerAdapter, httpTracing, hypermediaRepresentionModelProcessorConfigurator, hypermediaRestTemplateBeanPostProcessor, hypermediaRestTemplateConfigurer, hypermediaWebMvcConfigurer, hypermediaWebMvcConverters, inetUtils, inetUtilsProperties, infoEndpoint, inputBindingLifecycle, integrationArgumentResolverMessageConverter, integrationConversionService, integrationManagementConfigurer, integrationMessageHandlerMethodFactory, integrationPauseHandler, jacksonGeoModule, jacksonHttpMessageConverter, jacksonObjectMapper, jacksonObjectMapperBuilder, jdbcTemplate, jpaContext, jpaHelper, jpaMappingContext, jpaVendorAdapter, jsonComponentModule, jsonMapper, jsonSchemaConverter, jvmGcMetrics, jvmMemoryMetrics, jvmThreadMetrics, kafkaAdmin, kafkaConsumerFactory, kafkaConsumerMetrics, kafkaExtendedPropertiesDefaultMappingsProvider, kafkaListenerContainerFactory, kafkaListenerContainerFactoryConfigurer, kafkaNullConverter, kafkaProducerFactory, kafkaProducerListener, kafkaProducerMetrics, kafkaTemplate, kafkaTracing, linkCollector, linkDiscovererRegistry, linkDiscoverers, localeCharsetMappingsCustomizer, logbackMetrics, loggingRebinder, management.endpoints.web-org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties, management.endpoints.web.cors-org.springframework.boot.actuate.autoconfigure.endpoint.web.CorsEndpointProperties, management.health.diskspace-org.springframework.boot.actuate.autoconfigure.system.DiskSpaceHealthIndicatorProperties, management.health.status-org.springframework.boot.actuate.autoconfigure.health.HealthIndicatorProperties, management.info-org.springframework.boot.actuate.autoconfigure.info.InfoContributorProperties, management.metrics-org.springframework.boot.actuate.autoconfigure.metrics.MetricsProperties, management.metrics.export.simple-org.springframework.boot.actuate.autoconfigure.metrics.export.simple.SimpleProperties, management.server-org.springframework.boot.actuate.autoconfigure.web.server.ManagementServerProperties, managementServletContext, mappingJackson2HttpMessageConverter, messageChannelStreamListenerResultAdapter, messageConverterConfigurer, messageConverters, messageResolver, messageSourceFactory, messagingTracing, metadataConfiguration, meterRegistryPostProcessor, methodValidationPostProcessor, metricsHttpClientUriTagFilter, metricsHttpServerUriTagFilter, metricsRestTemplateCustomizer, metricsWebMvcConfigurer, micrometerClock, miniproject.config.kafka.KafkaProcessor, multipartConfigElement, multipartResolver, mvcContentNegotiationManager, mvcConversionService, mvcHandlerMappingIntrospector, mvcPathMatcher, mvcResourceUrlProvider, mvcUriComponentsContributor, mvcUrlPathHelper, mvcValidator, mvcViewResolver, namedParameterJdbcTemplate, newSpanParser, noOpSpanReporter, noOpTagValueResolver, openAIConfig, openAIRestTemplate, openAIService, openEntityManagerInViewInterceptor, openEntityManagerInViewInterceptorConfigurer, org.springframework.aop.config.internalAutoProxyCreator, org.springframework.boot.actuate.autoconfigure.endpoint.EndpointAutoConfiguration, org.springframework.boot.actuate.autoconfigure.endpoint.web.ServletEndpointManagementContextConfiguration, org.springframework.boot.actuate.autoconfigure.endpoint.web.ServletEndpointManagementContextConfiguration$WebMvcServletEndpointManagementContextConfiguration, org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration, org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointAutoConfiguration$WebEndpointServletConfiguration, org.springframework.boot.actuate.autoconfigure.endpoint.web.servlet.WebMvcEndpointManagementContextConfiguration, org.springframework.boot.actuate.autoconfigure.health.HealthContributorAutoConfiguration, org.springframework.boot.actuate.autoconfigure.health.HealthEndpointAutoConfiguration, org.springframework.boot.actuate.autoconfigure.health.HealthEndpointConfiguration, org.springframework.boot.actuate.autoconfigure.health.HealthEndpointWebExtensionConfiguration, org.springframework.boot.actuate.autoconfigure.health.LegacyHealthEndpointAdaptersConfiguration, org.springframework.boot.actuate.autoconfigure.health.LegacyHealthEndpointCompatibilityConfiguration, org.springframework.boot.actuate.autoconfigure.health.LegacyHealthEndpointCompatibilityConfiguration$LegacyReactiveHealthEndpointCompatibilityConfiguration, org.springframework.boot.actuate.autoconfigure.health.ReactiveHealthEndpointConfiguration, org.springframework.boot.actuate.autoconfigure.info.InfoContributorAutoConfiguration, org.springframework.boot.actuate.autoconfigure.info.InfoEndpointAutoConfiguration, org.springframework.boot.actuate.autoconfigure.jdbc.DataSourceHealthContributorAutoConfiguration, org.springframework.boot.actuate.autoconfigure.metrics.CompositeMeterRegistryAutoConfiguration, org.springframework.boot.actuate.autoconfigure.metrics.JvmMetricsAutoConfiguration, org.springframework.boot.actuate.autoconfigure.metrics.KafkaMetricsAutoConfiguration, org.springframework.boot.actuate.autoconfigure.metrics.LogbackMetricsAutoConfiguration, org.springframework.boot.actuate.autoconfigure.metrics.MetricsAutoConfiguration, org.springframework.boot.actuate.autoconfigure.metrics.SystemMetricsAutoConfiguration, org.springframework.boot.actuate.autoconfigure.metrics.export.simple.SimpleMetricsExportAutoConfiguration, org.springframework.boot.actuate.autoconfigure.metrics.jdbc.DataSourcePoolMetricsAutoConfiguration, org.springframework.boot.actuate.autoconfigure.metrics.jdbc.DataSourcePoolMetricsAutoConfiguration$DataSourcePoolMetadataMetricsConfiguration, org.springframework.boot.actuate.autoconfigure.metrics.jdbc.DataSourcePoolMetricsAutoConfiguration$HikariDataSourceMetricsConfiguration, org.springframework.boot.actuate.autoconfigure.metrics.orm.jpa.HibernateMetricsAutoConfiguration, org.springframework.boot.actuate.autoconfigure.metrics.web.client.HttpClientMetricsAutoConfiguration, org.springframework.boot.actuate.autoconfigure.metrics.web.client.RestTemplateMetricsConfiguration, org.springframework.boot.actuate.autoconfigure.metrics.web.servlet.WebMvcMetricsAutoConfiguration, org.springframework.boot.actuate.autoconfigure.metrics.web.tomcat.TomcatMetricsAutoConfiguration, org.springframework.boot.actuate.autoconfigure.system.DiskSpaceHealthContributorAutoConfiguration, org.springframework.boot.actuate.autoconfigure.web.mappings.MappingsEndpointAutoConfiguration, org.springframework.boot.actuate.autoconfigure.web.mappings.MappingsEndpointAutoConfiguration$ServletWebConfiguration, org.springframework.boot.actuate.autoconfigure.web.mappings.MappingsEndpointAutoConfiguration$ServletWebConfiguration$SpringMvcConfiguration, org.springframework.boot.actuate.autoconfigure.web.server.ManagementContextAutoConfiguration, org.springframework.boot.actuate.autoconfigure.web.server.ManagementContextAutoConfiguration$SameManagementContextConfiguration, org.springframework.boot.actuate.autoconfigure.web.server.ManagementContextAutoConfiguration$SameManagementContextConfiguration$EnableSameManagementContextConfiguration, org.springframework.boot.actuate.autoconfigure.web.servlet.ServletManagementContextAutoConfiguration, org.springframework.boot.autoconfigure.AutoConfigurationPackages, org.springframework.boot.autoconfigure.aop.AopAutoConfiguration, org.springframework.boot.autoconfigure.aop.AopAutoConfiguration$AspectJAutoProxyingConfiguration, org.springframework.boot.autoconfigure.aop.AopAutoConfiguration$AspectJAutoProxyingConfiguration$CglibAutoProxyConfiguration, org.springframework.boot.autoconfigure.availability.ApplicationAvailabilityAutoConfiguration, org.springframework.boot.autoconfigure.context.ConfigurationPropertiesAutoConfiguration, org.springframework.boot.autoconfigure.context.LifecycleAutoConfiguration, org.springframework.boot.autoconfigure.context.PropertyPlaceholderAutoConfiguration, org.springframework.boot.autoconfigure.dao.PersistenceExceptionTranslationAutoConfiguration, org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration, org.springframework.boot.autoconfigure.data.rest.RepositoryRestMvcAutoConfiguration, org.springframework.boot.autoconfigure.hateoas.HypermediaAutoConfiguration, org.springframework.boot.autoconfigure.hateoas.HypermediaHttpMessageConverterConfiguration, org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration, org.springframework.boot.autoconfigure.http.HttpMessageConvertersAutoConfiguration$StringHttpMessageConverterConfiguration, org.springframework.boot.autoconfigure.http.JacksonHttpMessageConvertersConfiguration, org.springframework.boot.autoconfigure.http.JacksonHttpMessageConvertersConfiguration$MappingJackson2HttpMessageConverterConfiguration, org.springframework.boot.autoconfigure.info.ProjectInfoAutoConfiguration, org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration, org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration$IntegrationComponentScanConfiguration, org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration$IntegrationConfiguration, org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration$IntegrationManagementConfiguration, org.springframework.boot.autoconfigure.integration.IntegrationAutoConfiguration$IntegrationManagementConfiguration$EnableIntegrationManagementConfiguration, org.springframework.boot.autoconfigure.internalCachingMetadataReaderFactory, org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration, org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration$Jackson2ObjectMapperBuilderCustomizerConfiguration, org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration$JacksonObjectMapperBuilderConfiguration, org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration$JacksonObjectMapperConfiguration, org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration$ParameterNamesModuleConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration$PooledDataSourceConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceConfiguration$Hikari, org.springframework.boot.autoconfigure.jdbc.DataSourceInitializationConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceInitializerInvoker, org.springframework.boot.autoconfigure.jdbc.DataSourceJmxConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceJmxConfiguration$Hikari, org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration$DataSourceTransactionManagerConfiguration, org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration, org.springframework.boot.autoconfigure.jdbc.JdbcTemplateConfiguration, org.springframework.boot.autoconfigure.jdbc.NamedParameterJdbcTemplateConfiguration, org.springframework.boot.autoconfigure.jdbc.metadata.DataSourcePoolMetadataProvidersConfiguration, org.springframework.boot.autoconfigure.jdbc.metadata.DataSourcePoolMetadataProvidersConfiguration$HikariPoolDataSourceMetadataProviderConfiguration, org.springframework.boot.autoconfigure.kafka.KafkaAnnotationDrivenConfiguration, org.springframework.boot.autoconfigure.kafka.KafkaAnnotationDrivenConfiguration$EnableKafkaConfiguration, org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration, org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration, org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaConfiguration, org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration$JpaWebConfiguration, org.springframework.boot.autoconfigure.security.oauth2.resource.servlet.OAuth2ResourceServerAutoConfiguration, org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration, org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration, org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration, org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration$EnableTransactionManagementConfiguration, org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration$EnableTransactionManagementConfiguration$CglibAutoProxyConfiguration, org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration$TransactionTemplateConfiguration, org.springframework.boot.autoconfigure.transaction.jta.JtaAutoConfiguration, org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration, org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration, org.springframework.boot.autoconfigure.web.embedded.EmbeddedWebServerFactoryCustomizerAutoConfiguration, org.springframework.boot.autoconfigure.web.embedded.EmbeddedWebServerFactoryCustomizerAutoConfiguration$TomcatWebServerFactoryCustomizerConfiguration, org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration, org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration$DispatcherServletConfiguration, org.springframework.boot.autoconfigure.web.servlet.DispatcherServletAutoConfiguration$DispatcherServletRegistrationConfiguration, org.springframework.boot.autoconfigure.web.servlet.HttpEncodingAutoConfiguration, org.springframework.boot.autoconfigure.web.servlet.MultipartAutoConfiguration, org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration, org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryConfiguration$EmbeddedTomcat, org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration, org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration$EnableWebMvcConfiguration, org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration$WebMvcAutoConfigurationAdapter, org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration, org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration$DefaultErrorViewResolverConfiguration, org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration$WhitelabelErrorViewConfiguration, org.springframework.boot.autoconfigure.websocket.servlet.WebSocketServletAutoConfiguration, org.springframework.boot.autoconfigure.websocket.servlet.WebSocketServletAutoConfiguration$TomcatWebSocketConfiguration, org.springframework.boot.context.internalConfigurationPropertiesBinder, org.springframework.boot.context.internalConfigurationPropertiesBinderFactory, org.springframework.boot.context.properties.BoundConfigurationProperties, org.springframework.boot.context.properties.ConfigurationBeanFactoryMetadata, org.springframework.boot.context.properties.ConfigurationPropertiesBeanDefinitionValidator, org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor, org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration, org.springframework.cloud.autoconfigure.LifecycleMvcEndpointAutoConfiguration, org.springframework.cloud.autoconfigure.PauseResumeEndpointsConfiguration, org.springframework.cloud.autoconfigure.RefreshAutoConfiguration, org.springframework.cloud.autoconfigure.RefreshAutoConfiguration$JpaInvokerConfiguration, org.springframework.cloud.autoconfigure.RefreshAutoConfiguration$RefreshScopeBeanDefinitionEnhancer, org.springframework.cloud.autoconfigure.RefreshEndpointAutoConfiguration, org.springframework.cloud.autoconfigure.RefreshEndpointAutoConfiguration$RefreshEndpointConfiguration, org.springframework.cloud.autoconfigure.RestartEndpointWithIntegrationConfiguration, org.springframework.cloud.client.CommonsClientAutoConfiguration, org.springframework.cloud.client.CommonsClientAutoConfiguration$ActuatorConfiguration, org.springframework.cloud.client.CommonsClientAutoConfiguration$DiscoveryLoadBalancerConfiguration, org.springframework.cloud.client.ReactiveCommonsClientAutoConfiguration, org.springframework.cloud.client.discovery.composite.CompositeDiscoveryClientAutoConfiguration, org.springframework.cloud.client.discovery.simple.SimpleDiscoveryClientAutoConfiguration, org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationAutoConfiguration, org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationConfiguration, org.springframework.cloud.client.serviceregistry.ServiceRegistryAutoConfiguration, org.springframework.cloud.commons.httpclient.HttpClientConfiguration, org.springframework.cloud.commons.util.UtilAutoConfiguration, org.springframework.cloud.configuration.CompatibilityVerifierAutoConfiguration, org.springframework.cloud.function.context.config.ContextFunctionCatalogAutoConfiguration, org.springframework.cloud.function.context.config.ContextFunctionCatalogAutoConfiguration$JsonMapperConfiguration, org.springframework.cloud.function.context.config.ContextFunctionCatalogAutoConfiguration$PlainFunctionScanConfiguration, org.springframework.cloud.netflix.archaius.ArchaiusAutoConfiguration, org.springframework.cloud.netflix.archaius.ArchaiusAutoConfiguration$ArchaiusEndpointConfiguration, org.springframework.cloud.netflix.archaius.ArchaiusAutoConfiguration$PropagateEventsConfiguration, org.springframework.cloud.openfeign.FeignAutoConfiguration, org.springframework.cloud.openfeign.FeignAutoConfiguration$HystrixFeignTargeterConfiguration, org.springframework.cloud.openfeign.hateoas.FeignHalAutoConfiguration, org.springframework.cloud.sleuth.annotation.SleuthAnnotationAutoConfiguration, org.springframework.cloud.sleuth.autoconfig.TraceAutoConfiguration, org.springframework.cloud.sleuth.autoconfig.TraceAutoConfiguration$TraceMetricsMicrometerConfiguration, org.springframework.cloud.sleuth.autoconfig.TraceAutoConfiguration$TraceMetricsMicrometerConfiguration$NoReporterMetricsBeanConfiguration, org.springframework.cloud.sleuth.autoconfig.TraceBaggageConfiguration, org.springframework.cloud.sleuth.instrument.async.AsyncAutoConfiguration, org.springframework.cloud.sleuth.instrument.async.AsyncDefaultAutoConfiguration, org.springframework.cloud.sleuth.instrument.async.AsyncDefaultAutoConfiguration$DefaultAsyncConfigurerSupport, org.springframework.cloud.sleuth.instrument.circuitbreaker.SleuthCircuitBreakerAutoConfiguration, org.springframework.cloud.sleuth.instrument.hystrix.SleuthHystrixAutoConfiguration, org.springframework.cloud.sleuth.instrument.messaging.TraceMessagingAutoConfiguration, org.springframework.cloud.sleuth.instrument.messaging.TraceMessagingAutoConfiguration$SleuthKafkaConfiguration, org.springframework.cloud.sleuth.instrument.messaging.TraceSpringIntegrationAutoConfiguration, org.springframework.cloud.sleuth.instrument.messaging.TraceSpringMessagingAutoConfiguration, org.springframework.cloud.sleuth.instrument.reactor.TraceReactorAutoConfiguration, org.springframework.cloud.sleuth.instrument.reactor.TraceReactorAutoConfiguration$TraceReactorConfiguration, org.springframework.cloud.sleuth.instrument.reactor.TraceReactorAutoConfiguration$TraceReactorConfiguration$HooksRefresherConfiguration, org.springframework.cloud.sleuth.instrument.rpc.TraceRpcAutoConfiguration, org.springframework.cloud.sleuth.instrument.rxjava.RxJavaAutoConfiguration, org.springframework.cloud.sleuth.instrument.scheduling.TraceSchedulingAutoConfiguration, org.springframework.cloud.sleuth.instrument.web.TraceHttpAutoConfiguration, org.springframework.cloud.sleuth.instrument.web.TraceWebAutoConfiguration, org.springframework.cloud.sleuth.instrument.web.TraceWebAutoConfiguration$ActuatorSkipPatternProviderConfig, org.springframework.cloud.sleuth.instrument.web.TraceWebAutoConfiguration$DefaultSkipPatternConfig, org.springframework.cloud.sleuth.instrument.web.TraceWebAutoConfiguration$ManagementSkipPatternProviderConfig, org.springframework.cloud.sleuth.instrument.web.TraceWebMvcConfigurer, org.springframework.cloud.sleuth.instrument.web.TraceWebServletAutoConfiguration, org.springframework.cloud.sleuth.instrument.web.TraceWebServletAutoConfiguration$TraceWebMvcAutoConfiguration, org.springframework.cloud.sleuth.instrument.web.client.TraceWebAsyncClientAutoConfiguration, org.springframework.cloud.sleuth.instrument.web.client.TraceWebClientAutoConfiguration, org.springframework.cloud.sleuth.instrument.web.client.TraceWebClientAutoConfiguration$RestTemplateConfig, org.springframework.cloud.sleuth.instrument.web.client.TraceWebClientAutoConfiguration$RestTemplateConfig$TraceInterceptorConfiguration, org.springframework.cloud.sleuth.instrument.web.client.feign.TraceFeignClientAutoConfiguration, org.springframework.cloud.sleuth.instrument.web.client.feign.TraceFeignClientAutoConfiguration$FeignBeanPostProcessorConfiguration, org.springframework.cloud.sleuth.log.SleuthLogAutoConfiguration, org.springframework.cloud.sleuth.log.SleuthLogAutoConfiguration$Slf4jConfiguration, org.springframework.cloud.sleuth.propagation.SleuthTagPropagationAutoConfiguration, org.springframework.cloud.sleuth.propagation.SleuthTagPropagationAutoConfiguration$TagPropagationConfiguration, org.springframework.cloud.sleuth.sampler.SamplerAutoConfiguration, org.springframework.cloud.sleuth.sampler.SamplerAutoConfiguration$RefreshScopedSamplerConfiguration, org.springframework.cloud.stream.binder.kafka.config.ExtendedBindingHandlerMappingsProviderConfiguration, org.springframework.cloud.stream.config.BinderFactoryAutoConfiguration, org.springframework.cloud.stream.config.BindersHealthIndicatorAutoConfiguration, org.springframework.cloud.stream.config.BindingServiceConfiguration, org.springframework.cloud.stream.config.BindingsEndpointAutoConfiguration, org.springframework.cloud.stream.config.ChannelBindingAutoConfiguration, org.springframework.cloud.stream.config.ChannelsEndpointAutoConfiguration, org.springframework.cloud.stream.config.ContentTypeConfiguration, org.springframework.cloud.stream.config.SpelExpressionConverterConfiguration, org.springframework.cloud.stream.function.FunctionConfiguration, org.springframework.context.annotation.internalAutowiredAnnotationProcessor, org.springframework.context.annotation.internalCommonAnnotationProcessor, org.springframework.context.annotation.internalConfigurationAnnotationProcessor, org.springframework.context.annotation.internalPersistenceAnnotationProcessor, org.springframework.context.event.internalEventListenerFactory, org.springframework.context.event.internalEventListenerProcessor, org.springframework.data.jpa.repository.support.JpaEvaluationContextExtension, org.springframework.data.jpa.util.JpaMetamodelCacheCleanup, org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration, org.springframework.data.web.config.SpringDataJacksonConfiguration, org.springframework.hateoas.config.HateoasConfiguration, org.springframework.hateoas.config.RestTemplateHateoasConfiguration, org.springframework.hateoas.config.WebMvcEntityLinksConfiguration, org.springframework.hateoas.config.WebMvcHateoasConfiguration, org.springframework.hateoas.mediatype.hal.HalMediaTypeConfiguration, org.springframework.integration.config.IntegrationManagementConfiguration, org.springframework.integration.context.defaultPollerMetadata, org.springframework.integration.dsl.BaseIntegrationFlowDefinition$ReplyProducerCleaner, org.springframework.integration.dsl.context.IntegrationFlowBeanPostProcessor, org.springframework.integration.dsl.context.IntegrationFlowContext, org.springframework.integration.internalMessagingAnnotationPostProcessor, org.springframework.kafka.config.internalKafkaListenerAnnotationProcessor, org.springframework.kafka.config.internalKafkaListenerEndpointRegistry, org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration, org.springframework.transaction.config.internalTransactionAdvisor, org.springframework.transaction.config.internalTransactionalEventListenerFactory, outputBindingLifecycle, pageableResolver, pagedResourcesAssembler, pagedResourcesAssemblerArgumentResolver, parameterNamesModule, pathMappedEndpoints, persistenceExceptionTranslationPostProcessor, persistentEntities, persistentEntityArgumentResolver, pingHealthContributor, platformTransactionManagerCustomizers, policyHandler, preserveErrorControllerTargetClassPostProcessor, processorMetrics, profileController, profileResourceProcessor, projectionDefinitionRegistrar, propertiesMeterFilter, propertySourcesPlaceholderConfigurer, reactiveHealthContributorRegistry, reactiveHealthIndicatorRegistry, reactorSleuthMethodInvocationProcessor, refreshEventListener, refreshScope, refreshScopeHealthIndicator, relProviderPluginRegistry, repoRequestArgumentResolver, repositories, repositoryController, repositoryEntityController, repositoryExporterHandlerAdapter, repositoryInvokerFactory, repositoryPropertyReferenceController, repositoryRelProvider, repositoryRestConfiguration, repositoryRestExceptionHandler, repositorySchemaController, repositorySearchController, representationModelProcessorInvoker, requestContextFilter, requestMappingHandlerAdapter, requestMappingHandlerMapping, resourceHandlerMapping, resourceMappings, resourceMetadataHandlerMethodArgumentResolver, restHandlerMapping, restTemplateBuilder, restTemplateExchangeTagsProvider, routerFunctionMapping, rpcTracing, scopedTarget.defaultTraceSampler, selfLinkProvider, server-org.springframework.boot.autoconfigure.web.ServerProperties, serverHttpRequestMethodArgumentResolver, servletEndpointDiscoverer, servletEndpointRegistrar, servletExposeExcludePropertyEndpointFilter, servletMappingDescriptionProvider, servletWebChildContextFactory, servletWebServerFactoryCustomizer, simpleConfig, simpleControllerHandlerAdapter, simpleDiscoveryClient, simpleDiscoveryProperties, simpleMeterRegistry, skipPatternForActuatorEndpointsSamePort, sleuthAdvisorConfig, sleuthCurrentTraceContext, sleuthCurrentTraceContextBuilder, sleuthHttpClientSampler, sleuthHystrixConcurrencyStrategy, sleuthKafkaAspect, sleuthMicrometerReporterMetrics, sleuthPropagation, sleuthRxJavaSchedulersHook, sleuthSkipPatternProvider, sleuthSpanNamer, slf4jSpanDecorator, sortResolver, spanCustomizer, spelConverter, spelPropertyAccessorRegistrar, spelTagValueExpressionResolver, spring.cloud.compatibility-verifier-org.springframework.cloud.configuration.CompatibilityVerifierProperties, spring.cloud.discovery.client.health-indicator-org.springframework.cloud.client.discovery.health.DiscoveryClientHealthIndicatorProperties, spring.cloud.function-org.springframework.cloud.function.context.FunctionProperties, spring.cloud.service-registry.auto-registration-org.springframework.cloud.client.serviceregistry.AutoServiceRegistrationProperties, spring.cloud.stream-org.springframework.cloud.stream.config.BindingServiceProperties, spring.cloud.stream.function-org.springframework.cloud.stream.function.StreamFunctionProperties, spring.cloud.stream.integration-org.springframework.cloud.stream.config.SpringIntegrationProperties, spring.cloud.stream.poller-org.springframework.cloud.stream.config.DefaultPollerProperties, spring.data.rest-org.springframework.boot.autoconfigure.data.rest.RepositoryRestProperties, spring.datasource-org.springframework.boot.autoconfigure.jdbc.DataSourceProperties, spring.hateoas-org.springframework.boot.autoconfigure.hateoas.HateoasProperties, spring.info-org.springframework.boot.autoconfigure.info.ProjectInfoProperties, spring.integration-org.springframework.boot.autoconfigure.integration.IntegrationProperties, spring.jackson-org.springframework.boot.autoconfigure.jackson.JacksonProperties, spring.jdbc-org.springframework.boot.autoconfigure.jdbc.JdbcProperties, spring.jpa-org.springframework.boot.autoconfigure.orm.jpa.JpaProperties, spring.jpa.hibernate-org.springframework.boot.autoconfigure.orm.jpa.HibernateProperties, spring.kafka-org.springframework.boot.autoconfigure.kafka.KafkaProperties, spring.lifecycle-org.springframework.boot.autoconfigure.context.LifecycleProperties, spring.mvc-org.springframework.boot.autoconfigure.web.servlet.WebMvcProperties, spring.resources-org.springframework.boot.autoconfigure.web.ResourceProperties, spring.security.oauth2.resourceserver-org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2ResourceServerProperties, spring.servlet.multipart-org.springframework.boot.autoconfigure.web.servlet.MultipartProperties, spring.sleuth-org.springframework.cloud.sleuth.autoconfig.SleuthProperties, spring.sleuth-org.springframework.cloud.sleuth.instrument.messaging.SleuthMessagingProperties, spring.sleuth.async-org.springframework.cloud.sleuth.instrument.async.SleuthAsyncProperties, spring.sleuth.baggage-keys, spring.sleuth.baggage-org.springframework.cloud.sleuth.autoconfig.SleuthBaggageProperties, spring.sleuth.circuitbreaker-org.springframework.cloud.sleuth.instrument.circuitbreaker.SleuthCircuitBreakerProperties, spring.sleuth.hystrix.strategy-org.springframework.cloud.sleuth.instrument.hystrix.SleuthHystrixConcurrencyStrategyProperties, spring.sleuth.keys-org.springframework.cloud.sleuth.instrument.web.TraceKeys, spring.sleuth.local-keys, spring.sleuth.log.slf4j-org.springframework.cloud.sleuth.log.SleuthSlf4jProperties, spring.sleuth.log.slf4j.whitelisted-mdc-keys, spring.sleuth.propagation-keys, spring.sleuth.propagation.tag-org.springframework.cloud.sleuth.propagation.SleuthTagPropagationProperties, spring.sleuth.reactor-org.springframework.cloud.sleuth.instrument.reactor.SleuthReactorProperties, spring.sleuth.rxjava.schedulers-org.springframework.cloud.sleuth.instrument.rxjava.SleuthRxJavaSchedulersProperties, spring.sleuth.sampler-org.springframework.cloud.sleuth.sampler.SamplerProperties, spring.sleuth.scheduled-org.springframework.cloud.sleuth.instrument.scheduling.SleuthSchedulingProperties, spring.sleuth.web-org.springframework.cloud.sleuth.instrument.web.SleuthWebProperties, spring.task.execution-org.springframework.boot.autoconfigure.task.TaskExecutionProperties, spring.task.scheduling-org.springframework.boot.autoconfigure.task.TaskSchedulingProperties, spring.transaction-org.springframework.boot.autoconfigure.transaction.TransactionProperties, springBootRepositoryRestConfigurer, springBootVersionVerifier, standardJacksonObjectMapperBuilderCustomizer, streamBridgeUtils, streamListenerAnnotationBeanPostProcessor, stringHttpMessageConverter, supplierInitializer, tagPropagationSpanHandler, taskExecutorBuilder, taskSchedulerBuilder, tomcatMetricsBinder, tomcatServletWebServerFactory, tomcatServletWebServerFactoryCustomizer, tomcatWebServerFactoryCustomizer, traceAsyncAspect, traceChannelInterceptor, traceCircuitBreakerFactoryAspect, traceContextClosedListener, traceFeignAspect, traceFeignObjectWrapper, traceHookRegisteringBeanDefinitionRegistryPostProcessor, traceMessagePropagationGetter, traceMessagePropagationSetter, traceRestTemplateBeanPostProcessor, traceRestTemplateCustomizer, traceSchedulingAspect, traceWebAspect, traceWebFilter, tracer, tracing, tracingClientHttpRequestInterceptor, tracingFilter, tracingGlobalChannelInterceptorWrapper, transactionAttributeSource, transactionInterceptor, transactionManager, transactionTemplate, uptimeMetrics, uriListHttpMessageConverter, validatingRepositoryEventListener, viewControllerHandlerMapping, viewResolver, webEndpointDiscoverer, webEndpointPathMapper, webEndpointServletHandlerMapping, webExposeExcludePropertyEndpointFilter, webMvcEntityLinks, webMvcLinkBuilderFactory, webMvcMetricsFilter, webMvcTagsProvider, webServerFactoryCustomizerBeanPostProcessor, websocketServletWebServerCustomizer, welcomePageHandlerMapping]
+2025-06-30 07:49:46.511  INFO [ai system management,,,] 142119 --- [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=1b70e6dd-53d1-3a77-917c-454e61900f89
+2025-06-30 07:49:46.720  INFO [ai system management,,,] 142119 --- [           main] faultConfiguringBeanFactoryPostProcessor : No bean named 'errorChannel' has been explicitly defined. Therefore, a default PublishSubscribeChannel will be created.
+2025-06-30 07:49:46.723  INFO [ai system management,,,] 142119 --- [           main] faultConfiguringBeanFactoryPostProcessor : No bean named 'taskScheduler' has been explicitly defined. Therefore, a default ThreadPoolTaskScheduler will be created.
+2025-06-30 07:49:46.727  INFO [ai system management,,,] 142119 --- [           main] faultConfiguringBeanFactoryPostProcessor : No bean named 'integrationHeaderChannelRegistry' has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.
+2025-06-30 07:49:46.937  INFO [ai system management,,,] 142119 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'integrationChannelResolver' of type [org.springframework.integration.support.channel.BeanFactoryChannelResolver] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2025-06-30 07:49:46.942  INFO [ai system management,,,] 142119 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'integrationDisposableAutoCreatedBeans' of type [org.springframework.integration.config.annotation.Disposables] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2025-06-30 07:49:46.971  INFO [ai system management,,,] 142119 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.stream.config.BindersHealthIndicatorAutoConfiguration' of type [org.springframework.cloud.stream.config.BindersHealthIndicatorAutoConfiguration$$EnhancerBySpringCGLIB$$d7010a83] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2025-06-30 07:49:46.984  INFO [ai system management,,,] 142119 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'bindersHealthContributor' of type [org.springframework.cloud.stream.config.BindersHealthIndicatorAutoConfiguration$BindersHealthContributor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2025-06-30 07:49:46.991  INFO [ai system management,,,] 142119 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'bindersHealthIndicatorListener' of type [org.springframework.cloud.stream.config.BindersHealthIndicatorAutoConfiguration$BindersHealthIndicatorListener] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2025-06-30 07:49:47.010  INFO [ai system management,,,] 142119 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.integration.config.IntegrationManagementConfiguration' of type [org.springframework.integration.config.IntegrationManagementConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2025-06-30 07:49:47.338  INFO [ai system management,,,] 142119 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8089 (http)
+2025-06-30 07:49:47.345  INFO [ai system management,,,] 142119 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-30 07:49:47.346  INFO [ai system management,,,] 142119 --- [           main] org.apache.catalina.core.StandardEngine  : Starting Servlet engine: [Apache Tomcat/9.0.36]
+2025-06-30 07:49:47.431  INFO [ai system management,,,] 142119 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-06-30 07:49:47.431  INFO [ai system management,,,] 142119 --- [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2015 ms
+2025-06-30 07:49:48.451  INFO [ai system management,,,] 142119 --- [           main] o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'applicationTaskExecutor'
+2025-06-30 07:49:48.512  INFO [ai system management,,,] 142119 --- [           main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService 'taskScheduler'
+2025-06-30 07:49:48.531  INFO [ai system management,,,] 142119 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-30 07:49:48.643  INFO [ai system management,,,] 142119 --- [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-06-30 07:49:48.671 DEBUG [ai system management,,,] 142119 --- [           main] o.s.cloud.sleuth.internal.ContextUtil    : Context [2baa8d82] is either not refreshed or is closed
+2025-06-30 07:49:48.687  INFO [ai system management,,,] 142119 --- [         task-1] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+Loaded OpenAI API key from .env file: ✓
+2025-06-30 07:49:48.720  INFO [ai system management,,,] 142119 --- [         task-1] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 5.4.17.Final
+2025-06-30 07:49:48.813  INFO [ai system management,,,] 142119 --- [         task-1] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.0.Final}
+2025-06-30 07:49:48.829 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration boolean -> org.hibernate.type.BooleanType@3973ccee
+2025-06-30 07:49:48.830 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration boolean -> org.hibernate.type.BooleanType@3973ccee
+2025-06-30 07:49:48.830 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.lang.Boolean -> org.hibernate.type.BooleanType@3973ccee
+2025-06-30 07:49:48.830 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration numeric_boolean -> org.hibernate.type.NumericBooleanType@635fb139
+2025-06-30 07:49:48.830 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration true_false -> org.hibernate.type.TrueFalseType@7d42d2eb
+2025-06-30 07:49:48.830 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration yes_no -> org.hibernate.type.YesNoType@393e6823
+2025-06-30 07:49:48.831 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration byte -> org.hibernate.type.ByteType@55199790
+2025-06-30 07:49:48.831 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration byte -> org.hibernate.type.ByteType@55199790
+2025-06-30 07:49:48.831 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.lang.Byte -> org.hibernate.type.ByteType@55199790
+2025-06-30 07:49:48.832 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration character -> org.hibernate.type.CharacterType@1b51bd95
+2025-06-30 07:49:48.832 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration char -> org.hibernate.type.CharacterType@1b51bd95
+2025-06-30 07:49:48.832 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.lang.Character -> org.hibernate.type.CharacterType@1b51bd95
+2025-06-30 07:49:48.832 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration short -> org.hibernate.type.ShortType@17c3120
+2025-06-30 07:49:48.833 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration short -> org.hibernate.type.ShortType@17c3120
+2025-06-30 07:49:48.857 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.lang.Short -> org.hibernate.type.ShortType@17c3120
+2025-06-30 07:49:48.858 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration integer -> org.hibernate.type.IntegerType@56436bf1
+2025-06-30 07:49:48.858 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration int -> org.hibernate.type.IntegerType@56436bf1
+2025-06-30 07:49:48.858 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.lang.Integer -> org.hibernate.type.IntegerType@56436bf1
+2025-06-30 07:49:48.858 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration long -> org.hibernate.type.LongType@7ca5ff88
+2025-06-30 07:49:48.858 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration long -> org.hibernate.type.LongType@7ca5ff88
+2025-06-30 07:49:48.858 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.lang.Long -> org.hibernate.type.LongType@7ca5ff88
+2025-06-30 07:49:48.859 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration float -> org.hibernate.type.FloatType@7a9ff98
+2025-06-30 07:49:48.859 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration float -> org.hibernate.type.FloatType@7a9ff98
+2025-06-30 07:49:48.859 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.lang.Float -> org.hibernate.type.FloatType@7a9ff98
+2025-06-30 07:49:48.860 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration double -> org.hibernate.type.DoubleType@5cd4a9c1
+2025-06-30 07:49:48.860 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration double -> org.hibernate.type.DoubleType@5cd4a9c1
+2025-06-30 07:49:48.860 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.lang.Double -> org.hibernate.type.DoubleType@5cd4a9c1
+2025-06-30 07:49:48.860 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration big_decimal -> org.hibernate.type.BigDecimalType@723961ee
+2025-06-30 07:49:48.860 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.math.BigDecimal -> org.hibernate.type.BigDecimalType@723961ee
+2025-06-30 07:49:48.861 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration big_integer -> org.hibernate.type.BigIntegerType@501c0812
+2025-06-30 07:49:48.861 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.math.BigInteger -> org.hibernate.type.BigIntegerType@501c0812
+2025-06-30 07:49:48.862 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration string -> org.hibernate.type.StringType@287cbcea
+2025-06-30 07:49:48.862 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.lang.String -> org.hibernate.type.StringType@287cbcea
+2025-06-30 07:49:48.862 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration nstring -> org.hibernate.type.StringNVarcharType@114623e8
+2025-06-30 07:49:48.863 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration ncharacter -> org.hibernate.type.CharacterNCharType@4a56e08e
+2025-06-30 07:49:48.863 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration url -> org.hibernate.type.UrlType@54d7dc8e
+2025-06-30 07:49:48.863 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.net.URL -> org.hibernate.type.UrlType@54d7dc8e
+2025-06-30 07:49:48.864 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration Duration -> org.hibernate.type.DurationType@9cca99f
+2025-06-30 07:49:48.864 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.time.Duration -> org.hibernate.type.DurationType@9cca99f
+2025-06-30 07:49:48.865 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration Instant -> org.hibernate.type.InstantType@106493a8
+2025-06-30 07:49:48.865 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.time.Instant -> org.hibernate.type.InstantType@106493a8
+2025-06-30 07:49:48.866 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration LocalDateTime -> org.hibernate.type.LocalDateTimeType@7686499a
+2025-06-30 07:49:48.866 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.time.LocalDateTime -> org.hibernate.type.LocalDateTimeType@7686499a
+2025-06-30 07:49:48.866 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration LocalDate -> org.hibernate.type.LocalDateType@58f28a7c
+2025-06-30 07:49:48.866 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.time.LocalDate -> org.hibernate.type.LocalDateType@58f28a7c
+2025-06-30 07:49:48.867 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration LocalTime -> org.hibernate.type.LocalTimeType@60e26fcd
+2025-06-30 07:49:48.867 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.time.LocalTime -> org.hibernate.type.LocalTimeType@60e26fcd
+2025-06-30 07:49:48.868 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration OffsetDateTime -> org.hibernate.type.OffsetDateTimeType@2fafe32
+2025-06-30 07:49:48.868 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.time.OffsetDateTime -> org.hibernate.type.OffsetDateTimeType@2fafe32
+2025-06-30 07:49:48.868 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration OffsetTime -> org.hibernate.type.OffsetTimeType@78cde43c
+2025-06-30 07:49:48.868 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.time.OffsetTime -> org.hibernate.type.OffsetTimeType@78cde43c
+2025-06-30 07:49:48.869 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration ZonedDateTime -> org.hibernate.type.ZonedDateTimeType@e0f2ea5
+2025-06-30 07:49:48.869 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.time.ZonedDateTime -> org.hibernate.type.ZonedDateTimeType@e0f2ea5
+2025-06-30 07:49:48.870 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration date -> org.hibernate.type.DateType@f79a0b4
+2025-06-30 07:49:48.870 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.sql.Date -> org.hibernate.type.DateType@f79a0b4
+2025-06-30 07:49:48.871 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration time -> org.hibernate.type.TimeType@743c8618
+2025-06-30 07:49:48.871 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.sql.Time -> org.hibernate.type.TimeType@743c8618
+2025-06-30 07:49:48.871 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration timestamp -> org.hibernate.type.TimestampType@10d20d1
+2025-06-30 07:49:48.871 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.sql.Timestamp -> org.hibernate.type.TimestampType@10d20d1
+2025-06-30 07:49:48.871 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.util.Date -> org.hibernate.type.TimestampType@10d20d1
+2025-06-30 07:49:48.872 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration dbtimestamp -> org.hibernate.type.DbTimestampType@53044902
+2025-06-30 07:49:48.873 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration calendar -> org.hibernate.type.CalendarType@5f329187
+2025-06-30 07:49:48.873 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.util.Calendar -> org.hibernate.type.CalendarType@5f329187
+2025-06-30 07:49:48.873 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.util.GregorianCalendar -> org.hibernate.type.CalendarType@5f329187
+2025-06-30 07:49:48.873 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration calendar_date -> org.hibernate.type.CalendarDateType@e89c893
+2025-06-30 07:49:48.874 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration calendar_time -> org.hibernate.type.CalendarTimeType@4f9da8a1
+2025-06-30 07:49:48.874 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration locale -> org.hibernate.type.LocaleType@ce61186
+2025-06-30 07:49:48.874 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.util.Locale -> org.hibernate.type.LocaleType@ce61186
+2025-06-30 07:49:48.875 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration currency -> org.hibernate.type.CurrencyType@537c66a9
+2025-06-30 07:49:48.875 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.util.Currency -> org.hibernate.type.CurrencyType@537c66a9
+2025-06-30 07:49:48.875 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration timezone -> org.hibernate.type.TimeZoneType@228721de
+2025-06-30 07:49:48.876 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.util.TimeZone -> org.hibernate.type.TimeZoneType@228721de
+2025-06-30 07:49:48.876 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration class -> org.hibernate.type.ClassType@f0eeb4b
+2025-06-30 07:49:48.876 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.lang.Class -> org.hibernate.type.ClassType@f0eeb4b
+2025-06-30 07:49:48.877 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration uuid-binary -> org.hibernate.type.UUIDBinaryType@694274ea
+2025-06-30 07:49:48.877 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.util.UUID -> org.hibernate.type.UUIDBinaryType@694274ea
+2025-06-30 07:49:48.877 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration uuid-char -> org.hibernate.type.UUIDCharType@5f5360ee
+2025-06-30 07:49:48.878 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration binary -> org.hibernate.type.BinaryType@610b55ad
+2025-06-30 07:49:48.878 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration byte[] -> org.hibernate.type.BinaryType@610b55ad
+2025-06-30 07:49:48.878 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration [B -> org.hibernate.type.BinaryType@610b55ad
+2025-06-30 07:49:48.878 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration wrapper-binary -> org.hibernate.type.WrapperBinaryType@75886297
+2025-06-30 07:49:48.878 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration Byte[] -> org.hibernate.type.WrapperBinaryType@75886297
+2025-06-30 07:49:48.878 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration [Ljava.lang.Byte; -> org.hibernate.type.WrapperBinaryType@75886297
+2025-06-30 07:49:48.879 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration row_version -> org.hibernate.type.RowVersionType@2a298fb3
+2025-06-30 07:49:48.879 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration image -> org.hibernate.type.ImageType@50062443
+2025-06-30 07:49:48.880 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration characters -> org.hibernate.type.CharArrayType@4acc694
+2025-06-30 07:49:48.880 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration char[] -> org.hibernate.type.CharArrayType@4acc694
+2025-06-30 07:49:48.880 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration [C -> org.hibernate.type.CharArrayType@4acc694
+2025-06-30 07:49:48.880 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration wrapper-characters -> org.hibernate.type.CharacterArrayType@7a4c7719
+2025-06-30 07:49:48.880 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration [Ljava.lang.Character; -> org.hibernate.type.CharacterArrayType@7a4c7719
+2025-06-30 07:49:48.881 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration Character[] -> org.hibernate.type.CharacterArrayType@7a4c7719
+2025-06-30 07:49:48.881 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration text -> org.hibernate.type.TextType@382ede51
+2025-06-30 07:49:48.881 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration ntext -> org.hibernate.type.NTextType@257af873
+2025-06-30 07:49:48.882 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration blob -> org.hibernate.type.BlobType@5beaf235
+2025-06-30 07:49:48.882 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.sql.Blob -> org.hibernate.type.BlobType@5beaf235
+2025-06-30 07:49:48.882 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration materialized_blob -> org.hibernate.type.MaterializedBlobType@bbad22c
+2025-06-30 07:49:48.883 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration clob -> org.hibernate.type.ClobType@712ce739
+2025-06-30 07:49:48.883 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.sql.Clob -> org.hibernate.type.ClobType@712ce739
+2025-06-30 07:49:48.884 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration nclob -> org.hibernate.type.NClobType@34ece96f
+2025-06-30 07:49:48.884 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.sql.NClob -> org.hibernate.type.NClobType@34ece96f
+2025-06-30 07:49:48.884 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration materialized_clob -> org.hibernate.type.MaterializedClobType@ec36551
+2025-06-30 07:49:48.884 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration materialized_nclob -> org.hibernate.type.MaterializedNClobType@7d8a8217
+2025-06-30 07:49:48.885 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration serializable -> org.hibernate.type.SerializableType@323b59dc
+2025-06-30 07:49:48.887 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration object -> org.hibernate.type.ObjectType@31bfea93
+2025-06-30 07:49:48.887 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration java.lang.Object -> org.hibernate.type.ObjectType@31bfea93
+2025-06-30 07:49:48.888 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration imm_date -> org.hibernate.type.AdaptedImmutableType@4043fdbb
+2025-06-30 07:49:48.888 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration imm_time -> org.hibernate.type.AdaptedImmutableType@2be8fedf
+2025-06-30 07:49:48.888 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration imm_timestamp -> org.hibernate.type.AdaptedImmutableType@4166bc0d
+2025-06-30 07:49:48.888 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration imm_dbtimestamp -> org.hibernate.type.AdaptedImmutableType@7c912bf2
+2025-06-30 07:49:48.888 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration imm_calendar -> org.hibernate.type.AdaptedImmutableType@2360affe
+2025-06-30 07:49:48.888 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration imm_calendar_date -> org.hibernate.type.AdaptedImmutableType@4f92b34b
+2025-06-30 07:49:48.888 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration imm_binary -> org.hibernate.type.AdaptedImmutableType@3b60f860
+2025-06-30 07:49:48.888 DEBUG [ai system management,,,] 142119 --- [         task-1] org.hibernate.type.BasicTypeRegistry     : Adding type registration imm_serializable -> org.hibernate.type.AdaptedImmutableType@4e5b9a45
+2025-06-30 07:49:48.931  INFO [ai system management,,,] 142119 --- [         task-1] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.H2Dialect
+2025-06-30 07:49:48.999 DEBUG [ai system management,,,] 142119 --- [         task-1] o.h.type.spi.TypeConfiguration$Scope     : Scoping TypeConfiguration [org.hibernate.type.spi.TypeConfiguration@629c9e3c] to MetadataBuildingContext [org.hibernate.boot.internal.MetadataBuildingContextRootImpl@17d37951]
+2025-06-30 07:49:49.273 DEBUG [ai system management,,,] 142119 --- [         task-1] o.h.type.spi.TypeConfiguration$Scope     : Scoping TypeConfiguration [org.hibernate.type.spi.TypeConfiguration@629c9e3c] to SessionFactoryImpl [org.hibernate.internal.SessionFactoryImpl@6fe32c7]
+Hibernate: 
+    
+    drop table if exists ai_table CASCADE 
+Hibernate: 
+    
+    drop sequence if exists hibernate_sequence
+Hibernate: create sequence hibernate_sequence start with 1 increment by 1
+Hibernate: 
+    
+    create table ai_table (
+       process_id bigint not null,
+        content varchar(255),
+        cover_image_url varchar(255),
+        manuscript_id bigint,
+        status varchar(255),
+        summary varchar(255),
+        title varchar(255),
+        primary key (process_id)
+    )
+2025-06-30 07:49:49.477  INFO [ai system management,,,] 142119 --- [         task-1] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000490: Using JtaPlatform implementation: [org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform]
+2025-06-30 07:49:49.480 TRACE [ai system management,,,] 142119 --- [         task-1] o.h.type.spi.TypeConfiguration$Scope     : Handling #sessionFactoryCreated from [org.hibernate.internal.SessionFactoryImpl@6fe32c7] for TypeConfiguration
+2025-06-30 07:49:49.482 DEBUG [ai system management,,,] 142119 --- [         task-1] o.s.cloud.sleuth.internal.ContextUtil    : Context [2baa8d82] is either not refreshed or is closed
+2025-06-30 07:49:49.482  INFO [ai system management,,,] 142119 --- [         task-1] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-30 07:49:50.379  WARN [ai system management,,,] 142119 --- [           main] c.n.c.sources.URLConfigurationSource     : No URLs will be polled as dynamic configuration sources.
+2025-06-30 07:49:50.379  INFO [ai system management,,,] 142119 --- [           main] c.n.c.sources.URLConfigurationSource     : To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2025-06-30 07:49:50.383  WARN [ai system management,,,] 142119 --- [           main] c.n.c.sources.URLConfigurationSource     : No URLs will be polled as dynamic configuration sources.
+2025-06-30 07:49:50.383  INFO [ai system management,,,] 142119 --- [           main] c.n.c.sources.URLConfigurationSource     : To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2025-06-30 07:49:50.445  WARN [ai system management,,,] 142119 --- [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-06-30 07:49:50.863  INFO [ai system management,,,] 142119 --- [           main] onConfiguration$FunctionBindingRegistrar : Functional binding is disabled due to the presense of @EnableBinding annotation in your configuration
+2025-06-30 07:49:51.374 DEBUG [ai system management,,,] 142119 --- [           main] o.s.c.c.SpringBootVersionVerifier        : Version found in Boot manifest [2.3.1.RELEASE]
+2025-06-30 07:49:51.374 DEBUG [ai system management,,,] 142119 --- [           main] o.s.c.c.SpringBootVersionVerifier        : Version found in Boot manifest [2.3.1.RELEASE]
+2025-06-30 07:49:51.374 DEBUG [ai system management,,,] 142119 --- [           main] o.s.c.c.CompositeCompatibilityVerifier   : All conditions are passing
+2025-06-30 07:49:51.389 DEBUG [ai system management,,,] 142119 --- [           main] c.s.i.h.SleuthHystrixConcurrencyStrategy : Current Hystrix plugins configuration is [concurrencyStrategy [com.netflix.hystrix.strategy.concurrency.HystrixConcurrencyStrategyDefault@6f999cf4],eventNotifier [com.netflix.hystrix.strategy.eventnotifier.HystrixEventNotifierDefault@7892635c],metricPublisher [com.netflix.hystrix.strategy.metrics.HystrixMetricsPublisherDefault@79c9a128],propertiesStrategy [com.netflix.hystrix.strategy.properties.HystrixPropertiesStrategyDefault@729a98e9],]
+2025-06-30 07:49:51.389 DEBUG [ai system management,,,] 142119 --- [           main] c.s.i.h.SleuthHystrixConcurrencyStrategy : Registering Sleuth Hystrix Concurrency Strategy.
+2025-06-30 07:49:51.502 DEBUG [ai system management,,,] 142119 --- [           main] o.s.c.s.i.r.SleuthRxJavaSchedulersHook   : Current RxJava plugins configuration is [schedulersHook [rx.plugins.RxJavaSchedulersHook@7b9e7633],errorHandler [rx.plugins.RxJavaPlugins$1@1fbd0850],observableExecutionHook [rx.plugins.RxJavaObservableExecutionHookDefault@57bc7f67],]
+2025-06-30 07:49:51.502 DEBUG [ai system management,,,] 142119 --- [           main] o.s.c.s.i.r.SleuthRxJavaSchedulersHook   : Registering Sleuth RxJava Schedulers Hook.
+2025-06-30 07:49:51.532  INFO [ai system management,,,] 142119 --- [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoint(s) beneath base path '/actuator'
+2025-06-30 07:49:51.713  INFO [ai system management,,,] 142119 --- [           main] o.s.c.s.m.DirectWithAttributesChannel    : Channel 'application-1.event-in' has 1 subscriber(s).
+2025-06-30 07:49:51.732  INFO [ai system management,,,] 142119 --- [           main] o.s.i.endpoint.EventDrivenConsumer       : Adding {logging-channel-adapter:_org.springframework.integration.errorLogger} as a subscriber to the 'errorChannel' channel
+2025-06-30 07:49:51.732  INFO [ai system management,,,] 142119 --- [           main] o.s.i.channel.PublishSubscribeChannel    : Channel 'application-1.errorChannel' has 1 subscriber(s).
+2025-06-30 07:49:51.732  INFO [ai system management,,,] 142119 --- [           main] o.s.i.endpoint.EventDrivenConsumer       : started bean '_org.springframework.integration.errorLogger'
+2025-06-30 07:49:51.733 DEBUG [ai system management,,,] 142119 --- [           main] o.s.c.s.b.AbstractBindableProxyFactory   : Binding outputs for :interface miniproject.config.kafka.KafkaProcessor
+2025-06-30 07:49:51.733 DEBUG [ai system management,,,] 142119 --- [           main] o.s.c.s.b.AbstractBindableProxyFactory   : Binding :interface miniproject.config.kafka.KafkaProcessor:event-out
+2025-06-30 07:49:51.733  INFO [ai system management,,,] 142119 --- [           main] o.s.c.s.binder.DefaultBinderFactory      : Creating binder: kafka
+2025-06-30 07:49:52.058  INFO [ai system management,,,] 142119 --- [           main] DeferredRepositoryInitializationListener : Triggering deferred initialization of Spring Data repositories…
+2025-06-30 07:49:52.086  INFO [ai system management,,,] 142119 --- [           main] DeferredRepositoryInitializationListener : Spring Data repositories initialized!
+2025-06-30 07:49:52.088 DEBUG [ai system management,,,] 142119 --- [           main] o.s.c.s.internal.SleuthContextListener   : Context refreshed or closed [org.springframework.context.event.ContextRefreshedEvent[source=org.springframework.context.annotation.AnnotationConfigApplicationContext@3272c5b3, started on Mon Jun 30 07:49:51 UTC 2025, parent: org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@29a60c27]]
+2025-06-30 07:49:52.140  INFO [ai system management,,,] 142119 --- [           main] o.s.c.s.binder.DefaultBinderFactory      : Caching the binder: kafka
+2025-06-30 07:49:52.140  INFO [ai system management,,,] 142119 --- [           main] o.s.c.s.binder.DefaultBinderFactory      : Retrieving cached binder: kafka
+2025-06-30 07:49:52.200  INFO [ai system management,,,] 142119 --- [           main] o.s.c.s.b.k.p.KafkaTopicProvisioner      : Using kafka topic for outbound: miniproject
+2025-06-30 07:49:52.201  INFO [ai system management,,,] 142119 --- [           main] o.a.k.clients.admin.AdminClientConfig    : AdminClientConfig values: 
+	bootstrap.servers = [localhost:9092]
+	client.dns.lookup = default
+	client.id = 
+	connections.max.idle.ms = 300000
+	default.api.timeout.ms = 60000
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 2147483647
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.mechanism = GSSAPI
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2]
+	ssl.endpoint.identification.algorithm = https
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.2
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+
+2025-06-30 07:49:52.240  INFO [ai system management,,,] 142119 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 2.5.0
+2025-06-30 07:49:52.240  INFO [ai system management,,,] 142119 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: 66563e712b0b9f84
+2025-06-30 07:49:52.240  INFO [ai system management,,,] 142119 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1751269792239
+2025-06-30 07:49:52.417 DEBUG [ai system management,,,] 142119 --- [           main] o.s.c.s.b.k.p.KafkaTopicProvisioner      : Attempting to retrieve the description for the topic: miniproject
+2025-06-30 07:49:52.428  INFO [ai system management,,,] 142119 --- [           main] o.a.k.clients.producer.ProducerConfig    : ProducerConfig values: 
+	acks = 1
+	batch.size = 16384
+	bootstrap.servers = [localhost:9092]
+	buffer.memory = 33554432
+	client.dns.lookup = default
+	client.id = producer-1
+	compression.type = none
+	connections.max.idle.ms = 540000
+	delivery.timeout.ms = 120000
+	enable.idempotence = false
+	interceptor.classes = []
+	key.serializer = class org.apache.kafka.common.serialization.ByteArraySerializer
+	linger.ms = 0
+	max.block.ms = 60000
+	max.in.flight.requests.per.connection = 5
+	max.request.size = 1048576
+	metadata.max.age.ms = 300000
+	metadata.max.idle.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partitioner.class = class org.apache.kafka.clients.producer.internals.DefaultPartitioner
+	receive.buffer.bytes = 32768
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 2147483647
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.mechanism = GSSAPI
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2]
+	ssl.endpoint.identification.algorithm = https
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.2
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	transaction.timeout.ms = 60000
+	transactional.id = null
+	value.serializer = class org.apache.kafka.common.serialization.ByteArraySerializer
+
+2025-06-30 07:49:52.444  INFO [ai system management,,,] 142119 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 2.5.0
+2025-06-30 07:49:52.444  INFO [ai system management,,,] 142119 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: 66563e712b0b9f84
+2025-06-30 07:49:52.444  INFO [ai system management,,,] 142119 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1751269792444
+2025-06-30 07:49:52.450  INFO [ai system management,,,] 142119 --- [ad | producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=producer-1] Cluster ID: 2wRcxA7hQrqwMrs_Hh6SIA
+2025-06-30 07:49:52.459  INFO [ai system management,,,] 142119 --- [           main] o.a.k.clients.producer.KafkaProducer     : [Producer clientId=producer-1] Closing the Kafka producer with timeoutMillis = 30000 ms.
+2025-06-30 07:49:52.470  INFO [ai system management,,,] 142119 --- [           main] o.s.c.s.m.DirectWithAttributesChannel    : Channel 'application-1.event-out' has 1 subscriber(s).
+2025-06-30 07:49:52.471 DEBUG [ai system management,,,] 142119 --- [           main] o.s.c.s.b.AbstractBindableProxyFactory   : Binding inputs for :interface miniproject.config.kafka.KafkaProcessor
+2025-06-30 07:49:52.471 DEBUG [ai system management,,,] 142119 --- [           main] o.s.c.s.b.AbstractBindableProxyFactory   : Binding :interface miniproject.config.kafka.KafkaProcessor:event-in
+2025-06-30 07:49:52.471  INFO [ai system management,,,] 142119 --- [           main] o.s.c.s.binder.DefaultBinderFactory      : Retrieving cached binder: kafka
+2025-06-30 07:49:52.521  INFO [ai system management,,,] 142119 --- [           main] o.a.k.clients.admin.AdminClientConfig    : AdminClientConfig values: 
+	bootstrap.servers = [localhost:9092]
+	client.dns.lookup = default
+	client.id = 
+	connections.max.idle.ms = 300000
+	default.api.timeout.ms = 60000
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 2147483647
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.mechanism = GSSAPI
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2]
+	ssl.endpoint.identification.algorithm = https
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.2
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+
+2025-06-30 07:49:52.523  INFO [ai system management,,,] 142119 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 2.5.0
+2025-06-30 07:49:52.523  INFO [ai system management,,,] 142119 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: 66563e712b0b9f84
+2025-06-30 07:49:52.523  INFO [ai system management,,,] 142119 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1751269792523
+2025-06-30 07:49:52.539  INFO [ai system management,,,] 142119 --- [           main] o.a.k.clients.consumer.ConsumerConfig    : ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 100
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = default
+	client.id = 
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = ai system management
+	group.instance.id = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.ByteArrayDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.mechanism = GSSAPI
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2]
+	ssl.endpoint.identification.algorithm = https
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.2
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.apache.kafka.common.serialization.ByteArrayDeserializer
+
+2025-06-30 07:49:52.564  INFO [ai system management,,,] 142119 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 2.5.0
+2025-06-30 07:49:52.565  INFO [ai system management,,,] 142119 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: 66563e712b0b9f84
+2025-06-30 07:49:52.565  INFO [ai system management,,,] 142119 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1751269792564
+2025-06-30 07:49:52.577  INFO [ai system management,,,] 142119 --- [           main] org.apache.kafka.clients.Metadata        : [Consumer clientId=consumer-ai system management-1, groupId=ai system management] Cluster ID: 2wRcxA7hQrqwMrs_Hh6SIA
+2025-06-30 07:49:52.590 DEBUG [ai system management,,,] 142119 --- [           main] o.s.c.s.b.k.KafkaMessageChannelBinder    : Listened partitions: Partition(topic = miniproject, partition = 0, leader = 1, replicas = [1], isr = [1], offlineReplicas = [])
+2025-06-30 07:49:52.599  INFO [ai system management,,,] 142119 --- [           main] o.s.c.stream.binder.BinderErrorChannel   : Channel 'miniproject.ai system management.errors' has 1 subscriber(s).
+2025-06-30 07:49:52.599  INFO [ai system management,,,] 142119 --- [           main] o.s.c.stream.binder.BinderErrorChannel   : Channel 'miniproject.ai system management.errors' has 0 subscriber(s).
+2025-06-30 07:49:52.599  INFO [ai system management,,,] 142119 --- [           main] o.s.c.stream.binder.BinderErrorChannel   : Channel 'miniproject.ai system management.errors' has 1 subscriber(s).
+2025-06-30 07:49:52.599  INFO [ai system management,,,] 142119 --- [           main] o.s.c.stream.binder.BinderErrorChannel   : Channel 'miniproject.ai system management.errors' has 2 subscriber(s).
+2025-06-30 07:49:52.609  INFO [ai system management,,,] 142119 --- [           main] o.a.k.clients.consumer.ConsumerConfig    : ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 100
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = default
+	client.id = 
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = ai system management
+	group.instance.id = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.ByteArrayDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.mechanism = GSSAPI
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2]
+	ssl.endpoint.identification.algorithm = https
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.2
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.apache.kafka.common.serialization.ByteArrayDeserializer
+
+2025-06-30 07:49:52.612  INFO [ai system management,,,] 142119 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 2.5.0
+2025-06-30 07:49:52.612  INFO [ai system management,,,] 142119 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: 66563e712b0b9f84
+2025-06-30 07:49:52.612  INFO [ai system management,,,] 142119 --- [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1751269792612
+2025-06-30 07:49:52.617  INFO [ai system management,,,] 142119 --- [           main] o.a.k.clients.consumer.KafkaConsumer     : [Consumer clientId=consumer-ai system management-2, groupId=ai system management] Subscribed to topic(s): miniproject
+2025-06-30 07:49:52.619  INFO [ai system management,,,] 142119 --- [           main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService
+2025-06-30 07:49:52.622  INFO [ai system management,,,] 142119 --- [           main] s.i.k.i.KafkaMessageDrivenChannelAdapter : started org.springframework.integration.kafka.inbound.KafkaMessageDrivenChannelAdapter@759fe679
+2025-06-30 07:49:52.623  INFO [ai system management,,,] 142119 --- [           main] o.s.c.s.binder.kafka.KafkaBinderMetrics  : Try to shutdown the old scheduler with 0 threads
+2025-06-30 07:49:52.630  INFO [ai system management,,,] 142119 --- [container-0-C-1] org.apache.kafka.clients.Metadata        : [Consumer clientId=consumer-ai system management-2, groupId=ai system management] Cluster ID: 2wRcxA7hQrqwMrs_Hh6SIA
+2025-06-30 07:49:52.631  INFO [ai system management,,,] 142119 --- [container-0-C-1] o.a.k.c.c.internals.AbstractCoordinator  : [Consumer clientId=consumer-ai system management-2, groupId=ai system management] Discovered group coordinator localhost:9092 (id: 2147483646 rack: null)
+2025-06-30 07:49:52.632  INFO [ai system management,,,] 142119 --- [container-0-C-1] o.a.k.c.c.internals.AbstractCoordinator  : [Consumer clientId=consumer-ai system management-2, groupId=ai system management] (Re-)joining group
+2025-06-30 07:49:52.637  INFO [ai system management,,,] 142119 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8089 (http) with context path ''
+2025-06-30 07:49:52.638  INFO [ai system management,,,] 142119 --- [container-0-C-1] o.a.k.c.c.internals.AbstractCoordinator  : [Consumer clientId=consumer-ai system management-2, groupId=ai system management] Join group failed with org.apache.kafka.common.errors.MemberIdRequiredException: The group member needs to have a valid member id before actually entering a consumer group
+2025-06-30 07:49:52.638  INFO [ai system management,,,] 142119 --- [container-0-C-1] o.a.k.c.c.internals.AbstractCoordinator  : [Consumer clientId=consumer-ai system management-2, groupId=ai system management] (Re-)joining group
+2025-06-30 07:49:52.646  INFO [ai system management,,,] 142119 --- [           main] DeferredRepositoryInitializationListener : Triggering deferred initialization of Spring Data repositories…
+2025-06-30 07:49:52.647  INFO [ai system management,,,] 142119 --- [           main] DeferredRepositoryInitializationListener : Spring Data repositories initialized!
+2025-06-30 07:49:52.661 DEBUG [ai system management,,,] 142119 --- [           main] o.s.c.s.internal.SleuthContextListener   : Context refreshed or closed [org.springframework.context.event.ContextRefreshedEvent[source=org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@29a60c27, started on Mon Jun 30 07:49:45 UTC 2025, parent: org.springframework.context.annotation.AnnotationConfigApplicationContext@6f10d5b6]]
+2025-06-30 07:49:52.692  INFO [ai system management,,,] 142119 --- [           main] m.AiSystemManagementApplication          : Started AiSystemManagementApplication in 7.88 seconds (JVM running for 8.209)
+2025-06-30 07:49:55.641  INFO [ai system management,,,] 142119 --- [container-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-ai system management-2, groupId=ai system management] Finished assignment for group at generation 9: {consumer-ai system management-2-38722822-bb98-4b2d-8177-c1cf02ef6c71=Assignment(partitions=[miniproject-0])}
+2025-06-30 07:49:55.645  INFO [ai system management,,,] 142119 --- [container-0-C-1] o.a.k.c.c.internals.AbstractCoordinator  : [Consumer clientId=consumer-ai system management-2, groupId=ai system management] Successfully joined group with generation 9
+2025-06-30 07:49:55.648  INFO [ai system management,,,] 142119 --- [container-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-ai system management-2, groupId=ai system management] Adding newly assigned partitions: miniproject-0
+2025-06-30 07:49:55.656  INFO [ai system management,,,] 142119 --- [container-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-ai system management-2, groupId=ai system management] Setting offset for partition miniproject-0 to the committed offset FetchPosition{offset=19, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:9092 (id: 1 rack: null)], epoch=0}}
+2025-06-30 07:49:55.657  INFO [ai system management,,,] 142119 --- [container-0-C-1] o.s.c.s.b.k.KafkaMessageChannelBinder$1  : ai system management: partitions assigned: [miniproject-0]
+2025-06-30 07:50:02.625  INFO [ai system management,,,] 142119 --- [pool-5-thread-1] o.a.k.clients.consumer.ConsumerConfig    : ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.offset.reset = latest
+	bootstrap.servers = [localhost:9092]
+	check.crcs = true
+	client.dns.lookup = default
+	client.id = 
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = true
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = ai system management
+	group.instance.id = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.ByteArrayDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.mechanism = GSSAPI
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2]
+	ssl.endpoint.identification.algorithm = https
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.2
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.apache.kafka.common.serialization.ByteArrayDeserializer
+
+2025-06-30 07:50:02.629  INFO [ai system management,,,] 142119 --- [pool-5-thread-1] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 2.5.0
+2025-06-30 07:50:02.629  INFO [ai system management,,,] 142119 --- [pool-5-thread-1] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: 66563e712b0b9f84
+2025-06-30 07:50:02.629  INFO [ai system management,,,] 142119 --- [pool-5-thread-1] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1751269802629
+2025-06-30 07:50:02.632  INFO [ai system management,,,] 142119 --- [pool-5-thread-1] org.apache.kafka.clients.Metadata        : [Consumer clientId=consumer-ai system management-3, groupId=ai system management] Cluster ID: 2wRcxA7hQrqwMrs_Hh6SIA
+2025-06-30 07:50:02.642  INFO [ai system management,,,] 142119 --- [pool-5-thread-1] o.a.k.c.c.internals.AbstractCoordinator  : [Consumer clientId=consumer-ai system management-3, groupId=ai system management] Discovered group coordinator localhost:9092 (id: 2147483646 rack: null)
+2025-06-30 07:52:08.082  INFO [ai system management,,,] 142119 --- [nio-8089-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-30 07:52:08.082  INFO [ai system management,,,] 142119 --- [nio-8089-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-06-30 07:52:08.096  INFO [ai system management,,,] 142119 --- [nio-8089-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 14 ms
+OpenAI API configured: true (Key: sk-proj...)
+OpenAI API configured: true (Key: sk-proj...)
+OpenAI API configured: true (Key: sk-proj...)

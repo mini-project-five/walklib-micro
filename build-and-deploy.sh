@@ -108,21 +108,34 @@ build_and_deploy_service() {
         return 1
     fi
     
-    # Docker 이미지 빌드
+    # Docker 이미지 빌드 (버전 태그 + latest 태그)
+    local BASE_IMAGE="${SERVICE_IMAGES[$SERVICE_NAME]}"
+    local LATEST_IMAGE="$BASE_IMAGE:latest"
+    
     echo -e "${YELLOW}🐳 Docker 이미지 빌드 중...${NC}"
-    if docker build -t "$IMAGE_NAME" "$SERVICE_NAME"; then
+    if docker build -t "$IMAGE_NAME" -t "$LATEST_IMAGE" "$SERVICE_NAME"; then
         echo -e "${GREEN}✅ Docker 이미지 빌드 완료${NC}"
+        echo -e "${BLUE}📋 생성된 이미지: $IMAGE_NAME, $LATEST_IMAGE${NC}"
     else
         echo -e "${RED}❌ Docker 이미지 빌드 실패${NC}"
         return 1
     fi
     
-    # Docker 이미지 푸시
-    echo -e "${YELLOW}📤 Docker 이미지 푸시 중...${NC}"
+    # Docker 이미지 푸시 (버전 태그)
+    echo -e "${YELLOW}📤 Docker 이미지 푸시 중 (버전 태그)...${NC}"
     if docker push "$IMAGE_NAME"; then
-        echo -e "${GREEN}✅ Docker 이미지 푸시 완료${NC}"
+        echo -e "${GREEN}✅ 버전 태그 푸시 완료: $IMAGE_NAME${NC}"
     else
-        echo -e "${RED}❌ Docker 이미지 푸시 실패${NC}"
+        echo -e "${RED}❌ 버전 태그 푸시 실패${NC}"
+        return 1
+    fi
+    
+    # Docker 이미지 푸시 (latest 태그)
+    echo -e "${YELLOW}📤 Docker 이미지 푸시 중 (latest 태그)...${NC}"
+    if docker push "$LATEST_IMAGE"; then
+        echo -e "${GREEN}✅ latest 태그 푸시 완료: $LATEST_IMAGE${NC}"
+    else
+        echo -e "${RED}❌ latest 태그 푸시 실패${NC}"
         return 1
     fi
     

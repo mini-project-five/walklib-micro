@@ -31,10 +31,18 @@ public class Author {
 
     private String realName;
 
-    private AuthorRegisterStatus authorRegisterStatus;
+    private AuthorRegisterStatus authorRegisterStatus; // PENDING, APPROVED, REJECTED
 
     @Embedded
     private ManuscriptId manuscriptId;
+
+    @PrePersist
+    public void onPrePersist() {
+        // Set initial status if not already set
+        if (this.authorRegisterStatus == null) {
+            this.authorRegisterStatus = AuthorRegisterStatus.PENDING;
+        }
+    }
 
     @PostPersist
     public void onPostPersist() {
@@ -51,57 +59,42 @@ public class Author {
         return authorRepository;
     }
 
+    public static void authorRegisterPolicy(
+        AuthorRegisterApplied authorRegisterApplied
+    ){
+        // This method can be used for additional processing after author registration
+        System.out.println("Author register policy triggered for: " + authorRegisterApplied.getAuthorName());
+    }
+
     //<<< Clean Arch / Port Method
     public static void authorStatusManagementPolicy(
         AuthorApproved authorApproved
     ) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        Author author = new Author();
-        repository().save(author);
-
-        */
-
-        /** Example 2:  finding and process
+        System.out.println("Author approval policy triggered for author: " + authorApproved.getAuthorId());
         
-
-        repository().findById(authorApproved.get???()).ifPresent(author->{
-            
-            author // do something
+        // Update author status to APPROVED
+        Author author = repository().findById(authorApproved.getAuthorId()).orElse(null);
+        if (author != null) {
+            author.setAuthorRegisterStatus(AuthorRegisterStatus.APPROVED);
             repository().save(author);
-
-
-         });
-        */
-
+            System.out.println("Author status updated to APPROVED: " + author.getAuthorName());
+        }
     }
 
     //>>> Clean Arch / Port Method
-    //<<< Clean Arch / Port Method
-    public static void authorStatusManagementPolicy(
+    //<<< Clean Arch / Port Method  
+    public static void authorRejectionManagementPolicy(
         AuthorRejected authorRejected
     ) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
-        Author author = new Author();
-        repository().save(author);
-
-        */
-
-        /** Example 2:  finding and process
+        System.out.println("Author rejection policy triggered for author: " + authorRejected.getAuthorId());
         
-
-        repository().findById(authorRejected.get???()).ifPresent(author->{
-            
-            author // do something
+        // Update author status to REJECTED
+        Author author = repository().findById(authorRejected.getAuthorId()).orElse(null);
+        if (author != null) {
+            author.setAuthorRegisterStatus(AuthorRegisterStatus.REJECTED);
             repository().save(author);
-
-
-         });
-        */
-
+            System.out.println("Author status updated to REJECTED: " + author.getAuthorName());
+        }
     }
     //>>> Clean Arch / Port Method
 

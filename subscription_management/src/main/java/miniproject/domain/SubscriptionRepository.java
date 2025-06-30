@@ -10,4 +10,9 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
     path = "subscriptions"
 )
 public interface SubscriptionRepository
-    extends PagingAndSortingRepository<Subscription, Long> {}
+    extends PagingAndSortingRepository<Subscription, Long> {
+    
+    java.util.Optional<Subscription> findByUserIdAndStatus(Long userId, String status);
+    
+    java.util.List<Subscription> findByUserId(Long userId);
+}

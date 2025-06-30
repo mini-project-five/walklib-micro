@@ -71,13 +71,13 @@ public class PolicyHandler {
     ) {
         AuthorRejected event = authorRejected;
         System.out.println(
-            "\n\n##### listener AuthorStatusManagementPolicy : " +
+            "\n\n##### listener AuthorRejectionManagementPolicy : " +
             authorRejected +
             "\n\n"
         );
 
         // Sample Logic //
-        Author.authorStatusManagementPolicy(event);
+        Author.authorRejectionManagementPolicy(event);
     }
 }
 //>>> Clean Arch / Inbound Adaptor

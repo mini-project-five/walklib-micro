@@ -11,9 +11,10 @@ import miniproject.infra.AbstractEvent;
 @ToString
 public class ManuscriptCreated extends AbstractEvent {
 
-    private Long manuscriptId;
     private Long authorId;
     private String title;
+    private String content;
+    private String updatedAt;
 
     public ManuscriptCreated(Manuscript aggregate) {
         super(aggregate);

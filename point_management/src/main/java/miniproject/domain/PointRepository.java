@@ -11,4 +11,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 //<<< PoEAA / Repository
 @RepositoryRestResource(collectionResourceRel = "points", path = "points")
 public interface PointRepository
-    extends PagingAndSortingRepository<Point, Long> {}
+    extends PagingAndSortingRepository<Point, Long> {
+    
+    java.util.Optional<Point> findByUserId(Long userId);
+}

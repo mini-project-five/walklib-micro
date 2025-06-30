@@ -23,6 +23,12 @@ public class AuthorManagement {
     private Long managementId;
 
     private Long userId;
+    
+    private Long authorId;
+    
+    private String authorName;
+    
+    private String email;
 
     private Long reviewerId;
 
@@ -32,11 +38,14 @@ public class AuthorManagement {
 
     @PreUpdate
     public void onPreUpdate() {
-        AuthorApproved authorApproved = new AuthorApproved(this);
-        authorApproved.publishAfterCommit();
-
-        AuthorRejected authorRejected = new AuthorRejected(this);
-        authorRejected.publishAfterCommit();
+        // Only publish events when status changes to final states
+        if (this.managementStatus == ManagementStatus.APPROVED) {
+            AuthorApproved authorApproved = new AuthorApproved(this);
+            authorApproved.publishAfterCommit();
+        } else if (this.managementStatus == ManagementStatus.REJECTED) {
+            AuthorRejected authorRejected = new AuthorRejected(this);
+            authorRejected.publishAfterCommit();
+        }
     }
 
     public static AuthorManagementRepository repository() {
@@ -50,30 +59,45 @@ public class AuthorManagement {
     public static void authorManagementPolicy(
         AuthorRegisterApplied authorRegisterApplied
     ) {
-        //implement business logic here:
-
-        /** Example 1:  new item 
+        System.out.println("Processing author registration: " + authorRegisterApplied.getAuthorName());
+        
+        // Create new author management record
         AuthorManagement authorManagement = new AuthorManagement();
+        authorManagement.setAuthorId(authorRegisterApplied.getAuthorId());
+        authorManagement.setAuthorName(authorRegisterApplied.getAuthorName());
+        authorManagement.setEmail(authorRegisterApplied.getEmail());
+        authorManagement.setManagementStatus(ManagementStatus.PENDING);
+        authorManagement.setReviewedAt(new Date());
+        
         repository().save(authorManagement);
-
-        */
-
-        /** Example 2:  finding and process
         
-        // if authorRegisterApplied.manuscriptId exists, use it
+        // Auto-approval logic (simulate review process)
+        boolean shouldApprove = autoReviewAuthor(authorRegisterApplied);
         
-        // ObjectMapper mapper = new ObjectMapper();
-        // Map<Long, Object> authorMap = mapper.convertValue(authorRegisterApplied.getManuscriptId(), Map.class);
-
-        repository().findById(authorRegisterApplied.get???()).ifPresent(authorManagement->{
-            
-            authorManagement // do something
-            repository().save(authorManagement);
-
-
-         });
-        */
-
+        if (shouldApprove) {
+            authorManagement.setManagementStatus(ManagementStatus.APPROVED);
+            authorManagement.setReviewerId(1L); // System reviewer
+            System.out.println("Author approved: " + authorRegisterApplied.getAuthorName());
+        } else {
+            authorManagement.setManagementStatus(ManagementStatus.REJECTED);
+            authorManagement.setReviewerId(1L);
+            System.out.println("Author rejected: " + authorRegisterApplied.getAuthorName());
+        }
+        
+        // Save once - @PreUpdate will handle event publishing based on status
+        repository().save(authorManagement);
+    }
+    
+    private static boolean autoReviewAuthor(AuthorRegisterApplied application) {
+        // Simple auto-approval logic
+        if (application.getEmail() == null || !application.getEmail().contains("@")) {
+            return false;
+        }
+        if (application.getAuthorName() == null || application.getAuthorName().length() < 2) {
+            return false;
+        }
+        // 90% approval rate simulation
+        return Math.random() > 0.1;
     }
     //>>> Clean Arch / Port Method
 

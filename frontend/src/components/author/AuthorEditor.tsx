@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { manuscriptAPI, aiAPI, Manuscript } from '@/services/api';
 
 interface AuthorEditorProps {
   user: any;
@@ -18,6 +19,7 @@ export const AuthorEditor = ({ user, onBack }: AuthorEditorProps) => {
   const [isPolishing, setIsPolishing] = useState(false);
   const [isGeneratingCover, setIsGeneratingCover] = useState(false);
   const [generatedCover, setGeneratedCover] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
 
   const handleLogout = () => {
@@ -37,20 +39,30 @@ export const AuthorEditor = ({ user, onBack }: AuthorEditorProps) => {
 
     setIsPolishing(true);
     
-    // AI 다듬기 시뮬레이션
-    setTimeout(() => {
-      const polishedTitle = title ? `${title} (AI 다듬기 완료)` : title;
-      const polishedContent = content ? `${content}\n\n[AI가 문체와 표현을 세련되게 다듬었습니다]` : content;
+    try {
+      const response = await aiAPI.polishText(title, content);
       
-      setTitle(polishedTitle);
-      setContent(polishedContent);
-      setIsPolishing(false);
-      
+      if (response.success) {
+        setTitle(response.polishedTitle || title);
+        setContent(response.polishedContent || content);
+        
+        toast({
+          title: "AI 다듬기 완료!",
+          description: "작품이 더욱 세련되게 다듬어졌습니다.",
+        });
+      } else {
+        throw new Error('AI 다듬기 실패');
+      }
+    } catch (error) {
+      console.error('Polish text error:', error);
       toast({
-        title: "AI 다듬기 완료!",
-        description: "작품이 더욱 세련되게 다듬어졌습니다.",
+        title: "AI 다듬기 실패",
+        description: "다시 시도해주세요.",
+        variant: "destructive"
       });
-    }, 2000);
+    } finally {
+      setIsPolishing(false);
+    }
   };
 
   const handleGenerateCover = async () => {
@@ -65,21 +77,33 @@ export const AuthorEditor = ({ user, onBack }: AuthorEditorProps) => {
 
     setIsGeneratingCover(true);
     
-    // AI 표지 생성 시뮬레이션
-    setTimeout(() => {
-      const covers = ['🎨', '📚', '✨', '🌟', '🎭', '🖼️', '🎪', '🌸'];
-      const randomCover = covers[Math.floor(Math.random() * covers.length)];
-      setGeneratedCover(randomCover);
-      setIsGeneratingCover(false);
+    try {
+      const response = await aiAPI.generateCover(title);
       
+      if (response.success) {
+        // Use emoji as fallback, but store the actual image URL for future use
+        setGeneratedCover(response.coverEmoji || '📚');
+        
+        toast({
+          title: "AI 표지 생성 완료!",
+          description: "작품에 어울리는 표지가 생성되었습니다.",
+        });
+      } else {
+        throw new Error('AI 표지 생성 실패');
+      }
+    } catch (error) {
+      console.error('Generate cover error:', error);
       toast({
-        title: "AI 표지 생성 완료!",
-        description: "작품에 어울리는 표지가 생성되었습니다.",
+        title: "AI 표지 생성 실패",
+        description: "다시 시도해주세요.",
+        variant: "destructive"
       });
-    }, 3000);
+    } finally {
+      setIsGeneratingCover(false);
+    }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!title || !content) {
       toast({
         title: "필수 항목을 입력해주세요",
@@ -89,10 +113,38 @@ export const AuthorEditor = ({ user, onBack }: AuthorEditorProps) => {
       return;
     }
 
-    toast({
-      title: "작품이 저장되었습니다!",
-      description: "작가 센터에서 확인할 수 있습니다.",
-    });
+    setIsSaving(true);
+
+    try {
+      const manuscriptData: Manuscript = {
+        authorId: user.authorData?.authorId || user.id,
+        title,
+        content,
+        status: 'DRAFT'
+      };
+
+      const savedManuscript = await manuscriptAPI.create(manuscriptData);
+
+      toast({
+        title: "작품이 저장되었습니다!",
+        description: "작가 센터에서 확인할 수 있습니다.",
+      });
+
+      // Clear form
+      setTitle('');
+      setContent('');
+      setGeneratedCover('');
+      
+    } catch (error) {
+      console.error('Save error:', error);
+      toast({
+        title: "저장 실패",
+        description: "작품 저장 중 오류가 발생했습니다.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -175,10 +227,11 @@ export const AuthorEditor = ({ user, onBack }: AuthorEditorProps) => {
                   
                   <Button
                     onClick={handleSave}
-                    className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
+                    disabled={isSaving}
+                    className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white disabled:opacity-50"
                   >
                     <Save className="h-4 w-4 mr-2" />
-                    저장하기
+                    {isSaving ? '저장 중...' : '저장하기'}
                   </Button>
                 </div>
               </CardContent>

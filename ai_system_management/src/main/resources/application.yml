@@ -45,9 +45,18 @@ logging:
     org.hibernate.type: trace
     org.springframework.cloud: debug
 
+# OpenAI Configuration
+openai:
+  api:
+    key: ${OPENAI_API_KEY:sk-your-api-key-here}
+    url: https://api.openai.com/v1/chat/completions
+  dalle:
+    url: https://api.openai.com/v1/images/generations
+  model: gpt-3.5-turbo
+
 
 server:
-  port: 8088
+  port: 8089
 
 ---
 
@@ -63,7 +72,7 @@ spring:
     stream:
       kafka:
         binder:
-          brokers: my-kafka:9092
+          brokers: kafka:9092
         streams:
           binder:
             configuration:

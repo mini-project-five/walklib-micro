@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { PenTool, Eye, EyeOff, ArrowLeft, Sparkles } from 'lucide-react';
+import { authorAPI, Author } from '@/services/api';
 
 interface AuthorLoginProps {
   onLogin: (userData: any) => void;
@@ -22,43 +23,84 @@ export const AuthorLogin = ({ onLogin, onBack }: AuthorLoginProps) => {
     penName: ''
   });
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     
-    if (isSignup) {
-      if (formData.password !== formData.confirmPassword) {
-        setMessage('비밀번호가 일치하지 않습니다.');
-        return;
+    try {
+      if (isSignup) {
+        if (formData.password !== formData.confirmPassword) {
+          setMessage('비밀번호가 일치하지 않습니다.');
+          setLoading(false);
+          return;
+        }
+        
+        // Create new author
+        const newAuthor: Author = {
+          authorName: formData.penName,
+          email: formData.email,
+          introduction: `안녕하세요, ${formData.penName}입니다.`,
+          authorPassword: formData.password,
+          realName: formData.name,
+        };
+        
+        const createdAuthor = await authorAPI.create(newAuthor);
+        setMessage('작가 가입이 완료되었습니다. 로그인해주세요.');
+        
+        setTimeout(() => {
+          setIsSignup(false);
+          setMessage('');
+          setFormData({ name: '', email: '', password: '', confirmPassword: '', penName: '' });
+        }, 1500);
+      } else {
+        // Login - find author by email
+        try {
+          const authorsResponse = await authorAPI.getAll();
+          const authors = authorsResponse._embedded?.authors || [];
+          
+          const author = authors.find(a => a.email === formData.email);
+          
+          if (!author) {
+            setMessage('등록되지 않은 이메일입니다.');
+            setLoading(false);
+            return;
+          }
+          
+          if (author.authorRegisterStatus === 'PENDING') {
+            setMessage('아직 승인 대기 중입니다. 잠시 후 다시 시도해주세요.');
+            setLoading(false);
+            return;
+          }
+          
+          if (author.authorRegisterStatus === 'REJECTED') {
+            setMessage('승인이 거절되었습니다. 관리자에게 문의하세요.');
+            setLoading(false);
+            return;
+          }
+          
+          const userData = {
+            id: author.authorId,
+            name: author.realName,
+            penName: author.authorName,
+            email: author.email,
+            userType: 'author',
+            authorData: author,
+            works: [],
+            totalViews: 0
+          };
+          
+          onLogin(userData);
+        } catch (loginError) {
+          setMessage('로그인 중 오류가 발생했습니다.');
+        }
       }
-      
-      const userData = {
-        id: Date.now(),
-        name: formData.name,
-        penName: formData.penName,
-        email: formData.email,
-        userType: 'author',
-        works: [],
-        totalViews: 0
-      };
-      
-      setMessage('작가 가입이 완료되었습니다. 로그인해주세요.');
-      setTimeout(() => {
-        setIsSignup(false);
-        setMessage('');
-        setFormData({ name: '', email: '', password: '', confirmPassword: '', penName: '' });
-      }, 1500);
-    } else {
-      const userData = {
-        id: Date.now(),
-        name: '작가',
-        penName: '신진작가',
-        email: formData.email,
-        userType: 'author',
-        works: [],
-        totalViews: 0
-      };
-      onLogin(userData);
+    } catch (error) {
+      console.error('API Error:', error);
+      setMessage(isSignup ? '가입 중 오류가 발생했습니다.' : '로그인 중 오류가 발생했습니다.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -181,9 +223,10 @@ export const AuthorLogin = ({ onLogin, onBack }: AuthorLoginProps) => {
             
             <Button 
               type="submit" 
-              className="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white py-3 rounded-xl transition-all duration-300 font-medium h-12"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white py-3 rounded-xl transition-all duration-300 font-medium h-12 disabled:opacity-50"
             >
-              {isSignup ? '가입하기' : '로그인'}
+              {loading ? '처리 중...' : (isSignup ? '가입하기' : '로그인')}
             </Button>
           </form>
           

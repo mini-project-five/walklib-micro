@@ -13,6 +13,9 @@ public class AuthorApproved extends AbstractEvent {
 
     private Long managementId;
     private Long userId;
+    private Long authorId;
+    private String authorName;
+    private String email;
     private ManagementStatus managementStatus;
 
     public AuthorApproved(AuthorManagement aggregate) {

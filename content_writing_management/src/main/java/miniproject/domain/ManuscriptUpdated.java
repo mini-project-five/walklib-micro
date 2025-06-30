@@ -12,6 +12,8 @@ import miniproject.infra.AbstractEvent;
 public class ManuscriptUpdated extends AbstractEvent {
 
     private Long manuscriptId;
+    private String title;
+    private String content;
     private String updatedAt;
 
     public ManuscriptUpdated(Manuscript aggregate) {

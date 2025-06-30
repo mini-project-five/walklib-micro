@@ -11,4 +11,11 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 //<<< PoEAA / Repository
 @RepositoryRestResource(collectionResourceRel = "books", path = "books")
 public interface BookRepository
-    extends PagingAndSortingRepository<Book, Long> {}
+    extends PagingAndSortingRepository<Book, Long> {
+    
+    java.util.Optional<Book> findByManuscriptId(Long manuscriptId);
+    
+    List<Book> findByAuthorId(Long authorId);
+    
+    List<Book> findByIsBestseller(Boolean isBestseller);
+}
