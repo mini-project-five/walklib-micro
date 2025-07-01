@@ -1,5 +1,5 @@
 // API client for microservices
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'; // Gateway URL
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || window.location.origin; // Use current origin as default
 
 export interface User {
   userId?: number;

@@ -162,7 +162,7 @@ server:
   port: 8080
 EOF
 
-    # Frontend용 Nginx 설정 생성
+    # Frontend용 Nginx 설정 생성 (수정된 버전)
     cat > /tmp/nginx-frontend.conf << 'EOF'
 upstream walklib_gateway {
     server walklib-gateway:8080;
@@ -189,29 +189,61 @@ server {
         client_max_body_size 100M;
     }
 
-    # 백엔드 서비스 라우팅
-    location /users/ {
-        proxy_pass http://walklib_gateway/users/;
+    # 백엔드 서비스 라우팅 (trailing slash 제거)
+    location /users {
+        proxy_pass http://walklib_gateway/users;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;
     }
 
-    location /books/ {
-        proxy_pass http://walklib_gateway/books/;
+    location /books {
+        proxy_pass http://walklib_gateway/books;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto \$scheme;
     }
 
-    location /authors/ {
-        proxy_pass http://walklib_gateway/authors/;
+    location /authors {
+        proxy_pass http://walklib_gateway/authors;
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_Set_header X-Forwarded-Proto \$scheme;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+
+    location /manuscripts {
+        proxy_pass http://walklib_gateway/manuscripts;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+
+    location /ai {
+        proxy_pass http://walklib_gateway/ai;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+
+    location /points {
+        proxy_pass http://walklib_gateway/points;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
+
+    location /subscriptions {
+        proxy_pass http://walklib_gateway/subscriptions;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
     }
 }
 EOF
@@ -250,7 +282,7 @@ deploy_infrastructure() {
         KAFKA_CFG_PROCESS_ROLES=controller,broker \
         KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093 \
         KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT \
-        KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka:9093 \
+        KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@localhost:9093 \
         KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER \
         KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092 \
         KAFKA_CFG_OFFSETS_TOPIC_REPLICATION_FACTOR=1 \
