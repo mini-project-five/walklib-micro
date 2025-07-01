@@ -100,7 +100,7 @@ export const authorAPI = {
     body: JSON.stringify(author),
   }),
   
-  getAll: () => apiRequest<{_embedded: {authors: Author[]}}>('authors'),
+  getAll: () => apiRequest<Author[] | {_embedded: {authors: Author[]}}>('authors'),
   
   getById: (id: number) => apiRequest<Author>(`authors/${id}`),
   

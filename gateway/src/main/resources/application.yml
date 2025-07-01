@@ -34,9 +34,9 @@ spring:
           predicates:
             - Path=/manuscripts/**, /manuscriptLists/**
         - id: ai system management
-          uri: http://localhost:8088
+          uri: http://localhost:8089
           predicates:
-            - Path=/ais/**, 
+            - Path=/ai/**, /ais/**
         - id: frontend
           uri: http://localhost:8080
           predicates:

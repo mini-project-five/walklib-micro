@@ -58,7 +58,14 @@ export const AuthorLogin = ({ onLogin, onBack }: AuthorLoginProps) => {
         // Login - find author by email
         try {
           const authorsResponse = await authorAPI.getAll();
-          const authors = authorsResponse._embedded?.authors || [];
+          
+          // Handle both Spring Data REST format and simple array format
+          let authors: Author[] = [];
+          if (Array.isArray(authorsResponse)) {
+            authors = authorsResponse;
+          } else if (authorsResponse._embedded?.authors) {
+            authors = authorsResponse._embedded.authors;
+          }
           
           const author = authors.find(a => a.email === formData.email);
           

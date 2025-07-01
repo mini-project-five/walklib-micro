@@ -1,9 +1,14 @@
 server:
-  port: 8080
+  port: 8089
 
 spring:
   application:
     name: ai system management
+
+openai:
+  api:
+    key: ${OPENAI_API_KEY:}
+
 ---
 
 spring:
@@ -44,10 +49,6 @@ logging:
   level:
     org.hibernate.type: trace
     org.springframework.cloud: debug
-
-
-server:
-  port: 8088
 
 ---
 

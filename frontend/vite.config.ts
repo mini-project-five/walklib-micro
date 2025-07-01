@@ -7,7 +7,37 @@ import { componentTagger } from "lovable-tagger";
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
-    port: 8080,
+    port: 5173,
+    proxy: {
+      '/users': {
+        target: 'http://localhost:8088',
+        changeOrigin: true,
+      },
+      '/authors': {
+        target: 'http://localhost:8088',
+        changeOrigin: true,
+      },
+      '/books': {
+        target: 'http://localhost:8088',
+        changeOrigin: true,
+      },
+      '/manuscripts': {
+        target: 'http://localhost:8088',
+        changeOrigin: true,
+      },
+      '/points': {
+        target: 'http://localhost:8088',
+        changeOrigin: true,
+      },
+      '/subscriptions': {
+        target: 'http://localhost:8088',
+        changeOrigin: true,
+      },
+      '/ai': {
+        target: 'http://localhost:8088',
+        changeOrigin: true,
+      },
+    },
   },
   plugins: [
     react(),
