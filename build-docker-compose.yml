@@ -23,101 +23,153 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
 
-  user management:
+  user_management:
     depends_on: 
       - kafka
     image: adoptopenjdk/maven-openjdk11:latest
+    container_name: walklib_user_management
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     command: mvn spring-boot:run
     ports:
-      - 8082:8082
+      - 8081:8080
     working_dir: /usr/src
     volumes:
-      - ./user management:/usr/src
+      - ./user_management:/usr/src
       - ./maven-repo:/root/.m2
       
-  point management:
+  point_management:
     depends_on: 
       - kafka
     image: adoptopenjdk/maven-openjdk11:latest
+    container_name: walklib_point_management
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     command: mvn spring-boot:run
     ports:
-      - 8083:8083
+      - 8085:8080
     working_dir: /usr/src
     volumes:
-      - ./point management:/usr/src
+      - ./point_management:/usr/src
       - ./maven-repo:/root/.m2
       
-  subscription management:
+  subscription_management:
     depends_on: 
       - kafka
     image: adoptopenjdk/maven-openjdk11:latest
+    container_name: walklib_subscription_management
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     command: mvn spring-boot:run
     ports:
-      - 8084:8084
+      - 8086:8080
     working_dir: /usr/src
     volumes:
-      - ./subscription management:/usr/src
+      - ./subscription_management:/usr/src
       - ./maven-repo:/root/.m2
       
-  book management:
+  book_management:
     depends_on: 
       - kafka
     image: adoptopenjdk/maven-openjdk11:latest
+    container_name: walklib_book_management
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     command: mvn spring-boot:run
     ports:
-      - 8085:8085
+      - 8083:8080
     working_dir: /usr/src
     volumes:
-      - ./book management:/usr/src
+      - ./book_management:/usr/src
       - ./maven-repo:/root/.m2
       
-  author management:
+  author_management:
     depends_on: 
       - kafka
     image: adoptopenjdk/maven-openjdk11:latest
+    container_name: walklib_author_management
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     command: mvn spring-boot:run
     ports:
-      - 8086:8086
+      - 8082:8080
     working_dir: /usr/src
     volumes:
-      - ./author management:/usr/src
+      - ./author_management:/usr/src
       - ./maven-repo:/root/.m2
       
-  content writing management:
+  content_writing_management:
     depends_on: 
       - kafka
     image: adoptopenjdk/maven-openjdk11:latest
+    container_name: walklib_content_writing_management
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     command: mvn spring-boot:run
     ports:
-      - 8087:8087
+      - 8084:8080
     working_dir: /usr/src
     volumes:
-      - ./content writing management:/usr/src
+      - ./content_writing_management:/usr/src
       - ./maven-repo:/root/.m2
       
-  ai system management:
+  ai_system_management:
     depends_on: 
       - kafka
     image: adoptopenjdk/maven-openjdk11:latest
+    container_name: walklib_ai_system_management
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     command: mvn spring-boot:run
     ports:
-      - 8088:8088
+      - 8087:8080
     working_dir: /usr/src
     volumes:
-      - ./ai system management:/usr/src
+      - ./ai_system_management:/usr/src
       - ./maven-repo:/root/.m2
       
+  gateway:
+    depends_on: 
+      - user_management
+      - point_management
+      - subscription_management
+      - book_management
+      - author_management
+      - content_writing_management
+      - ai_system_management
+    image: adoptopenjdk/maven-openjdk11:latest
+    container_name: walklib_gateway
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    command: >
+      bash -c "
+        ./scripts/wait-for-services.sh \
+          walklib_user_management:8080 \
+          walklib_point_management:8080 \
+          walklib_subscription_management:8080 \
+          walklib_book_management:8080 \
+          walklib_author_management:8080 \
+          walklib_content_writing_management:8080 \
+          walklib_ai_system_management:8080 &&
+        mvn spring-boot:run
+      "
+    ports:
+      - 8080:8080
+    working_dir: /usr/src
+    volumes:
+      - .:/usr/src
+      - ./maven-repo:/root/.m2
+      
+  frontend:
+    depends_on: 
+      - gateway
+    image: node:18-alpine
+    container_name: walklib_frontend
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - 3000:5173
+    working_dir: /usr/src
+    volumes:
+      - ./frontend:/usr/src
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8080

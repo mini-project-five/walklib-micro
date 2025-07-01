@@ -1,0 +1,9 @@
+*.bak
+*.tmp
+.git
+.gitignore
+README.md
+.vscode/
+node_modules/
+.DS_Store
+Thumbs.db

@@ -14,4 +14,14 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
     path = "manuscripts"
 )
 public interface ManuscriptRepository
-    extends PagingAndSortingRepository<Manuscript, Long> {}
+    extends PagingAndSortingRepository<Manuscript, Long> {
+    
+    List<Manuscript> findByAuthorId(Long authorId);
+    
+    List<Manuscript> findByStatus(String status);
+    
+    List<Manuscript> findByAuthorIdAndStatus(Long authorId, String status);
+    
+    @Query("SELECT m FROM Manuscript m ORDER BY m.manuscriptId DESC")
+    List<Manuscript> findAllOrderByIdDesc(Pageable pageable);
+}

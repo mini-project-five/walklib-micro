@@ -1469,3 +1469,52 @@ Hibernate:
 2025-06-30 07:20:18.458 DEBUG [author management,5b4f1ffc710df36c,89203f226dfe7970,true] 122874 --- [container-0-C-1] .DispatchingStreamListenerMessageHandler : handler 'org.springframework.cloud.stream.binding.DispatchingStreamListenerMessageHandler@3b25ce5e' produced no reply for request Message: GenericMessage [payload=byte[89], headers={deliveryAttempt=1, kafka_timestampType=CREATE_TIME, type=AiProcessingStarted, kafka_receivedTopic=miniproject, b3=5b4f1ffc710df36c-89203f226dfe7970-1, nativeHeaders={b3=[5b4f1ffc710df36c-89203f226dfe7970-1]}, kafka_offset=18, scst_nativeHeadersPresent=true, kafka_consumer=org.apache.kafka.clients.consumer.KafkaConsumer@4ee90d14, id=01ed5b1c-d0f7-5992-dd9b-40136afa4326, kafka_receivedPartitionId=0, contentType=application/json, kafka_receivedTimestamp=1751268018433, kafka_groupId=author management, timestamp=1751268018452}]
 2025-06-30 07:20:18.458 DEBUG [author management,5b4f1ffc710df36c,89203f226dfe7970,true] 122874 --- [container-0-C-1] o.s.c.s.m.DirectWithAttributesChannel    : postSend (sent=true) on channel 'bean 'event-in'', message: GenericMessage [payload=byte[89], headers={deliveryAttempt=1, kafka_timestampType=CREATE_TIME, type=AiProcessingStarted, kafka_receivedTopic=miniproject, b3=5b4f1ffc710df36c-89203f226dfe7970-1, nativeHeaders={b3=[5b4f1ffc710df36c-89203f226dfe7970-1]}, kafka_offset=18, scst_nativeHeadersPresent=true, kafka_consumer=org.apache.kafka.clients.consumer.KafkaConsumer@4ee90d14, id=01ed5b1c-d0f7-5992-dd9b-40136afa4326, kafka_receivedPartitionId=0, contentType=application/json, kafka_receivedTimestamp=1751268018433, kafka_groupId=author management, timestamp=1751268018452}]
 2025-06-30 07:20:18.458 DEBUG [author management,5b4f1ffc710df36c,89203f226dfe7970,true] 122874 --- [container-0-C-1] o.s.c.s.i.m.TracingChannelInterceptor    : Will finish the current span after completion LazySpan(5b4f1ffc710df36c/89203f226dfe7970)
+2025-06-30 09:32:38.487  INFO [author management,,,] 122874 --- [thor management] o.a.k.c.c.internals.AbstractCoordinator  : [Consumer clientId=consumer-author management-2, groupId=author management] Group coordinator localhost:9092 (id: 2147483646 rack: null) is unavailable or invalid, will attempt rediscovery
+2025-06-30 09:32:38.491  INFO [author management,,,] 122874 --- [container-0-C-1] o.a.kafka.clients.FetchSessionHandler    : [Consumer clientId=consumer-author management-2, groupId=author management] Error sending fetch request (sessionId=1286219972, epoch=20344) to node 1: {}.
+
+org.apache.kafka.common.errors.DisconnectException: null
+
+2025-06-30 09:32:38.658  WARN [author management,,,] 122874 --- [ad | producer-2] org.apache.kafka.clients.NetworkClient   : [Producer clientId=producer-2] Connection to node 1 (localhost/127.0.0.1:9092) could not be established. Broker may not be available.
+2025-06-30 09:32:38.661  WARN [author management,,,] 122874 --- [container-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-author management-2, groupId=author management] Connection to node 1 (localhost/127.0.0.1:9092) could not be established. Broker may not be available.
+2025-06-30 09:32:38.759  WARN [author management,,,] 122874 --- [ad | producer-2] org.apache.kafka.clients.NetworkClient   : [Producer clientId=producer-2] Connection to node 1 (localhost/127.0.0.1:9092) could not be established. Broker may not be available.
+2025-06-30 09:32:38.857  WARN [author management,,,] 122874 --- [container-0-C-1] org.apache.kafka.clients.NetworkClient   : [Consumer clientId=consumer-author management-2, groupId=author management] Connection to node 1 (localhost/127.0.0.1:9092) could not be established. Broker may not be available.
+2025-06-30 09:32:38.864 DEBUG [author management,,,] 122874 --- [extShutdownHook] o.s.c.s.internal.SleuthContextListener   : Context refreshed or closed [org.springframework.context.event.ContextClosedEvent[source=org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@1c98290c, started on Mon Jun 30 06:42:39 UTC 2025, parent: org.springframework.context.annotation.AnnotationConfigApplicationContext@35841320]]
+2025-06-30 09:32:38.864 DEBUG [author management,,,] 122874 --- [extShutdownHook] o.s.c.s.internal.SleuthContextListener   : Context refreshed or closed [org.springframework.context.event.ContextClosedEvent[source=org.springframework.context.annotation.AnnotationConfigApplicationContext@119cd026, started on Mon Jun 30 06:42:46 UTC 2025, parent: org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@1c98290c]]
+2025-06-30 09:32:38.961  WARN [author management,,,] 122874 --- [ad | producer-2] org.apache.kafka.clients.NetworkClient   : [Producer clientId=producer-2] Connection to node 1 (localhost/127.0.0.1:9092) could not be established. Broker may not be available.
+2025-06-30 09:32:39.060 DEBUG [author management,,,] 122874 --- [extShutdownHook] o.s.c.s.b.AbstractBindableProxyFactory   : Unbinding inputs for :interface miniproject.config.kafka.KafkaProcessor
+2025-06-30 09:32:39.060 DEBUG [author management,,,] 122874 --- [extShutdownHook] o.s.c.s.b.AbstractBindableProxyFactory   : Unbinding :interface miniproject.config.kafka.KafkaProcessor:event-in
+2025-06-30 09:32:39.063  INFO [author management,,,] 122874 --- [container-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-author management-2, groupId=author management] Revoke previously assigned partitions miniproject-0
+2025-06-30 09:32:39.063  INFO [author management,,,] 122874 --- [container-0-C-1] o.s.c.s.b.k.KafkaMessageChannelBinder$1  : author management: partitions revoked: [miniproject-0]
+2025-06-30 09:32:39.064  INFO [author management,,,] 122874 --- [container-0-C-1] o.a.k.clients.consumer.KafkaConsumer     : [Consumer clientId=consumer-author management-2, groupId=author management] Unsubscribed all topics or patterns and assigned partitions
+2025-06-30 09:32:39.064  INFO [author management,,,] 122874 --- [container-0-C-1] o.s.s.c.ThreadPoolTaskScheduler          : Shutting down ExecutorService
+2025-06-30 09:32:39.067  INFO [author management,,,] 122874 --- [container-0-C-1] essageListenerContainer$ListenerConsumer : author management: Consumer stopped
+2025-06-30 09:32:39.069  INFO [author management,,,] 122874 --- [extShutdownHook] s.i.k.i.KafkaMessageDrivenChannelAdapter : stopped org.springframework.integration.kafka.inbound.KafkaMessageDrivenChannelAdapter@5fe1b8d2
+2025-06-30 09:32:39.276  INFO [author management,,,] 122874 --- [extShutdownHook] o.s.c.stream.binder.BinderErrorChannel   : Channel 'application-1.miniproject.author management.errors' has 1 subscriber(s).
+2025-06-30 09:32:39.357  INFO [author management,,,] 122874 --- [extShutdownHook] o.s.c.stream.binder.BinderErrorChannel   : Channel 'application-1.miniproject.author management.errors' has 0 subscriber(s).
+2025-06-30 09:32:39.360 DEBUG [author management,,,] 122874 --- [extShutdownHook] o.s.c.s.b.AbstractBindableProxyFactory   : Unbinding outputs for :interface miniproject.config.kafka.KafkaProcessor
+2025-06-30 09:32:39.360 DEBUG [author management,,,] 122874 --- [extShutdownHook] o.s.c.s.b.AbstractBindableProxyFactory   : Binding :interface miniproject.config.kafka.KafkaProcessor:event-out
+2025-06-30 09:32:39.360  INFO [author management,,,] 122874 --- [extShutdownHook] o.a.k.clients.producer.KafkaProducer     : [Producer clientId=producer-2] Closing the Kafka producer with timeoutMillis = 30000 ms.
+2025-06-30 09:32:39.363  INFO [author management,,,] 122874 --- [extShutdownHook] o.s.i.endpoint.EventDrivenConsumer       : Removing {logging-channel-adapter:_org.springframework.integration.errorLogger} as a subscriber to the 'errorChannel' channel
+2025-06-30 09:32:39.363  INFO [author management,,,] 122874 --- [extShutdownHook] o.s.i.channel.PublishSubscribeChannel    : Channel 'application-1.errorChannel' has 0 subscriber(s).
+2025-06-30 09:32:39.363  INFO [author management,,,] 122874 --- [extShutdownHook] o.s.i.endpoint.EventDrivenConsumer       : stopped bean '_org.springframework.integration.errorLogger'
+2025-06-30 09:32:39.459  INFO [author management,,,] 122874 --- [extShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-30 09:32:39.460  INFO [author management,,,] 122874 --- [extShutdownHook] .SchemaDropperImpl$DelayedDropActionImpl : HHH000477: Starting delayed evictData of schema as part of SessionFactory shut-down'
+Hibernate: 
+    
+    drop table if exists author_table CASCADE 
+Hibernate: 
+    
+    drop table if exists author_management_table CASCADE 
+Hibernate: 
+    
+    drop table if exists author_management_view_table CASCADE 
+Hibernate: 
+    
+    drop sequence if exists hibernate_sequence
+2025-06-30 09:32:39.466 TRACE [author management,,,] 122874 --- [extShutdownHook] o.h.type.spi.TypeConfiguration$Scope     : Handling #sessionFactoryClosed from [org.hibernate.internal.SessionFactoryImpl@1113a4f2] for TypeConfiguration
+2025-06-30 09:32:39.467 DEBUG [author management,,,] 122874 --- [extShutdownHook] o.h.type.spi.TypeConfiguration$Scope     : Un-scoping TypeConfiguration [org.hibernate.type.spi.TypeConfiguration$Scope@bb6da77] from SessionFactory [org.hibernate.internal.SessionFactoryImpl@1113a4f2]
+2025-06-30 09:32:39.468  INFO [author management,,,] 122874 --- [extShutdownHook] o.s.s.c.ThreadPoolTaskScheduler          : Shutting down ExecutorService 'taskScheduler'
+2025-06-30 09:32:39.468  INFO [author management,,,] 122874 --- [extShutdownHook] o.s.s.concurrent.ThreadPoolTaskExecutor  : Shutting down ExecutorService 'applicationTaskExecutor'
+2025-06-30 09:32:39.468  INFO [author management,,,] 122874 --- [extShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-06-30 09:32:39.470  INFO [author management,,,] 122874 --- [extShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-06-30 09:32:39.472  WARN [author management,,,] 122874 --- [extShutdownHook] o.s.b.f.support.DisposableBeanAdapter    : Destroy method 'close' on bean with name 'traceHookRegisteringBeanDefinitionRegistryPostProcessor' threw an exception: java.lang.NoSuchMethodError: 'void reactor.core.publisher.Hooks.removeQueueWrapper(java.lang.String)'

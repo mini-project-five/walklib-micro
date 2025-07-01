@@ -1,93 +1,93 @@
 ---
-
+# Default profile (로컬 개발용)
 spring:
   profiles: default
+  application:
+    name: gateway
   cloud:
     gateway:
-#<<< API Gateway / Routes
       routes:
-        - id: user management
+        - id: user_management
           uri: http://localhost:8082
           predicates:
-            - Path=/users/**, 
-        - id: point management
+            - Path=/users/**
+        - id: point_management
           uri: http://localhost:8083
           predicates:
             - Path=/points/**, /pointLists/**
-        - id: subscription management
+        - id: subscription_management
           uri: http://localhost:8084
           predicates:
-            - Path=/subscriptions/**, 
-        - id: book management
+            - Path=/subscriptions/**
+        - id: book_management
           uri: http://localhost:8085
           predicates:
             - Path=/books/**, /bookLists/**
-        - id: author management
+        - id: author_management
           uri: http://localhost:8086
           predicates:
             - Path=/authors/**, /authorManagements/**, /authorManagementViews/**
-        - id: content writing management
+        - id: content_writing_management
           uri: http://localhost:8087
           predicates:
             - Path=/manuscripts/**, /manuscriptLists/**
-        - id: ai system management
+        - id: ai_system_management
           uri: http://localhost:8089
           predicates:
-            - Path=/ais/**, 
+            - Path=/ai/**, /ais/**
         - id: frontend
-          uri: http://localhost:8080
+          uri: http://localhost:3000
           predicates:
             - Path=/**
-#>>> API Gateway / Routes
       globalcors:
         corsConfigurations:
           '[/**]':
-            allowedOrigins:
-              - "*"
-            allowedMethods:
-              - "*"
-            allowedHeaders:
-              - "*"
-            allowCredentials: true
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
 
 server:
   port: 8088
 
 ---
-
+# Docker profile 
 spring:
   profiles: docker
+  application:
+    name: gateway
+  main:
+    allow-bean-definition-overriding: true
   cloud:
     gateway:
       routes:
-        - id: user management
+        - id: user_management
           uri: http://walklib_user_management:8080
           predicates:
-            - Path=/users/**, 
-        - id: point management
+            - Path=/users/**
+        - id: point_management
           uri: http://walklib_point_management:8080
           predicates:
-            - Path=/points/**, 
-        - id: subscription management
+            - Path=/points/**, /pointLists/**
+        - id: subscription_management
           uri: http://walklib_subscription_management:8080
           predicates:
-            - Path=/subscriptions/**, 
-        - id: book management
+            - Path=/subscriptions/**
+        - id: book_management
           uri: http://walklib_book_management:8080
           predicates:
-            - Path=/books/**, 
-        - id: author management
+            - Path=/books/**, /bookLists/**
+        - id: author_management
           uri: http://walklib_author_management:8080
           predicates:
-            - Path=/authors/**, /authorManagements/**, 
-        - id: content writing management
+            - Path=/authors/**, /authorManagements/**, /authorManagementViews/**
+        - id: content_writing_management
           uri: http://walklib_content_writing_management:8080
           predicates:
-            - Path=/manuscripts/**, 
-        - id: ai system management
+            - Path=/manuscripts/**, /manuscriptLists/**
+        - id: ai_system_management
           uri: http://walklib_ai_system_management:8080
           predicates:
-            - Path=/ais/**, 
+            - Path=/ai/**, /ais/**
         - id: frontend
           uri: http://walklib_frontend:80
           predicates:
@@ -95,13 +95,9 @@ spring:
       globalcors:
         corsConfigurations:
           '[/**]':
-            allowedOrigins:
-              - "*"
-            allowedMethods:
-              - "*"
-            allowedHeaders:
-              - "*"
-            allowCredentials: true
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
 
 server:
   port: 8080

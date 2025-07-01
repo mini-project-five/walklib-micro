@@ -1,6 +1,3 @@
-server:
-  port: 8080
-
 spring:
   application:
     name: subscription management
@@ -89,4 +86,7 @@ api:
   url: 
     subscription management: subscription management:8080 
     
+
+server:
+  port: 8080
 

@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ModernHeader } from './ModernHeader';
 import { ModernBookCarousel } from './ModernBookCarousel';
 import { Footer } from '@/components/ui/footer';
+import { bookAPI, Book } from '@/services/api';
 
-interface Book {
+interface LibraryBook {
   id: number;
   title: string;
   author: string;
@@ -17,102 +18,20 @@ interface Book {
   isBestseller?: boolean;
 }
 
-const mockBooks: Book[] = [
-  {
-    id: 1,
-    title: '별 헤는 밤',
-    author: '윤동주',
-    cover: '✨',
-    genre: '시',
-    price: 5,
-    rating: 4.5,
-    views: 1234,
-    likes: 567,
-    isNew: true,
-  },
-  {
-    id: 2,
-    title: 'The Little Prince',
-    author: 'Antoine de Saint-Exupéry',
-    cover: '👑',
-    genre: '소설',
-    price: 10,
-    rating: 4.8,
-    views: 5678,
-    likes: 1234,
-    isBestseller: true,
-  },
-  {
-    id: 3,
-    title: 'Pride and Prejudice',
-    author: 'Jane Austen',
-    cover: '📜',
-    genre: '소설',
-    price: 8,
-    rating: 4.7,
-    views: 4321,
-    likes: 987,
-  },
-  {
-    id: 4,
-    title: '1984',
-    author: 'George Orwell',
-    cover: '👁️',
-    genre: '소설',
-    price: 12,
-    rating: 4.9,
-    views: 9876,
-    likes: 2345,
-    isNew: true,
-    isBestseller: true,
-  },
-  {
-    id: 5,
-    title: 'To Kill a Mockingbird',
-    author: 'Harper Lee',
-    cover: '🐦',
-    genre: '소설',
-    price: 9,
-    rating: 4.6,
-    views: 3456,
-    likes: 678,
-  },
-  {
-    id: 6,
-    title: 'The Great Gatsby',
-    author: 'F. Scott Fitzgerald',
-    cover: '🍸',
-    genre: '소설',
-    price: 11,
-    rating: 4.8,
-    views: 6789,
-    likes: 3456,
-    isBestseller: true,
-  },
-  {
-    id: 7,
-    title: 'One Hundred Years of Solitude',
-    author: 'Gabriel García Márquez',
-    cover: '🦋',
-    genre: '소설',
-    price: 13,
-    rating: 4.9,
-    views: 10234,
-    likes: 4567,
-    isNew: true,
-  },
-  {
-    id: 8,
-    title: 'Moby Dick',
-    author: 'Herman Melville',
-    cover: '🐳',
-    genre: '소설',
-    price: 7,
-    rating: 4.5,
-    views: 2345,
-    likes: 789,
-  },
-];
+// Transform backend Book to LibraryBook
+const transformBook = (book: Book): LibraryBook => ({
+  id: book.bookId || 0,
+  title: book.title,
+  author: `작가 ${book.authorId}`, // This should be populated with actual author name
+  cover: book.coverImageUrl || '📚',
+  genre: book.category || '일반',
+  price: book.price || 0,
+  rating: 4.5, // Default rating
+  views: book.viewCount || 0,
+  likes: Math.floor((book.viewCount || 0) * 0.3), // Approximate likes
+  isNew: false, // This could be calculated based on publishedDate
+  isBestseller: book.isBestseller || false,
+});
 
 interface ModernMainLibraryProps {
   user: any;
@@ -131,10 +50,49 @@ export const ModernMainLibrary = ({
   onPaymentClick, 
   onLogout 
 }: ModernMainLibraryProps) => {
-  const [featuredBooks] = useState(mockBooks.slice(0, 5));
-  const [newBooks] = useState(mockBooks.filter(book => book.isNew));
-  const [bestSellerBooks] = useState(mockBooks.filter(book => book.isBestseller));
-  const [allBooks] = useState(mockBooks);
+  const [featuredBooks, setFeaturedBooks] = useState<LibraryBook[]>([]);
+  const [newBooks, setNewBooks] = useState<LibraryBook[]>([]);
+  const [bestSellerBooks, setBestSellerBooks] = useState<LibraryBook[]>([]);
+  const [allBooks, setAllBooks] = useState<LibraryBook[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadBooks = async () => {
+      try {
+        setIsLoading(true);
+
+        // Load all books
+        const [allBooksData, bestsellerData, newBooksData] = await Promise.all([
+          bookAPI.getAll(),
+          bookAPI.getBestsellers(),
+          bookAPI.getNewBooks()
+        ]);
+
+        // Transform data
+        const transformedAllBooks = allBooksData.map(transformBook);
+        const transformedBestsellers = bestsellerData.map(transformBook);
+        const transformedNewBooks = newBooksData.map(transformBook);
+
+        setAllBooks(transformedAllBooks);
+        setBestSellerBooks(transformedBestsellers);
+        setNewBooks(transformedNewBooks);
+        setFeaturedBooks(transformedAllBooks.slice(0, 5)); // Take first 5 as featured
+
+      } catch (error) {
+        console.error('Error loading books:', error);
+        
+        // Fallback to empty arrays if API fails
+        setAllBooks([]);
+        setBestSellerBooks([]);
+        setNewBooks([]);
+        setFeaturedBooks([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadBooks();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-amber-50/30">
@@ -147,40 +105,70 @@ export const ModernMainLibrary = ({
       />
       
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 space-y-8">
-        {/* Featured Books Carousel */}
-        <ModernBookCarousel
-          title="✨ 추천 작품"
-          books={featuredBooks}
-          onBookSelect={onBookSelect}
-        />
-
-        {/* New Releases Carousel */}
-        <ModernBookCarousel
-          title="🔥 따끈따끈 신작"
-          books={newBooks}
-          onBookSelect={onBookSelect}
-        />
-
-        {/* Bestseller Carousel */}
-        <ModernBookCarousel
-          title="🏆 요즘 핫한 베스트셀러"
-          books={bestSellerBooks}
-          onBookSelect={onBookSelect}
-        />
-
-        {/* All Books Grid */}
-        <div className="space-y-2">
-          <h2 className="text-2xl font-semibold text-gray-800">📚 모든 작품</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {allBooks.map((book) => (
-              <div key={book.id}>
-                <div onClick={() => onBookSelect(book)}>
-                  {book.title}
-                </div>
-              </div>
-            ))}
+        {isLoading ? (
+          <div className="flex items-center justify-center min-h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-700 mx-auto mb-4"></div>
+              <p className="text-gray-600">도서를 불러오는 중...</p>
+            </div>
           </div>
-        </div>
+        ) : (
+          <>
+            {/* Featured Books Carousel */}
+            {featuredBooks.length > 0 && (
+              <ModernBookCarousel
+                title="✨ 추천 작품"
+                books={featuredBooks}
+                onBookSelect={onBookSelect}
+              />
+            )}
+
+            {/* New Releases Carousel */}
+            {newBooks.length > 0 && (
+              <ModernBookCarousel
+                title="🔥 따끈따끈 신작"
+                books={newBooks}
+                onBookSelect={onBookSelect}
+              />
+            )}
+
+            {/* Bestseller Carousel */}
+            {bestSellerBooks.length > 0 && (
+              <ModernBookCarousel
+                title="🏆 요즘 핫한 베스트셀러"
+                books={bestSellerBooks}
+                onBookSelect={onBookSelect}
+              />
+            )}
+
+            {/* All Books Grid */}
+            <div className="space-y-2">
+              <h2 className="text-2xl font-semibold text-gray-800">📚 모든 작품</h2>
+              {allBooks.length > 0 ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                  {allBooks.map((book) => (
+                    <div 
+                      key={book.id}
+                      className="p-4 border rounded-lg hover:shadow-md transition-shadow cursor-pointer"
+                      onClick={() => onBookSelect(book)}
+                    >
+                      <div className="text-center">
+                        <div className="text-4xl mb-2">{book.cover}</div>
+                        <h3 className="font-medium text-sm line-clamp-2">{book.title}</h3>
+                        <p className="text-xs text-gray-600 mt-1">{book.author}</p>
+                        <p className="text-xs text-amber-600 mt-1">조회수: {book.views}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-gray-600">등록된 도서가 없습니다.</p>
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </main>
       
       <Footer />

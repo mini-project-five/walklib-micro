@@ -55,14 +55,56 @@ public class Manuscript {
         ManuscriptUpdated manuscriptUpdated = new ManuscriptUpdated(this);
         manuscriptUpdated.publishAfterCommit();
         
-        // Trigger publication request when status changes to COMPLETED
-        if ("COMPLETED".equals(this.status)) {
+        // Trigger publication request when status changes to PENDING_PUBLICATION
+        if ("PENDING_PUBLICATION".equals(this.status)) {
             PublicationRequested publicationRequested = new PublicationRequested(this);
             publicationRequested.publishAfterCommit();
+            System.out.println("Publication requested for manuscript: " + this.title);
         }
     }
 
     //<<< Clean Arch / Port Method
+    public static Manuscript createManuscript(Long authorId, String title, String content) {
+        System.out.println("Creating new manuscript: " + title + " by author: " + authorId);
+        
+        Manuscript manuscript = new Manuscript();
+        manuscript.setAuthorId(authorId);
+        manuscript.setTitle(title);
+        manuscript.setContent(content);
+        manuscript.setStatus("DRAFT");
+        manuscript.setUpdatedAt(new Date().toString());
+        
+        return repository().save(manuscript);
+    }
+    
+    public static Manuscript updateManuscript(Long manuscriptId, String title, String content) {
+        System.out.println("Updating manuscript: " + manuscriptId);
+        
+        return repository().findById(manuscriptId)
+            .map(manuscript -> {
+                if (title != null) manuscript.setTitle(title);
+                if (content != null) manuscript.setContent(content);
+                manuscript.setUpdatedAt(new Date().toString());
+                
+                return repository().save(manuscript);
+            })
+            .orElse(null);
+    }
+    
+    public static void requestPublication(Long manuscriptId) {
+        System.out.println("Requesting publication for manuscript: " + manuscriptId);
+        
+        repository().findById(manuscriptId).ifPresent(manuscript -> {
+            manuscript.setStatus("PENDING_PUBLICATION");
+            manuscript.setUpdatedAt(new Date().toString());
+            repository().save(manuscript);
+        });
+    }
+    
+    public static List<Manuscript> getManuscriptsByAuthor(Long authorId) {
+        return repository().findByAuthorId(authorId);
+    }
+
     public static void manuscriptCreatedPolicy(ManuscriptCreated manuscriptCreated){
         System.out.println("Manuscript created policy triggered for: " + manuscriptCreated.getTitle());
         // Additional processing logic can be added here

@@ -42,22 +42,18 @@ export const AuthorEditor = ({ user, onBack }: AuthorEditorProps) => {
     try {
       const response = await aiAPI.polishText(title, content);
       
-      if (response.success) {
-        setTitle(response.polishedTitle || title);
-        setContent(response.polishedContent || content);
-        
-        toast({
-          title: "AI 다듬기 완료!",
-          description: "작품이 더욱 세련되게 다듬어졌습니다.",
-        });
-      } else {
-        throw new Error('AI 다듬기 실패');
-      }
+      setTitle(response.polishedTitle || title);
+      setContent(response.polishedContent || content);
+      
+      toast({
+        title: "AI 다듬기 완료!",
+        description: "작품이 더욱 세련되게 다듬어졌습니다.",
+      });
     } catch (error) {
       console.error('Polish text error:', error);
       toast({
         title: "AI 다듬기 실패",
-        description: "다시 시도해주세요.",
+        description: error instanceof Error ? error.message : "다시 시도해주세요.",
         variant: "destructive"
       });
     } finally {
@@ -80,22 +76,18 @@ export const AuthorEditor = ({ user, onBack }: AuthorEditorProps) => {
     try {
       const response = await aiAPI.generateCover(title);
       
-      if (response.success) {
-        // Use emoji as fallback, but store the actual image URL for future use
-        setGeneratedCover(response.coverEmoji || '📚');
-        
-        toast({
-          title: "AI 표지 생성 완료!",
-          description: "작품에 어울리는 표지가 생성되었습니다.",
-        });
-      } else {
-        throw new Error('AI 표지 생성 실패');
-      }
+      // Use emoji as fallback, but store the actual image URL for future use
+      setGeneratedCover(response.coverEmoji || '📚');
+      
+      toast({
+        title: "AI 표지 생성 완료!",
+        description: "작품에 어울리는 표지가 생성되었습니다.",
+      });
     } catch (error) {
       console.error('Generate cover error:', error);
       toast({
         title: "AI 표지 생성 실패",
-        description: "다시 시도해주세요.",
+        description: error instanceof Error ? error.message : "다시 시도해주세요.",
         variant: "destructive"
       });
     } finally {
@@ -116,7 +108,7 @@ export const AuthorEditor = ({ user, onBack }: AuthorEditorProps) => {
     setIsSaving(true);
 
     try {
-      const manuscriptData: Manuscript = {
+      const manuscriptData: Omit<Manuscript, 'manuscriptId'> = {
         authorId: user.authorData?.authorId || user.id,
         title,
         content,
@@ -139,7 +131,7 @@ export const AuthorEditor = ({ user, onBack }: AuthorEditorProps) => {
       console.error('Save error:', error);
       toast({
         title: "저장 실패",
-        description: "작품 저장 중 오류가 발생했습니다.",
+        description: error instanceof Error ? error.message : "작품 저장 중 오류가 발생했습니다.",
         variant: "destructive"
       });
     } finally {

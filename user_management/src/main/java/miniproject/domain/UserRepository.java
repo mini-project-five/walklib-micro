@@ -11,6 +11,10 @@ public interface UserRepository
     
     java.util.Optional<User> findByEmail(String email);
     
+    java.util.Optional<User> findByEmailAndUserPassword(String email, String userPassword);
+    
+    java.util.Optional<User> findByUserName(String userName);
+    
     java.util.List<User> findByRole(String role);
     
     java.util.List<User> findByStatus(String status);

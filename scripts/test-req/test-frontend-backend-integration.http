@@ -1,0 +1,86 @@
+### Test Frontend-Backend Integration
+
+# 1. Test User Registration
+POST http://localhost:8080/users
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123",
+  "userName": "Test User",
+  "role": "READER"
+}
+
+###
+
+# 2. Test User Login
+POST http://localhost:8080/users/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+###
+
+# 3. Test Manuscript Creation
+POST http://localhost:8080/manuscripts
+Content-Type: application/json
+
+{
+  "authorId": 1,
+  "title": "테스트 원고",
+  "content": "이것은 테스트용 원고 내용입니다. AI 기능을 테스트하기 위한 샘플 텍스트입니다."
+}
+
+###
+
+# 4. Test AI Polish Text
+POST http://localhost:8080/ai/polish
+Content-Type: application/json
+
+{
+  "title": "테스트 제목",
+  "content": "이것은 다듬어질 내용입니다."
+}
+
+###
+
+# 5. Test AI Cover Generation
+POST http://localhost:8080/ai/cover
+Content-Type: application/json
+
+{
+  "title": "멋진 소설"
+}
+
+###
+
+# 6. Test AI Summary Generation
+POST http://localhost:8080/ai/summary
+Content-Type: application/json
+
+{
+  "content": "이것은 요약될 긴 내용입니다. 여러 문장으로 구성되어 있으며, AI가 이를 요약해야 합니다."
+}
+
+###
+
+# 7. Test Get All Books
+GET http://localhost:8080/books
+
+###
+
+# 8. Test Get Bestsellers
+GET http://localhost:8080/books/bestsellers
+
+###
+
+# 9. Test Get New Books
+GET http://localhost:8080/books/new
+
+###
+
+# 10. Test Manuscript Publication Request
+POST http://localhost:8080/manuscripts/1/request-publication

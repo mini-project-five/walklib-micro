@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { BookOpen, Eye, EyeOff } from 'lucide-react';
+import { BookOpen, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { userAPI, User } from '@/services/api';
 
 interface LoginScreenProps {
   onLogin: (userData: any) => void;
@@ -13,6 +14,7 @@ interface LoginScreenProps {
 export const LoginScreen = ({ onLogin }: LoginScreenProps) => {
   const [isSignup, setIsSignup] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -21,40 +23,59 @@ export const LoginScreen = ({ onLogin }: LoginScreenProps) => {
   });
   const [message, setMessage] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    setMessage('');
     
-    if (isSignup) {
-      if (formData.password !== formData.confirmPassword) {
-        setMessage('비밀번호가 일치하지 않습니다.');
-        return;
+    try {
+      if (isSignup) {
+        if (formData.password !== formData.confirmPassword) {
+          setMessage('비밀번호가 일치하지 않습니다.');
+          setIsLoading(false);
+          return;
+        }
+        
+        // Create new user via API
+        const userData: Omit<User, 'userId'> = {
+          userName: formData.name,
+          email: formData.email,
+          userPassword: formData.password,
+          role: 'READER'
+        };
+        
+        await userAPI.create(userData);
+        
+        setMessage('가입이 완료되었습니다. 로그인해주세요.');
+        setTimeout(() => {
+          setIsSignup(false);
+          setMessage('');
+          setFormData({ ...formData, name: '', confirmPassword: '' });
+        }, 1500);
+      } else {
+        // Login via API
+        const user = await userAPI.login(formData.email, formData.password);
+        
+        if (user) {
+          // Transform user data for component compatibility
+          const userData = {
+            id: user.userId,
+            name: user.userName,
+            email: user.email,
+            role: user.role,
+            status: user.status,
+            coins: 100, // Default for now
+            isSubscribed: false // Default for now
+          };
+          
+          onLogin(userData);
+        }
       }
-      
-      // Save user data (in real app, this would be API call)
-      const userData = {
-        id: Date.now(),
-        name: formData.name,
-        email: formData.email,
-        coins: 100,
-        isSubscribed: false
-      };
-      
-      setMessage('가입이 완료되었습니다. 로그인해주세요.');
-      setTimeout(() => {
-        setIsSignup(false);
-        setMessage('');
-        setFormData({ ...formData, name: '', confirmPassword: '' });
-      }, 1500);
-    } else {
-      // Login logic (simplified)
-      const userData = {
-        id: Date.now(),
-        name: '독서가',
-        email: formData.email,
-        coins: 100,
-        isSubscribed: false
-      };
-      onLogin(userData);
+    } catch (error) {
+      console.error('Authentication error:', error);
+      setMessage(error instanceof Error ? error.message : '로그인/회원가입 중 오류가 발생했습니다.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -151,9 +172,17 @@ export const LoginScreen = ({ onLogin }: LoginScreenProps) => {
             
             <Button 
               type="submit" 
-              className="w-full bg-amber-700 hover:bg-amber-800 text-white py-3 rounded-lg transition-colors font-medium"
+              disabled={isLoading}
+              className="w-full bg-amber-700 hover:bg-amber-800 disabled:opacity-50 text-white py-3 rounded-lg transition-colors font-medium"
             >
-              {isSignup ? '가입하기' : '로그인'}
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {isSignup ? '가입 중...' : '로그인 중...'}
+                </>
+              ) : (
+                isSignup ? '가입하기' : '로그인'
+              )}
             </Button>
           </form>
           
