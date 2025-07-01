@@ -17,7 +17,7 @@ export const AuthorEditor = ({ user, onBack }: AuthorEditorProps) => {
   const [content, setContent] = useState('');
   const [isPolishing, setIsPolishing] = useState(false);
   const [isGeneratingCover, setIsGeneratingCover] = useState(false);
-  const [generatedCover, setGeneratedCover] = useState('');
+  const [generatedCover, setGeneratedCover] = useState<string>('');
   const { toast } = useToast();
 
   const handleLogout = () => {
@@ -36,24 +36,59 @@ export const AuthorEditor = ({ user, onBack }: AuthorEditorProps) => {
     }
 
     setIsPolishing(true);
-    
-    // AI 다듬기 시뮬레이션
-    setTimeout(() => {
-      const polishedTitle = title ? `${title} (AI 다듬기 완료)` : title;
-      const polishedContent = content ? `${content}\n\n[AI가 문체와 표현을 세련되게 다듬었습니다]` : content;
-      
-      setTitle(polishedTitle);
-      setContent(polishedContent);
-      setIsPolishing(false);
-      
-      toast({
-        title: "AI 다듬기 완료!",
-        description: "작품이 더욱 세련되게 다듬어졌습니다.",
+
+    try {
+      const OPENAI_API_KEY = import.meta.env.VITE_CHAT_API_KEY;
+      const OPENAI_CHAT_URL = 'https://api.openai.com/v1/chat/completions';
+
+      const prompt = `다음 글과 같은 언어로 작가의 고유한 문체로 통일하고 오탈자를 수정하여 매끄럽게 다듬어 주세요: ${content}`;
+
+      const response = await fetch(OPENAI_CHAT_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [
+            { role: 'user', content: prompt }
+          ],
+          max_tokens: 500,
+          temperature: 0.7,
+        }),
       });
-    }, 2000);
+
+      if (!response.ok) {
+        throw new Error(`OpenAI API 오류: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const polishedText = data.choices?.[0]?.message?.content;
+
+      if (polishedText) {
+        setContent(polishedText);
+        toast({
+          title: "AI 다듬기 완료!",
+          description: "작품이 더욱 세련되게 다듬어졌습니다.",
+        });
+      } else {
+        throw new Error('다듬기 결과를 받지 못했습니다.');
+      }
+    } catch (error) {
+      toast({
+        title: "AI 다듬기 실패",
+        description: (error as Error).message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsPolishing(false);
+    }
   };
 
   const handleGenerateCover = async () => {
+    console.log('API Key:', import.meta.env.VITE_CHAT_API_KEY);
+
     if (!title) {
       toast({
         title: "제목을 입력해주세요",
@@ -64,19 +99,55 @@ export const AuthorEditor = ({ user, onBack }: AuthorEditorProps) => {
     }
 
     setIsGeneratingCover(true);
-    
-    // AI 표지 생성 시뮬레이션
-    setTimeout(() => {
-      const covers = ['🎨', '📚', '✨', '🌟', '🎭', '🖼️', '🎪', '🌸'];
-      const randomCover = covers[Math.floor(Math.random() * covers.length)];
-      setGeneratedCover(randomCover);
-      setIsGeneratingCover(false);
-      
-      toast({
-        title: "AI 표지 생성 완료!",
-        description: "작품에 어울리는 표지가 생성되었습니다.",
+
+    try {
+      const OPENAI_API_KEY = import.meta.env.VITE_CHAT_API_KEY;
+      const OPENAI_IMAGE_URL = 'https://api.openai.com/v1/images/generations';
+
+      const prompt = `Create a professional book cover design for:
+Title: ${title}
+Description: ${content}
+The cover should be modern, eye-catching, and suitable for publication.`;
+
+      const response = await fetch(OPENAI_IMAGE_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: 'dall-e-3',
+          prompt: prompt,
+          n: 1,
+          size: '1024x1024',
+        }),
       });
-    }, 3000);
+
+      if (!response.ok) {
+        throw new Error(`OpenAI API 오류: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const imageUrl = data.data?.[0]?.url;
+
+      if (imageUrl) {
+        setGeneratedCover(imageUrl);
+        toast({
+          title: "AI 표지 생성 완료!",
+          description: "작품에 어울리는 표지가 생성되었습니다.",
+        });
+      } else {
+        throw new Error('이미지 생성에 실패했습니다.');
+      }
+    } catch (error) {
+      toast({
+        title: "AI 표지 생성 실패",
+        description: (error as Error).message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeneratingCover(false);
+    }
   };
 
   const handleSave = () => {
@@ -194,10 +265,11 @@ export const AuthorEditor = ({ user, onBack }: AuthorEditorProps) => {
               <CardContent>
                 <div className="aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-300">
                   {generatedCover ? (
-                    <div className="text-center">
-                      <div className="text-6xl mb-4">{generatedCover}</div>
-                      <p className="text-sm text-gray-600 font-medium">{title || '제목'}</p>
-                    </div>
+                    <img
+                      src={generatedCover}
+                      alt={title || 'AI 생성 표지'}
+                      className="max-h-[400px] max-w-full object-contain rounded-xl mx-auto"
+                    />
                   ) : (
                     <div className="text-center text-gray-500">
                       <Image className="h-12 w-12 mx-auto mb-2 opacity-50" />

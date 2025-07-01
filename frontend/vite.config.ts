@@ -8,6 +8,20 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    proxy: {
+      '/v1/images/generations': {
+        target: 'https://api.openai.com',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/v1\/images\/generations/, '/v1/images/generations'),
+      },
+      '/v1/chat/completions': {
+        target: 'https://api.openai.com',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/v1\/chat\/completions/, '/v1/chat/completions'),
+      },
+    },
   },
   plugins: [
     react(),
