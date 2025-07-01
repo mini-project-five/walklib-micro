@@ -6,13 +6,13 @@ PROFILE="docker"
 
 # 서비스별 정보 정의 (디렉토리명, 이미지명, 컨테이너명, 외부 포트)
 SERVICES=(
-  "user management user-m userManagement 8082"
-  "subscription management subs-m subscriptionManagement 8084"
-  "point management point-m pointManagement 8083"
-  "content writing management content-m contentWritingManagement 8087"
-  "book management book-m bookManagement 8085"
-  "author management author-m authorManagement 8086"
-  "ai system management ai-m aiSystemManagement 8088"
+  "user_management user-m userManagement 8082"
+  "subscription_management subs-m subscriptionManagement 8084"
+  "point_management point-m pointManagement 8083"
+  "content_writing_management content-m contentWritingManagement 8087"
+  "book_management book-m bookManagement 8085"
+  "author_management author-m authorManagement 8086"
+  "ai_system_management ai-m aiSystemManagement 8088"
 )
 
 for SERVICE in "${SERVICES[@]}"; do
