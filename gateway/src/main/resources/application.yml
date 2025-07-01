@@ -1,5 +1,5 @@
 server:
-  port: 8088
+  port: 8080
 
 ---
 
@@ -7,51 +7,51 @@ spring:
   profiles: default
   cloud:
     gateway:
+      default-filters:
+        - name: RequestSize
+          args:
+            maxSize: 5000000  # 5MB
 #<<< API Gateway / Routes
       routes:
-        - id: user management
+        - id: user-management-auth
           uri: http://localhost:8082
           predicates:
-            - Path=/users/**, 
-        - id: point management
+            - Path=/users/auth/**
+          filters:
+            - RewritePath=/users/auth/(?<segment>.*), /auth/$\{segment}
+        - id: user-management
+          uri: http://localhost:8082
+          predicates:
+            - Path=/users/**, /auth/** 
+        - id: point-management
           uri: http://localhost:8083
           predicates:
             - Path=/points/**, /pointLists/**
-        - id: subscription management
+        - id: subscription-management
           uri: http://localhost:8084
           predicates:
             - Path=/subscriptions/**, 
-        - id: book management
+        - id: book-management
           uri: http://localhost:8085
           predicates:
             - Path=/books/**, /bookLists/**
-        - id: author management
+        - id: author-management
           uri: http://localhost:8086
           predicates:
             - Path=/authors/**, /authorManagements/**, /authorManagementViews/**
-        - id: content writing management
+        - id: content-writing-management
           uri: http://localhost:8087
           predicates:
             - Path=/manuscripts/**, /manuscriptLists/**
-        - id: ai system management
-          uri: http://localhost:8088
+        - id: ai-system-management
+          uri: http://localhost:8089
           predicates:
-            - Path=/ais/**, 
+            - Path=/ais/**
         - id: frontend
           uri: http://localhost:8080
           predicates:
             - Path=/**
 #>>> API Gateway / Routes
-      globalcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins:
-              - "*"
-            allowedMethods:
-              - "*"
-            allowedHeaders:
-              - "*"
-            allowCredentials: true
 
 
 ---
@@ -61,48 +61,57 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: user management
-          uri: http://userManagement:8080
+        - id: user-management
+          uri: http://infra-user:8080
           predicates:
             - Path=/users/**, 
-        - id: point management
-          uri: http://pointManagement:8080
+        - id: point-management
+          uri: http://infra-point:8080
           predicates:
             - Path=/points/**, 
-        - id: subscription management
-          uri: http://subscriptionManagement:8080
+        - id: subscription-management
+          uri: http://infra-subscription:8080
           predicates:
             - Path=/subscriptions/**, 
-        - id: book management
-          uri: http://bookManagement:8080
+        - id: book-management
+          uri: http://infra-book:8080
           predicates:
             - Path=/books/**, 
-        - id: author management
-          uri: http://authorManagement:8080
+        - id: author-management
+          uri: http://infra-author:8080
           predicates:
             - Path=/authors/**, /authorManagements/**, 
-        - id: content writing management
-          uri: http://contentWritingManagement:8080
+        - id: content-writing-management
+          uri: http://infra-content:8080
           predicates:
             - Path=/manuscripts/**, 
-        - id: ai system management
-          uri: http://aiSystemManagement:8080
+        - id: ai-system-management
+          uri: http://infra-ai:8080
           predicates:
             - Path=/ais/**, 
         - id: frontend
-          uri: http://frontend:8080
-          predicates:
+          uri: http://infra-frontend:80
+          predicates: 
             - Path=/**
       globalcors:
         corsConfigurations:
           '[/**]':
             allowedOrigins:
-              - "*"
+              - "http://localhost:3000"
+              - "http://localhost:3001"
+              - "http://localhost:8080"
             allowedMethods:
-              - "*"
+              - "GET"
+              - "POST"
+              - "PUT"
+              - "DELETE"
+              - "OPTIONS"
             allowedHeaders:
-              - "*"
-            allowCredentials: true
+              - "Content-Type"
+              - "Authorization"
+              - "X-Requested-With"
+              - "Accept"
+            allowCredentials: false
 
 server:
   port: 8080

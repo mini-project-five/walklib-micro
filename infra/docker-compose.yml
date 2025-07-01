@@ -18,6 +18,7 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       CLUSTER_ID: 'ciWo7IWazngRchmPES6q5A=='
       KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
+  
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     ports:
@@ -27,3 +28,126 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
     depends_on:
       - kafka
+
+  # Microservices
+  user:
+    build:
+      context: ../user
+      dockerfile: Dockerfile
+    ports:
+      - "8082:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+    depends_on:
+      - kafka
+    restart: unless-stopped
+
+  point:
+    build:
+      context: ../point
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+    depends_on:
+      - kafka
+    restart: unless-stopped
+
+  subscription:
+    build:
+      context: ../subscription
+      dockerfile: Dockerfile
+    ports:
+      - "8084:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+    depends_on:
+      - kafka
+    restart: unless-stopped
+
+  book:
+    build:
+      context: ../book
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+    depends_on:
+      - kafka
+    restart: unless-stopped
+
+  author:
+    build:
+      context: ../author
+      dockerfile: Dockerfile
+    ports:
+      - "8086:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+    depends_on:
+      - kafka
+    restart: unless-stopped
+
+  content:
+    build:
+      context: ../content
+      dockerfile: Dockerfile
+    ports:
+      - "8087:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+    depends_on:
+      - kafka
+    restart: unless-stopped
+
+  ai:
+    build:
+      context: ../ai
+      dockerfile: Dockerfile
+    ports:
+      - "8089:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS=kafka:9092
+    depends_on:
+      - kafka
+    restart: unless-stopped
+
+  gateway:
+    build:
+      context: ../gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8088:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - user
+      - point
+      - subscription
+      - book
+      - author
+      - content
+      - ai
+      - kafka
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - gateway
+    restart: unless-stopped%                  
