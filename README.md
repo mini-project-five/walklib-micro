@@ -1,107 +1,61 @@
-# 
+# 개발 환경
 
-## Model
-www.msaez.io/#/31334541/storming/3efacb35baa219662388e54c2dc76f3b
+## 구축
 
-## Before Running Services
-### Make sure there is a Kafka server running
+### kafka, kafka-ui 실행
 ```
-cd kafka
-docker-compose up
+~$ cd infra
+~/infra$ docker compose up
 ```
-- Check the Kafka messages:
-```
-cd infra
-docker-compose exec -it kafka /bin/bash
-cd /bin
-./kafka-console-consumer --bootstrap-server localhost:9092 --topic
-```
+- `infra` 디렉토리로 이동하여 명령어 실행.
+- docker 최신 버전이 아닐경우 `docker-compose` 명령어로 사용.
 
-## Run the backend micro-services
-See the README.md files inside the each microservices directory:
+```
+~$ docker ps
+```
+- 위 명령어로 `infra-kafka-1`, `infra-kafka-ui-1` 동작 확인
+- `localhost:8092`에 접속하여 웹으로 kafka 설정을 ui 확인가능.
 
-- user management
-- point management
-- subscription management
-- book management
-- author management
-- content writing management
-- ai system management
+### gateway 로컬 이미지 실행
 
+```
+~$ cd gateway
+~/gateway$ mvn clean package -DskipTests
+~/gateway$ docker build -t gateway:local .
+```
+- gateway 빌드
 
-## Run API Gateway (Spring Gateway)
 ```
-cd gateway
-mvn spring-boot:run
+~/gateway$ docker run -d --name gateway \
+-p 8080:8080 \
+--network infra_default \
+-e SPRING_PROFILES_ACTIVE=docker \
+gateway:local
 ```
+- gateway 실행
+- 외부 8080 와 내부 8080 포트 연결
+- kafka 가 실행 된 infra 디렉토리의 default 네트워크에 연결 (infra_default)
+- 환경변수 `SPRING_PROFILES_ACTIVE=docker` 추가
+- 빌드한 `gateway:local` 이미지 사용
 
-## Test by API
-- user management
-```
- http :8088/users userId="userId"email="email"userPassword="userPassword"userName="userName"isKtCustomer="isKtCustomer"role="Role"
-```
-- point management
-```
- http :8088/points pointId="pointId"userId="userId"pointBalance="pointBalance"
-```
-- subscription management
-```
- http :8088/subscriptions subscriptionId="subscriptionId"userId="userId"status="status"startDate="startDate"endDate="endDate"
-```
-- book management
-```
- http :8088/books bookId="bookId"title="title"authorId="authorId"viewCount="viewCount"isBestseller="isBestseller"status="status"
-```
-- author management
-```
- http :8088/authors authorId="authorId"authorName="authorName"email="email"introduction="introduction"authorPassword="authorPassword"realName="realName"
- http :8088/authorManagements managementId="managementId"userId="userId"reviewerId="reviewerId"reviewedAt="reviewedAt"
-```
-- content writing management
-```
- http :8088/manuscripts manuscriptId="manuscriptId"authorId="authorId"title="title"content="content"status="status"
-```
-- ai system management
-```
- http :8088/ais processId="processId"
-```
+### user management 로컬 이미지 실행
 
+```
+~$ cd user\ management/
+~/gateway$ mvn clean package -DskipTests
+~/gateway$ docker build -t user-m:local .
+```
+- gateway 빌드
 
-## Run the frontend
 ```
-cd frontend
-npm i
-npm run serve
+~/gateway$ docker run -d --name userManagement \
+-p 8082:8080 \
+--network infra_default \
+-e SPRING_PROFILES_ACTIVE=docker \
+user-m:local
 ```
-
-## Test by UI
-Open a browser to localhost:8088
-
-## Required Utilities
-
-- httpie (alternative for curl / POSTMAN) and network utils
-```
-sudo apt-get update
-sudo apt-get install net-tools
-sudo apt install iputils-ping
-pip install httpie
-```
-
-- kubernetes utilities (kubectl)
-```
-curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-```
-
-- aws cli (aws)
-```
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
-```
-
-- eksctl 
-```
-curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
-sudo mv /tmp/eksctl /usr/local/bin
-```
+- gateway 실행
+- 외부 8080 와 내부 8080 포트 연결
+- kafka 가 실행 된 infra 디렉토리의 default 네트워크에 연결 (infra_default)
+- 환경변수 `SPRING_PROFILES_ACTIVE=docker` 추가
+- 빌드한 `gateway:local` 이미지 사용
