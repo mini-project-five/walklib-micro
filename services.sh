@@ -3,6 +3,7 @@
 # 서비스별 정보 정의 (디렉토리명, 이미지명, 컨테이너명, 외부 포트)
 # 이 파일은 다른 스크립트에서 source 명령어로 불러와 사용됩니다.
 SERVICES=(
+  "gateway gateway gateway 8080"
   "user_management user-m userManagement 8082"
   "subscription_management subs-m subscriptionManagement 8084"
   "point_management point-m pointManagement 8083"
