@@ -69,7 +69,7 @@ cd walklib-micro
 ./init.sh
 
 # Java 환경 설정 및 마이크로서비스 빌드
-./setup-environment.sh
+A
 ```
 
 #### 3. 서비스 실행

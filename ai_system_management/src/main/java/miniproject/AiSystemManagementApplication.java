@@ -9,7 +9,7 @@ import org.springframework.context.ApplicationContext;
 
 @SpringBootApplication
 @EnableBinding(KafkaProcessor.class)
-@EnableFeignClients
+@EnableFeignClients(basePackages = "miniproject.external") // Feign Client 인터페이스가 있는 패키지 지정
 public class AiSystemManagementApplication {
 
     public static ApplicationContext applicationContext;
