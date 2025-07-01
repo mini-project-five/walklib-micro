@@ -116,7 +116,7 @@ start_infrastructure() {
         
         # 인프라 서비스 준비 대기
         echo -e "${YELLOW}⏳ 인프라 서비스 준비 대기 중...${NC}"
-        sleep 10
+        sleep 30
     else
         echo -e "${YELLOW}⚠️  ../infra/docker-compose.yml을 찾을 수 없습니다${NC}"
     fi
@@ -306,7 +306,6 @@ show_access_info() {
 main() {
     check_prerequisites
     check_port_conflicts
-    start_infrastructure
     cleanup_existing_containers
     start_microservices
     verify_services

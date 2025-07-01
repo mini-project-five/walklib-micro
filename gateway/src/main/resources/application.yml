@@ -1,5 +1,5 @@
 ---
-# Default profile (로컬 개발용)
+# Default profile for local development
 spring:
   profiles: default
   application:
