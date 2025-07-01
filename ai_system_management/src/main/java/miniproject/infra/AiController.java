@@ -29,6 +29,18 @@ public class AiController {
     private OpenAIService openAIService;
 
     /**
+     * Simple health check endpoint
+     */
+    @GetMapping("/health")
+    public ResponseEntity<Map<String, Object>> health() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "UP");
+        response.put("service", "AI System Management");
+        response.put("openai_configured", openAIService.isApiConfigured());
+        return ResponseEntity.ok(response);
+    }
+
+    /**
      * Polish text using AI
      */
     @PostMapping("/polish")
@@ -38,19 +50,24 @@ public class AiController {
 
         Map<String, Object> response = new HashMap<>();
 
+        System.out.println("AiController: polishText called - title: " + title + ", content: " + content);
         try {
             // Polish title if provided
             String polishedTitle = title;
             if (title != null && !title.trim().isEmpty()) {
+                System.out.println("AiController: Processing title polish");
                 String titlePrompt = "Please polish and improve this Korean title to make it more elegant and literary: " + title;
                 polishedTitle = openAIService.generateSummary(titlePrompt); // Reusing the summary method for text generation
+                System.out.println("AiController: Title polished to: " + polishedTitle);
             }
 
             // Polish content if provided
             String polishedContent = content;
             if (content != null && !content.trim().isEmpty()) {
+                System.out.println("AiController: Processing content polish");
                 String contentPrompt = "Please polish and improve this Korean text to make it more literary and well-written while maintaining the original meaning and style: " + content;
                 polishedContent = generatePolishedText(contentPrompt);
+                System.out.println("AiController: Content polished to: " + polishedContent);
             }
 
             response.put("success", true);
@@ -75,11 +92,14 @@ public class AiController {
     @PostMapping("/cover")
     public ResponseEntity<Map<String, Object>> generateCover(@RequestBody Map<String, String> request) {
         String title = request.get("title");
+        System.out.println("AiController: generateCover called with title: " + title);
 
         Map<String, Object> response = new HashMap<>();
 
         try {
+            System.out.println("AiController: Calling openAIService.generateCoverImage...");
             String coverImageUrl = openAIService.generateCoverImage(title);
+            System.out.println("AiController: Received coverImageUrl: " + coverImageUrl);
             
             response.put("success", true);
             response.put("coverImageUrl", coverImageUrl);
@@ -132,8 +152,12 @@ public class AiController {
      */
     private String generatePolishedText(String prompt) {
         try {
-            return openAIService.generateSummary(prompt); // Reusing the summary method
+            System.out.println("AiController: generatePolishedText called with prompt length: " + prompt.length());
+            String result = openAIService.generateSummary(prompt); // Reusing the summary method
+            System.out.println("AiController: generatePolishedText result: " + result);
+            return result;
         } catch (Exception e) {
+            System.err.println("AiController: Error in generatePolishedText: " + e.getMessage());
             return "텍스트 다듬기 중 오류가 발생했습니다.";
         }
     }

@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: walklib-frontend
+  labels:
+    app: walklib-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: walklib-frontend
+  template:
+    metadata:
+      labels:
+        app: walklib-frontend
+    spec:
+      containers:
+      - name: walklib-frontend
+        image: buildingbite/walklib_frontend:v1.1
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: walklib-frontend
+  labels:
+    app: walklib-frontend
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+  selector:
+    app: walklib-frontend

@@ -19,25 +19,8 @@ RUN npm run build
 # Production stage - Nginx로 정적 파일 서빙
 FROM nginx:alpine
 
-# Nginx 설정 파일 생성 (SPA 라우팅 지원)
-RUN echo 'server { \
-    listen 80; \
-    server_name localhost; \
-    root /usr/share/nginx/html; \
-    index index.html; \
-    \
-    location / { \
-        try_files $uri $uri/ /index.html; \
-    } \
-    \
-    location /api/ { \
-        proxy_pass http://walklib_gateway:8080/; \
-        proxy_set_header Host $host; \
-        proxy_set_header X-Real-IP $remote_addr; \
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; \
-        proxy_set_header X-Forwarded-Proto $scheme; \
-    } \
-}' > /etc/nginx/conf.d/default.conf
+# nginx 설정 파일 복사
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # 빌드된 정적 파일을 Nginx로 복사
 COPY --from=build /app/dist /usr/share/nginx/html

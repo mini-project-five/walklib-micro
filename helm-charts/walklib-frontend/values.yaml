@@ -1,0 +1,30 @@
+# Default values for walklib-frontend
+replicaCount: 1
+
+image:
+  repository: buildingbite/walklib_frontend
+  pullPolicy: IfNotPresent
+  tag: "v1.1"
+
+service:
+  type: LoadBalancer
+  port: 80
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Gateway configuration
+gateway:
+  url: "walklib-gateway:8080"
+
+# Environment specific configurations
+env:
+  production:
+    apiUrl: "http://your-production-gateway"
+  development:
+    apiUrl: "http://localhost:8088"

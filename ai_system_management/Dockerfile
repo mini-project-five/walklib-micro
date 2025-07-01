@@ -1,5 +1,6 @@
 FROM openjdk:15-jdk-alpine
 COPY target/*SNAPSHOT.jar app.jar
+COPY src/main/resources/.env /app/.env
 EXPOSE 8080
 ENV TZ=Asia/Seoul
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone

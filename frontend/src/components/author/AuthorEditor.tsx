@@ -76,8 +76,8 @@ export const AuthorEditor = ({ user, onBack }: AuthorEditorProps) => {
     try {
       const response = await aiAPI.generateCover(title);
       
-      // Use emoji as fallback, but store the actual image URL for future use
-      setGeneratedCover(response.coverEmoji || '📚');
+      // Use actual image URL if available, fallback to emoji
+      setGeneratedCover(response.coverImageUrl || response.coverEmoji || '📚');
       
       toast({
         title: "AI 표지 생성 완료!",
@@ -237,11 +237,34 @@ export const AuthorEditor = ({ user, onBack }: AuthorEditorProps) => {
                 <CardTitle className="text-lg font-medium text-gray-800">표지 미리보기</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-300">
+                <div className="aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center border-2 border-dashed border-gray-300 overflow-hidden">
                   {generatedCover ? (
-                    <div className="text-center">
-                      <div className="text-6xl mb-4">{generatedCover}</div>
-                      <p className="text-sm text-gray-600 font-medium">{title || '제목'}</p>
+                    <div className="text-center w-full h-full relative">
+                      {generatedCover.startsWith('http') ? (
+                        <>
+                          <img 
+                            src={generatedCover} 
+                            alt="AI 생성 표지" 
+                            className="w-full h-full object-cover rounded-xl"
+                            onError={(e) => {
+                              // Fallback to emoji if image fails to load
+                              const target = e.target as HTMLElement;
+                              target.style.display = 'none';
+                              const fallback = target.nextElementSibling as HTMLElement;
+                              if (fallback) fallback.style.display = 'block';
+                            }}
+                          />
+                          <div className="hidden text-6xl mb-4">📚</div>
+                          <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white p-2">
+                            <p className="text-sm font-medium truncate">{title || '제목'}</p>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="text-6xl mb-4">{generatedCover}</div>
+                          <p className="text-sm text-gray-600 font-medium">{title || '제목'}</p>
+                        </>
+                      )}
                     </div>
                   ) : (
                     <div className="text-center text-gray-500">
