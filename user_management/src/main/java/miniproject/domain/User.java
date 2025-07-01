@@ -22,7 +22,7 @@ public class User {
 
     private String email;
 
-    private Long userPassword;
+    private String userPassword;
 
     private String userName;
 

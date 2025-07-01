@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { BookOpen, Eye, EyeOff, ArrowLeft, Sparkles } from 'lucide-react';
+import { userApi } from '@/lib/api';
 
 interface ReaderLoginProps {
   onLogin: (userData: any) => void;
@@ -15,46 +16,52 @@ export const ReaderLogin = ({ onLogin, onBack }: ReaderLoginProps) => {
   const [isSignup, setIsSignup] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
     email: '',
-    password: '',
+    userPassword: '',
+    userName: '',
     confirmPassword: ''
   });
   const [message, setMessage] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const userData = {
+        email: formData.email,
+        userPassword: formData.userPassword,
+        userName: formData.userName,
+        isKtCustomer: false,
+        role: 'reader'
+      } as const;
     
     if (isSignup) {
-      if (formData.password !== formData.confirmPassword) {
+      if (formData.userPassword !== formData.confirmPassword) {
         setMessage('비밀번호가 일치하지 않습니다.');
         return;
       }
       
-      const userData = {
-        id: Date.now(),
-        name: formData.name,
-        email: formData.email,
-        coins: 100,
-        isSubscribed: false,
-        userType: 'reader'
-      };
+      try {
+        const res = await userApi.signup(userData)
+        console.log('res:', res);
+      } catch (e) {
+        setMessage('가입에 실패하였습니다. 이메일과 비밀번호를 확인해주세요.');
+        return;
+      }
       
       setMessage('가입이 완료되었습니다. 로그인해주세요.');
       setTimeout(() => {
         setIsSignup(false);
         setMessage('');
-        setFormData({ ...formData, name: '', confirmPassword: '' });
-      }, 1500);
+        setFormData({ ...formData, userName: '', confirmPassword: '' });
+      })
     } else {
-      const userData = {
-        id: Date.now(),
-        name: '독서가',
-        email: formData.email,
-        coins: 100,
-        isSubscribed: false,
-        userType: 'reader'
-      };
+      try {
+        const res = await userApi.login(userData)
+        console.log('res:', res)
+      } catch (e) {
+        setMessage('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
+        return;
+      }
       onLogin(userData);
     }
   };
@@ -108,8 +115,8 @@ export const ReaderLogin = ({ onLogin, onBack }: ReaderLoginProps) => {
                 <Label htmlFor="name" className="text-sm font-medium text-gray-700">이름</Label>
                 <Input
                   id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  value={formData.userName}
+                  onChange={(e) => setFormData({ ...formData, userName: e.target.value })}
                   className="border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl h-12"
                   required
                 />
@@ -134,8 +141,8 @@ export const ReaderLogin = ({ onLogin, onBack }: ReaderLoginProps) => {
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  value={formData.userPassword}
+                  onChange={(e) => setFormData({ ...formData, userPassword: e.target.value })}
                   className="border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl h-12 pr-12"
                   required
                 />
@@ -176,7 +183,7 @@ export const ReaderLogin = ({ onLogin, onBack }: ReaderLoginProps) => {
               onClick={() => {
                 setIsSignup(!isSignup);
                 setMessage('');
-                setFormData({ name: '', email: '', password: '', confirmPassword: '' });
+                setFormData({ userName: '', email: '', userPassword: '', confirmPassword: '' });
               }}
               className="text-sm text-gray-600 hover:text-indigo-600 transition-colors font-medium"
             >
