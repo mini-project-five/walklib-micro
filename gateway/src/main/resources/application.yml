@@ -1,6 +1,3 @@
-server:
-  port: 8088
-
 ---
 
 spring:
@@ -34,7 +31,7 @@ spring:
           predicates:
             - Path=/manuscripts/**, /manuscriptLists/**
         - id: ai system management
-          uri: http://localhost:8088
+          uri: http://localhost:8089
           predicates:
             - Path=/ais/**, 
         - id: frontend
@@ -53,6 +50,8 @@ spring:
               - "*"
             allowCredentials: true
 
+server:
+  port: 8088
 
 ---
 
@@ -62,35 +61,35 @@ spring:
     gateway:
       routes:
         - id: user management
-          uri: http://userManagement:8080
+          uri: http://walklib_user_management:8080
           predicates:
             - Path=/users/**, 
         - id: point management
-          uri: http://pointManagement:8080
+          uri: http://walklib_point_management:8080
           predicates:
             - Path=/points/**, 
         - id: subscription management
-          uri: http://subscriptionManagement:8080
+          uri: http://walklib_subscription_management:8080
           predicates:
             - Path=/subscriptions/**, 
         - id: book management
-          uri: http://bookManagement:8080
+          uri: http://walklib_book_management:8080
           predicates:
             - Path=/books/**, 
         - id: author management
-          uri: http://authorManagement:8080
+          uri: http://walklib_author_management:8080
           predicates:
             - Path=/authors/**, /authorManagements/**, 
         - id: content writing management
-          uri: http://contentWritingManagement:8080
+          uri: http://walklib_content_writing_management:8080
           predicates:
             - Path=/manuscripts/**, 
         - id: ai system management
-          uri: http://aiSystemManagement:8080
+          uri: http://walklib_ai_system_management:8080
           predicates:
             - Path=/ais/**, 
         - id: frontend
-          uri: http://frontend:8080
+          uri: http://walklib_frontend:80
           predicates:
             - Path=/**
       globalcors:

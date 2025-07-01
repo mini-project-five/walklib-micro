@@ -1,0 +1,139 @@
+### WalkLib Micro API 테스트 (Gateway 경유)
+### 모든 요청을 Gateway(8088)로 보내기
+
+### 1. Author 등록 테스트 (AuthorRegisterApplied 이벤트 발생)
+POST http://localhost:8088/authors
+Content-Type: application/json
+
+{
+  "authorName": "김작가",
+  "email": "author@example.com",
+  "introduction": "안녕하세요, 김작가입니다. 따뜻한 이야기를 쓰고 싶습니다.",
+  "realName": "김진수",
+  "authorPassword": "password123"
+}
+
+###
+
+### 2. User 등록 테스트 (User 생성)
+POST http://localhost:8088/users
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "userPassword": "password123",
+  "userName": "홍길동",
+  "role": "READER"
+}
+
+###
+
+### 3. Manuscript 생성 테스트 (PublicationRequested 이벤트 발생)
+POST http://localhost:8088/manuscripts
+Content-Type: application/json
+
+{
+  "authorId": 1,
+  "title": "AI와 함께하는 미래",
+  "content": "인공지능 기술의 발전과 함께 우리의 삶이 어떻게 변화하고 있는지에 대한 이야기입니다. 새로운 시대의 도전과 기회를 살펴보며, 인간과 AI가 공존하는 세상에서 우리가 나아가야 할 방향을 제시합니다. 기술의 발전이 가져다주는 편의성과 함께 고민해야 할 윤리적 문제들도 다룹니다.",
+  "status": "DRAFT"
+}
+
+###
+
+### 4. Point 구매 테스트 (PointsPurchased 이벤트 발생)
+POST http://localhost:8088/points
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "pointBalance": 10000,
+  "transactionType": "PURCHASE",
+  "transactionAmount": 10000,
+  "description": "포인트 구매"
+}
+
+###
+
+### 5. Subscription 활성화 테스트 (SubscriptionActivated 이벤트 발생)
+POST http://localhost:8088/subscriptions
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "planType": "PREMIUM",
+  "status": "ACTIVE"
+}
+
+###
+
+### 6. GET 요청들 - 생성된 데이터 확인 (모두 Gateway 경유)
+
+### Author 목록 조회
+GET http://localhost:8088/authors
+
+###
+
+### Author Management 조회
+GET http://localhost:8088/authorManagements
+
+###
+
+### User 목록 조회
+GET http://localhost:8088/users
+
+###
+
+### Manuscript 목록 조회
+GET http://localhost:8088/manuscripts
+
+###
+
+### AI 처리 결과 조회
+GET http://localhost:8088/ais
+
+###
+
+### Book 목록 조회
+GET http://localhost:8088/books
+
+###
+
+### Point 목록 조회
+GET http://localhost:8088/points
+
+###
+
+### Subscription 목록 조회
+GET http://localhost:8088/subscriptions
+
+###
+
+### 7. 특정 리소스 조회
+
+### 특정 Author 조회 (ID로)
+GET http://localhost:8088/authors/1
+
+###
+
+### 특정 Manuscript 조회 (ID로)
+GET http://localhost:8088/manuscripts/1
+
+###
+
+### AI 처리 상태 확인
+GET http://localhost:8088/ais/1
+
+###
+
+### 8. HTTPie 명령어 예시
+### 터미널에서 사용할 수 있는 명령어들
+
+# Author 등록
+# http POST http://localhost:8088/authors authorName="김작가" email="author@example.com" introduction="안녕하세요!" realName="김진수"
+
+# User 등록  
+# http POST http://localhost:8088/users email="user@example.com" userPassword="password123" userName="홍길동" role="READER"
+
+# Manuscript 생성
+# http POST http://localhost:8088/manuscripts authorId:=1 title="AI와 함께하는 미래" content="인공지능에 대한 이야기..." status="DRAFT"
