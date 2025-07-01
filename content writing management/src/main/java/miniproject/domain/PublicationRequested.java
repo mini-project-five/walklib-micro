@@ -26,5 +26,11 @@ public class PublicationRequested extends AbstractEvent {
     public PublicationRequested() {
         super();
     }
+
+    @Override
+    public Long getTimestamp() {
+        // 예시: Date를 Long으로 변환하여 리턴
+        return System.currentTimeMillis();
+    }
 }
 //>>> DDD / Domain Event
