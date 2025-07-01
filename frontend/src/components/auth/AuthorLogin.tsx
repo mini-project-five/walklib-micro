@@ -57,10 +57,13 @@ export const AuthorLogin = ({ onLogin, onBack }: AuthorLoginProps) => {
       } else {
         // Login - find author by email
         try {
-          const authorsResponse = await authorAPI.getAll();
-          const authors = authorsResponse._embedded?.authors || [];
+          const authors = await authorAPI.getAll();
           
-          const author = authors.find(a => a.email === formData.email);
+          // Find approved author first, then pending, then rejected
+          const matchingAuthors = authors.filter(a => a.email === formData.email);
+          const author = matchingAuthors.find(a => a.authorRegisterStatus === 'APPROVED') ||
+                         matchingAuthors.find(a => a.authorRegisterStatus === 'PENDING') ||
+                         matchingAuthors[0];
           
           if (!author) {
             setMessage('등록되지 않은 이메일입니다.');

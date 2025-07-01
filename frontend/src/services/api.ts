@@ -1,5 +1,5 @@
 // API client for microservices
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || window.location.origin; // Use current origin as default
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''; // Use relative path for production
 
 export interface User {
   userId?: number;
@@ -96,7 +96,7 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promi
 // User API
 export const userAPI = {
   create: async (user: Omit<User, 'userId'>) => {
-    const response = await apiRequest<ApiResponse<User>>('users', {
+    const response = await apiRequest<ApiResponse<User>>('/users', {
       method: 'POST',
       body: JSON.stringify({
         email: user.email,
@@ -114,7 +114,7 @@ export const userAPI = {
   },
   
   login: async (email: string, password: string) => {
-    const response = await apiRequest<ApiResponse<User>>('users/login', {
+    const response = await apiRequest<ApiResponse<User>>('/users/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
@@ -127,14 +127,14 @@ export const userAPI = {
   },
   
   getAll: async () => {
-    const response = await apiRequest<ApiResponse<User[]>>('users');
+    const response = await apiRequest<ApiResponse<User[]>>('/users');
     return response._embedded?.users || [];
   },
   
-  getById: (id: number) => apiRequest<User>(`users/${id}`),
+  getById: (id: number) => apiRequest<User>(`/users/${id}`),
   
   update: async (id: number, updates: Partial<User>) => {
-    const response = await apiRequest<ApiResponse<User>>(`users/${id}`, {
+    const response = await apiRequest<ApiResponse<User>>(`/users/${id}`, {
       method: 'PUT',
       body: JSON.stringify(updates),
     });
@@ -147,7 +147,7 @@ export const userAPI = {
   },
   
   promoteToAuthor: async (id: number) => {
-    const response = await apiRequest<ApiResponse<User>>(`users/${id}/promote-to-author`, {
+    const response = await apiRequest<ApiResponse<User>>(`/users/${id}/promote-to-author`, {
       method: 'POST',
     });
     
@@ -159,7 +159,7 @@ export const userAPI = {
   },
   
   updateStatus: async (id: number, status: string) => {
-    const response = await apiRequest<ApiResponse<User>>(`users/${id}/status`, {
+    const response = await apiRequest<ApiResponse<User>>(`/users/${id}/status`, {
       method: 'PUT',
       body: JSON.stringify({ status }),
     });
@@ -175,67 +175,43 @@ export const userAPI = {
 // Author API
 export const authorAPI = {
   create: async (author: Author) => {
-    const response = await apiRequest<ApiResponse<Author>>('authors', {
+    return await apiRequest<Author>('/authors', {
       method: 'POST',
       body: JSON.stringify(author),
     });
-    
-    if (response.success) {
-      return response.author || response.data;
-    } else {
-      throw new Error(response.error || 'Failed to create author');
-    }
   },
   
   getAll: async () => {
-    const response = await apiRequest<ApiResponse<Author[]>>('authors');
+    const response = await apiRequest<any>('/authors');
     return response._embedded?.authors || [];
   },
   
-  getById: (id: number) => apiRequest<Author>(`authors/${id}`),
+  getById: (id: number) => apiRequest<Author>(`/authors/${id}`),
   
   update: async (id: number, author: Partial<Author>) => {
-    const response = await apiRequest<ApiResponse<Author>>(`authors/${id}`, {
+    return await apiRequest<Author>(`/authors/${id}`, {
       method: 'PUT',
       body: JSON.stringify(author),
     });
-    
-    if (response.success) {
-      return response.author || response.data;
-    } else {
-      throw new Error(response.error || 'Failed to update author');
-    }
   },
   
   approve: async (id: number) => {
-    const response = await apiRequest<ApiResponse<Author>>(`authors/${id}/approve`, {
+    return await apiRequest<Author>(`/authors/${id}/approve`, {
       method: 'POST',
     });
-    
-    if (response.success) {
-      return response.author || response.data;
-    } else {
-      throw new Error(response.error || 'Failed to approve author');
-    }
   },
   
   reject: async (id: number) => {
-    const response = await apiRequest<ApiResponse<Author>>(`authors/${id}/reject`, {
+    return await apiRequest<Author>(`/authors/${id}/reject`, {
       method: 'POST',
     });
-    
-    if (response.success) {
-      return response.author || response.data;
-    } else {
-      throw new Error(response.error || 'Failed to reject author');
-    }
   },
 };
 
 // Book API
 export const bookAPI = {
   create: async (book: Omit<Book, 'bookId'>) => {
-    const response = await apiRequest<ApiResponse<Book>>('books', {
+    const response = await apiRequest<ApiResponse<Book>>('/books', {
       method: 'POST',
       body: JSON.stringify(book),
     });
@@ -248,12 +224,12 @@ export const bookAPI = {
   },
   
   getAll: async () => {
-    const response = await apiRequest<ApiResponse<Book[]>>('books');
+    const response = await apiRequest<ApiResponse<Book[]>>('/books');
     return response._embedded?.books || [];
   },
   
   getById: async (id: number) => {
-    const response = await apiRequest<ApiResponse<Book>>(`books/${id}`);
+    const response = await apiRequest<ApiResponse<Book>>(`/books/${id}`);
     if (response.success) {
       return response.book || response.data;
     } else {
@@ -262,22 +238,22 @@ export const bookAPI = {
   },
   
   getBestsellers: async () => {
-    const response = await apiRequest<ApiResponse<Book[]>>('books/bestsellers');
+    const response = await apiRequest<ApiResponse<Book[]>>('/books/bestsellers');
     return response._embedded?.books || [];
   },
   
   getNewBooks: async () => {
-    const response = await apiRequest<ApiResponse<Book[]>>('books/new');
+    const response = await apiRequest<ApiResponse<Book[]>>('/books/new');
     return response._embedded?.books || [];
   },
   
   getByAuthor: async (authorId: number) => {
-    const response = await apiRequest<ApiResponse<Book[]>>(`books/author/${authorId}`);
+    const response = await apiRequest<ApiResponse<Book[]>>(`/books/author/${authorId}`);
     return response._embedded?.books || [];
   },
   
   update: async (id: number, book: Partial<Book>) => {
-    const response = await apiRequest<ApiResponse<Book>>(`books/${id}`, {
+    const response = await apiRequest<ApiResponse<Book>>(`/books/${id}`, {
       method: 'PUT',
       body: JSON.stringify(book),
     });
@@ -290,7 +266,7 @@ export const bookAPI = {
   },
   
   incrementView: async (id: number) => {
-    const response = await apiRequest<ApiResponse<Book>>(`books/${id}/view`, {
+    const response = await apiRequest<ApiResponse<Book>>(`/books/${id}/view`, {
       method: 'POST',
     });
     
@@ -305,7 +281,7 @@ export const bookAPI = {
 // Manuscript API
 export const manuscriptAPI = {
   create: async (manuscript: Omit<Manuscript, 'manuscriptId'>) => {
-    const response = await apiRequest<ApiResponse<Manuscript>>('manuscripts', {
+    const response = await apiRequest<ApiResponse<Manuscript>>('/manuscripts', {
       method: 'POST',
       body: JSON.stringify(manuscript),
     });
@@ -318,24 +294,24 @@ export const manuscriptAPI = {
   },
   
   getAll: async () => {
-    const response = await apiRequest<ApiResponse<Manuscript[]>>('manuscripts');
+    const response = await apiRequest<ApiResponse<Manuscript[]>>('/manuscripts');
     return response._embedded?.manuscripts || [];
   },
   
-  getById: (id: number) => apiRequest<Manuscript>(`manuscripts/${id}`),
+  getById: (id: number) => apiRequest<Manuscript>(`/manuscripts/${id}`),
   
   getByAuthor: async (authorId: number) => {
-    const response = await apiRequest<ApiResponse<Manuscript[]>>(`manuscripts/author/${authorId}`);
+    const response = await apiRequest<ApiResponse<Manuscript[]>>(`/manuscripts/author/${authorId}`);
     return response._embedded?.manuscripts || [];
   },
   
   getByStatus: async (status: string) => {
-    const response = await apiRequest<ApiResponse<Manuscript[]>>(`manuscripts/status/${status}`);
+    const response = await apiRequest<ApiResponse<Manuscript[]>>(`/manuscripts/status/${status}`);
     return response._embedded?.manuscripts || [];
   },
   
   update: async (id: number, manuscript: Partial<Manuscript>) => {
-    const response = await apiRequest<ApiResponse<Manuscript>>(`manuscripts/${id}`, {
+    const response = await apiRequest<ApiResponse<Manuscript>>(`/manuscripts/${id}`, {
       method: 'PUT',
       body: JSON.stringify(manuscript),
     });
@@ -348,7 +324,7 @@ export const manuscriptAPI = {
   },
   
   requestPublication: async (id: number) => {
-    const response = await apiRequest<ApiResponse<Manuscript>>(`manuscripts/${id}/request-publication`, {
+    const response = await apiRequest<ApiResponse<Manuscript>>(`/manuscripts/${id}/request-publication`, {
       method: 'POST',
     });
     
@@ -362,26 +338,26 @@ export const manuscriptAPI = {
 
 // Point API
 export const pointAPI = {
-  create: (point: Point) => apiRequest<Point>('points', {
+  create: (point: Point) => apiRequest<Point>('/points', {
     method: 'POST',
     body: JSON.stringify(point),
   }),
   
-  getByUser: (userId: number) => apiRequest<{_embedded: {points: Point[]}}>(`points?userId=${userId}`),
+  getByUser: (userId: number) => apiRequest<{_embedded: {points: Point[]}}>(`/points?userId=${userId}`),
   
-  getTotalByUser: (userId: number) => apiRequest<number>(`points/user/${userId}/total`),
+  getTotalByUser: (userId: number) => apiRequest<number>(`/points/user/${userId}/total`),
 };
 
 // Subscription API
 export const subscriptionAPI = {
-  create: (subscription: Subscription) => apiRequest<Subscription>('subscriptions', {
+  create: (subscription: Subscription) => apiRequest<Subscription>('/subscriptions', {
     method: 'POST',
     body: JSON.stringify(subscription),
   }),
   
-  getByUser: (userId: number) => apiRequest<{_embedded: {subscriptions: Subscription[]}}>(`subscriptions?userId=${userId}`),
+  getByUser: (userId: number) => apiRequest<{_embedded: {subscriptions: Subscription[]}}>(`/subscriptions?userId=${userId}`),
   
-  getActiveByUser: (userId: number) => apiRequest<Subscription>(`subscriptions/user/${userId}/active`),
+  getActiveByUser: (userId: number) => apiRequest<Subscription>(`/subscriptions/user/${userId}/active`),
 };
 
 // AI API
@@ -392,7 +368,7 @@ export const aiAPI = {
       polishedTitle: string;
       polishedContent: string;
       error?: string;
-    }>('ai/polish', {
+    }>('/ai/polish', {
       method: 'POST',
       body: JSON.stringify({ title, content }),
     });
@@ -414,7 +390,7 @@ export const aiAPI = {
       coverImageUrl: string;
       coverEmoji: string;
       error?: string;
-    }>('ai/cover', {
+    }>('/ai/cover', {
       method: 'POST',
       body: JSON.stringify({ title }),
     });
@@ -435,7 +411,7 @@ export const aiAPI = {
       success: boolean;
       summary: string;
       error?: string;
-    }>('ai/summary', {
+    }>('/ai/summary', {
       method: 'POST',
       body: JSON.stringify({ content }),
     });
