@@ -15,3 +15,4 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 )
 public interface AuthorManagementRepository
     extends PagingAndSortingRepository<AuthorManagement, Long> {}
+    

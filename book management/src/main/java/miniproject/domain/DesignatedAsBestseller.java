@@ -12,7 +12,6 @@ import miniproject.infra.AbstractEvent;
 public class DesignatedAsBestseller extends AbstractEvent {
 
     private Long bookId;
-    private String bookId;
 
     public DesignatedAsBestseller(Book aggregate) {
         super(aggregate);
