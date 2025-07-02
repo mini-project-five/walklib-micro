@@ -21,6 +21,12 @@ export interface User {
   isKtCustomer?: boolean;
   ktAuthRequested?: boolean;
   ktAuthApproved?: boolean;
+  // 작가 관련 필드들
+  authorPending?: boolean; // 작가 승인 대기 여부
+  authorApproved?: boolean; // 작가 승인 여부
+  authorBio?: string; // 작가 소개
+  authorInfo?: string; // 작가 추가 정보
+  createdAt?: string; // 가입일
 }
 
 export interface Author {
@@ -348,6 +354,25 @@ export const authorAPI = {
       console.error('❌ 작가 회원가입 오류:', error);
       throw error;
     }
+  },
+
+  // 작가 승인 관련 API들
+  getPendingAuthors: async () => {
+    return await apiRequest<Author[]>(API_BASE_URLS.author, 'authors/pending', {
+      method: 'GET'
+    });
+  },
+  
+  approveAuthor: async (authorId: number) => {
+    return await apiRequest(API_BASE_URLS.author, `authors/${authorId}/approve`, {
+      method: 'POST'
+    });
+  },
+  
+  rejectAuthor: async (authorId: number) => {
+    return await apiRequest(API_BASE_URLS.author, `authors/${authorId}/reject`, {
+      method: 'POST'
+    });
   },
 };
 

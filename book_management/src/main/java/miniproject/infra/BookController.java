@@ -151,8 +151,8 @@ public class BookController {
             Book book = bookOptional.get();
             book.setViewCount(book.getViewCount() + 1);
             
-            // 조회수가 10 이상이면 베스트셀러로 자동 설정
-            if (book.getViewCount() >= 10) {
+            // 조회수가 5 이상이면 베스트셀러로 자동 설정
+            if (book.getViewCount() >= 5) {
                 book.setIsBestseller(true);
                 logger.info("도서 ID={}가 베스트셀러로 승격됨 (조회수: {})", id, book.getViewCount());
             }

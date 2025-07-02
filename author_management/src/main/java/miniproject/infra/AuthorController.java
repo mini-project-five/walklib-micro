@@ -123,5 +123,68 @@ public class AuthorController {
             return ResponseEntity.status(500).build();
         }
     }
+    
+    // === 작가 승인 관련 API들 ===
+    
+    // 승인 대기 중인 작가 목록 조회 (admin용)
+    @GetMapping("/pending")
+    public ResponseEntity<Iterable<Author>> getPendingAuthors() {
+        logger.info("=== Get Pending Authors Request ===");
+        try {
+            Iterable<Author> pendingAuthors = authorRepository.findByAuthorRegisterStatus(AuthorRegisterStatus.PENDING);
+            return ResponseEntity.ok(pendingAuthors);
+        } catch (Exception e) {
+            logger.error("Error getting pending authors: ", e);
+            return ResponseEntity.status(500).build();
+        }
+    }
+    
+    // 작가 승인 (admin만 가능)
+    @PostMapping("/{id}/approve")
+    public ResponseEntity<Author> approveAuthor(@PathVariable Long id) {
+        logger.info("=== Approve Author Request ===");
+        logger.info("Author ID: {}", id);
+        
+        Optional<Author> authorOpt = authorRepository.findById(id);
+        if (authorOpt.isPresent()) {
+            Author author = authorOpt.get();
+            if (author.getAuthorRegisterStatus() == AuthorRegisterStatus.PENDING) {
+                author.setAuthorRegisterStatus(AuthorRegisterStatus.APPROVED);
+                Author savedAuthor = authorRepository.save(author);
+                logger.info("Author approved successfully: {}", savedAuthor.getAuthorName());
+                return ResponseEntity.ok(savedAuthor);
+            } else {
+                logger.warn("Author is not in PENDING status: {}", author.getAuthorRegisterStatus());
+                return ResponseEntity.badRequest().build();
+            }
+        } else {
+            logger.warn("Author not found with ID: {}", id);
+            return ResponseEntity.notFound().build();
+        }
+    }
+    
+    // 작가 거절 (admin만 가능)
+    @PostMapping("/{id}/reject")
+    public ResponseEntity<Author> rejectAuthor(@PathVariable Long id) {
+        logger.info("=== Reject Author Request ===");
+        logger.info("Author ID: {}", id);
+        
+        Optional<Author> authorOpt = authorRepository.findById(id);
+        if (authorOpt.isPresent()) {
+            Author author = authorOpt.get();
+            if (author.getAuthorRegisterStatus() == AuthorRegisterStatus.PENDING) {
+                author.setAuthorRegisterStatus(AuthorRegisterStatus.REJECTED);
+                Author savedAuthor = authorRepository.save(author);
+                logger.info("Author rejected successfully: {}", savedAuthor.getAuthorName());
+                return ResponseEntity.ok(savedAuthor);
+            } else {
+                logger.warn("Author is not in PENDING status: {}", author.getAuthorRegisterStatus());
+                return ResponseEntity.badRequest().build();
+            }
+        } else {
+            logger.warn("Author not found with ID: {}", id);
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
 //>>> Clean Arch / Inbound Adaptor

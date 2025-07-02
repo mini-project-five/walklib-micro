@@ -7,7 +7,7 @@ import { BookDetail } from '@/components/books/BookDetail';
 import { PaymentCenter } from '@/components/payment/PaymentCenter';
 import { AuthorCenter } from '@/components/author/AuthorCenter';
 import { AuthorEditor } from '@/components/author/AuthorEditor';
-import { AdminKtAuth } from '@/components/admin/AdminKtAuth';
+import { AdminDashboard } from '@/components/admin/AdminDashboard';
 import { bookAPI, manuscriptAPI, pointAPI, subscriptionAPI } from '@/services/api';
 
 type Screen = 'type-selector' | 'reader-login' | 'author-login' | 'library' | 'book-detail' | 'payment' | 'author' | 'editor' | 'admin-kt';
@@ -229,7 +229,7 @@ const Index = () => {
       )}
       
       {currentScreen === 'admin-kt' && (
-        <AdminKtAuth
+        <AdminDashboard
           onBack={() => setCurrentScreen('type-selector')}
         />
       )}
