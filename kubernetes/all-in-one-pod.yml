@@ -1,0 +1,116 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: walklib-microservices-pod
+  labels:
+    app: walklib-microservices
+spec:
+  containers:
+    # Kafka
+    - name: kafka
+      image: confluentinc/cp-kafka:latest
+      ports:
+        - containerPort: 9092
+        - containerPort: 29092
+        - containerPort: 29093
+      env:
+        - name: KAFKA_NODE_ID
+          value: "1"
+        - name: KAFKA_PROCESS_ROLES
+          value: "broker,controller"
+        - name: KAFKA_CONTROLLER_QUORUM_VOTERS
+          value: "1@localhost:29093" # In-Pod communication
+        - name: KAFKA_LISTENERS
+          value: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:29093,PLAINTEXT_HOST://0.0.0.0:29092"
+        - name: KAFKA_ADVERTISED_LISTENERS
+          value: "PLAINTEXT://localhost:9092,PLAINTEXT_HOST://localhost:29092"
+        - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+          value: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT"
+        - name: KAFKA_CONTROLLER_LISTENER_NAMES
+          value: "CONTROLLER"
+        - name: KAFKA_INTER_BROKER_LISTENER_NAME
+          value: "PLAINTEXT"
+        - name: KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR
+          value: "1"
+        - name: KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR
+          value: "1"
+        - name: CLUSTER_ID
+          value: "ciWo7IWazngRchmPES6q5A=="
+        - name: KAFKA_LOG_DIRS
+          value: "/tmp/kraft-combined-logs"
+
+    # Kafka UI
+    - name: kafka-ui
+      image: provectuslabs/kafka-ui:latest
+      ports:
+        - containerPort: 8092 # Port conflict avoidance
+      env:
+        - name: KAFKA_CLUSTERS_0_NAME
+          value: "local"
+        - name: KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS
+          value: "localhost:9092" # In-Pod communication
+        - name: SERVER_PORT
+          value: "8092" # Set a unique port for Kafka-UI
+
+
+    # Frontend (Nginx) - ✅ 수정된 이미지 주소
+    - name: frontend
+      image: chldlsrb1000/frontend:latest
+      ports:
+        - containerPort: 80
+
+    # Gateway
+    - name: gateway
+      image: chldlsrb1000/gateway:latest
+      ports:
+        - containerPort: 8080
+      command: ["java", "-Xmx400M", "-jar", "/app.jar", "--server.port=8080"]
+
+    # User Management Microservice
+    - name: user-management
+      image: chldlsrb1000/user-m:latest
+      ports:
+        - containerPort: 8082
+      command: ["java", "-Xmx400M", "-jar", "/app.jar", "--server.port=8082"]
+
+    # Point Management Microservice
+    - name: point-management
+      image: chldlsrb1000/point-m:latest
+      ports:
+        - containerPort: 8083
+      command: ["java", "-Xmx400M", "-jar", "/app.jar", "--server.port=8083"]
+
+    # Subscription Management Microservice
+    - name: subscription-management
+      image: chldlsrb1000/subs-m:latest
+      ports:
+        - containerPort: 8084
+      command: ["java", "-Xmx400M", "-jar", "/app.jar", "--server.port=8084"]
+
+    # Book Management Microservice
+    - name: book-management
+      image: chldlsrb1000/book-m:latest
+      ports:
+        - containerPort: 8085
+      command: ["java", "-Xmx400M", "-jar", "/app.jar", "--server.port=8085"]
+
+    # Author Management Microservice
+    - name: author-management
+      image: chldlsrb1000/author-m:latest
+      ports:
+        - containerPort: 8086
+      command: ["java", "-Xmx400M", "-jar", "/app.jar", "--server.port=8086"]
+
+    # Content Writing Management Microservice
+    - name: content-writing-management
+      image: chldlsrb1000/content-m:latest
+      ports:
+        - containerPort: 8087
+      command: ["java", "-Xmx400M", "-jar", "/app.jar", "--server.port=8087"]
+
+    # AI System Management Microservice
+    - name: ai-system-management
+      image: chldlsrb1000/ai-m:latest
+      ports:
+        - containerPort: 8088
+      command: ["java", "-Xmx400M", "-jar", "/app.jar", "--server.port=8088"]
