@@ -363,6 +363,18 @@ export const manuscriptAPI = {
       console.log('Step 3: Publishing book...');
       const publishedBook = await bookAPI.publish(createdBook.bookId!);
       console.log('Book published:', publishedBook);
+      
+      // 4. 원고 상태를 PUBLISHED로 업데이트
+      console.log('Step 4: Updating manuscript status to PUBLISHED...');
+      const updatedManuscript = await apiRequest<Manuscript>(API_BASE_URLS.manuscript, `manuscripts/${manuscriptId}`, {
+        method: 'PUT',
+        body: JSON.stringify({
+          ...manuscript,
+          status: 'PUBLISHED'
+        }),
+      });
+      console.log('Manuscript status updated:', updatedManuscript);
+      
       console.log('=== MANUSCRIPT PUBLISH PROCESS COMPLETE ===');
       
       return publishedBook;

@@ -16,6 +16,7 @@ const Index = () => {
   const [selectedBook, setSelectedBook] = useState<any>(null);
   const [coins, setCoins] = useState(100);
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0); // 작가 센터 갱신용
 
   // Check if user is logged in on mount
   useEffect(() => {
@@ -90,6 +91,11 @@ const Index = () => {
     localStorage.setItem('walkingLibraryUser', JSON.stringify(updatedUser));
   };
 
+  // 원고 저장/출간 후 호출될 함수
+  const handleManuscriptSaved = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
+
   return (
     <div className="min-h-screen">
       {currentScreen === 'type-selector' && (
@@ -151,6 +157,7 @@ const Index = () => {
           user={user}
           onBack={() => setCurrentScreen('library')}
           onWriteClick={() => setCurrentScreen('editor')}
+          refreshTrigger={refreshTrigger}
         />
       )}
       
@@ -158,6 +165,7 @@ const Index = () => {
         <AuthorEditor
           user={user}
           onBack={() => setCurrentScreen('author')}
+          onManuscriptSaved={handleManuscriptSaved}
         />
       )}
     </div>
