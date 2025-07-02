@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Collections;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
@@ -37,18 +38,30 @@ public class ManuscriptController {
     }
 
     @GetMapping("/author/{authorId}")
-    public ResponseEntity<Map<String, Object>> getByAuthor(@PathVariable("authorId") Long authorId) {
+    public ResponseEntity<Map<String, Object>> getByAuthor(@PathVariable("authorId") String authorIdStr) {
         Map<String, Object> response = new HashMap<>();
         
         try {
+            // Handle "undefined" case - return empty list instead of error
+            if ("undefined".equals(authorIdStr) || authorIdStr == null || authorIdStr.trim().isEmpty()) {
+                response.put("success", true);
+                response.put("_embedded", Map.of("manuscripts", Collections.emptyList()));
+                return ResponseEntity.ok(response);
+            }
+            
+            Long authorId = Long.valueOf(authorIdStr);
+            
             List<Manuscript> manuscripts = Manuscript.getManuscriptsByAuthor(authorId);
             
             response.put("success", true);
             response.put("_embedded", Map.of("manuscripts", manuscripts));
             return ResponseEntity.ok(response);
             
+        } catch (NumberFormatException e) {
+            response.put("success", true);  // Return success with empty list instead of error
+            response.put("_embedded", Map.of("manuscripts", Collections.emptyList()));
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            System.err.println("Error getting manuscripts by author: " + e.getMessage());
             response.put("success", false);
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
@@ -60,17 +73,27 @@ public class ManuscriptController {
         Map<String, Object> response = new HashMap<>();
         
         try {
-            Long authorId = Long.valueOf(request.get("authorId").toString());
-            String title = (String) request.get("title");
-            String content = (String) request.get("content");
+            // Null 체크 추가
+            Object authorIdObj = request.get("authorId");
             
-            if (authorId == null || title == null || content == null) {
+            if (authorIdObj == null) {
                 response.put("success", false);
-                response.put("error", "AuthorId, title, and content are required");
+                response.put("error", "AuthorId is required");
                 return ResponseEntity.badRequest().body(response);
             }
             
-            Manuscript manuscript = Manuscript.createManuscript(authorId, title, content);
+            Long authorId = Long.valueOf(authorIdObj.toString());
+            String title = (String) request.get("title");
+            String content = (String) request.get("content");
+            String coverImageUrl = (String) request.get("coverImageUrl");  // 추가
+            
+            if (title == null || content == null) {
+                response.put("success", false);
+                response.put("error", "Title and content are required");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            Manuscript manuscript = Manuscript.createManuscript(authorId, title, content, coverImageUrl);
             
             if (manuscript != null) {
                 response.put("success", true);
@@ -82,6 +105,11 @@ public class ManuscriptController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
             }
             
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid authorId format: " + e.getMessage());
+            response.put("success", false);
+            response.put("error", "Invalid authorId format");
+            return ResponseEntity.badRequest().body(response);
         } catch (Exception e) {
             System.err.println("Error creating manuscript: " + e.getMessage());
             response.put("success", false);

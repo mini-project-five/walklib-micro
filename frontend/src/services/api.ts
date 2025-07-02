@@ -46,6 +46,8 @@ export interface Manuscript {
   content: string;
   status?: string;
   updatedAt?: string;
+  coverImageUrl?: string;
+  views?: number;
 }
 
 export interface Point {
@@ -174,6 +176,19 @@ export const userAPI = {
 
 // Author API
 export const authorAPI = {
+  login: async (email: string, password: string) => {
+    const response = await apiRequest<ApiResponse<Author>>('/auth/author/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    });
+    
+    if (response.success) {
+      return response.author || response.data;
+    } else {
+      throw new Error(response.error || 'Login failed');
+    }
+  },
+
   create: async (author: Author) => {
     return await apiRequest<Author>('/authors', {
       method: 'POST',
@@ -301,8 +316,7 @@ export const manuscriptAPI = {
   getById: (id: number) => apiRequest<Manuscript>(`/manuscripts/${id}`),
   
   getByAuthor: async (authorId: number) => {
-    const response = await apiRequest<ApiResponse<Manuscript[]>>(`/manuscripts/author/${authorId}`);
-    return response._embedded?.manuscripts || [];
+    return await apiRequest<ApiResponse<Manuscript[]>>(`/manuscripts/author/${authorId}`);
   },
   
   getByStatus: async (status: string) => {

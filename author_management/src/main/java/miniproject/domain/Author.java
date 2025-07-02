@@ -1,5 +1,6 @@
 package miniproject.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.util.Collections;
@@ -19,6 +20,7 @@ public class Author {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonProperty("authorId")
     private Long authorId;
 
     private String authorName;
@@ -58,6 +60,15 @@ public class Author {
         );
         return authorRepository;
     }
+
+    //<<< Clean Arch / Port Method
+    public static Author authenticateAuthor(String email, String password) {
+        return repository().findByEmail(email)
+            .filter(author -> AuthorRegisterStatus.APPROVED.equals(author.getAuthorRegisterStatus()))
+            .filter(author -> password.equals(author.getAuthorPassword()))
+            .orElse(null);
+    }
+    //>>> Clean Arch / Port Method
 
     public static void authorRegisterPolicy(
         AuthorRegisterApplied authorRegisterApplied

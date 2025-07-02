@@ -2,6 +2,8 @@ package miniproject.domain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -33,6 +35,11 @@ public class Manuscript {
 
     private String updatedAt;
 
+    private int views;
+    
+    @Column(name = "cover_image_url")
+    private String coverImageUrl;
+
     @PrePersist
     public void onPrePersist() {
         // Set initial status if not already set
@@ -40,8 +47,9 @@ public class Manuscript {
             this.status = "DRAFT";
         }
         if (this.updatedAt == null) {
-            this.updatedAt = new Date().toString();
+            this.updatedAt = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
         }
+        // views는 int 타입이므로 기본값이 0입니다
     }
 
     @PostPersist
@@ -64,17 +72,23 @@ public class Manuscript {
     }
 
     //<<< Clean Arch / Port Method
-    public static Manuscript createManuscript(Long authorId, String title, String content) {
+    public static Manuscript createManuscript(Long authorId, String title, String content, String coverImageUrl) {
         System.out.println("Creating new manuscript: " + title + " by author: " + authorId);
         
         Manuscript manuscript = new Manuscript();
         manuscript.setAuthorId(authorId);
         manuscript.setTitle(title);
         manuscript.setContent(content);
+        manuscript.setCoverImageUrl(coverImageUrl);
         manuscript.setStatus("DRAFT");
-        manuscript.setUpdatedAt(new Date().toString());
+        manuscript.setUpdatedAt(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
         
         return repository().save(manuscript);
+    }
+    
+    // 기존 호환성을 위한 오버로드 메소드
+    public static Manuscript createManuscript(Long authorId, String title, String content) {
+        return createManuscript(authorId, title, content, null);
     }
     
     public static Manuscript updateManuscript(Long manuscriptId, String title, String content) {
@@ -84,7 +98,7 @@ public class Manuscript {
             .map(manuscript -> {
                 if (title != null) manuscript.setTitle(title);
                 if (content != null) manuscript.setContent(content);
-                manuscript.setUpdatedAt(new Date().toString());
+                manuscript.setUpdatedAt(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
                 
                 return repository().save(manuscript);
             })
@@ -96,13 +110,16 @@ public class Manuscript {
         
         repository().findById(manuscriptId).ifPresent(manuscript -> {
             manuscript.setStatus("PENDING_PUBLICATION");
-            manuscript.setUpdatedAt(new Date().toString());
+            manuscript.setUpdatedAt(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
             repository().save(manuscript);
         });
     }
     
     public static List<Manuscript> getManuscriptsByAuthor(Long authorId) {
-        return repository().findByAuthorId(authorId);
+        System.out.println("📚 Finding manuscripts for authorId: " + authorId);
+        List<Manuscript> manuscripts = repository().findByAuthorId(authorId);
+        System.out.println("📚 Found " + manuscripts.size() + " manuscripts");
+        return manuscripts;
     }
 
     public static void manuscriptCreatedPolicy(ManuscriptCreated manuscriptCreated){

@@ -11,4 +11,8 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 //<<< PoEAA / Repository
 @RepositoryRestResource(collectionResourceRel = "authors", path = "authors")
 public interface AuthorRepository
-    extends PagingAndSortingRepository<Author, Long> {}
+    extends PagingAndSortingRepository<Author, Long> {
+    
+    java.util.Optional<Author> findByEmail(String email);
+    java.util.Optional<Author> findByEmailAndAuthorPassword(String email, String authorPassword);
+}

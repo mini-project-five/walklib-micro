@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { ArrowLeft, BookOpen, TrendingUp, Edit, Users } from 'lucide-react';
+import { ArrowLeft, BookOpen, TrendingUp, Edit, Users, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,27 +10,36 @@ interface AuthorCenterProps {
   user: any;
   onBack: () => void;
   onWriteClick: () => void;
+  onEditClick?: (manuscript: Manuscript) => void;
 }
 
-export const AuthorCenter = ({ user, onBack, onWriteClick }: AuthorCenterProps) => {
+export const AuthorCenter = ({ user, onBack, onWriteClick, onEditClick }: AuthorCenterProps) => {
   const [manuscripts, setManuscripts] = useState<Manuscript[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Load manuscripts function
+  const loadManuscripts = async () => {
+    try {
+      setLoading(true);
+      const authorId = user.authorData?.authorId || user.id;
+      
+      if (!authorId) {
+        setManuscripts([]);
+        return;
+      }
+      
+      const response = await manuscriptAPI.getByAuthor(Number(authorId));
+      const manuscriptList = response._embedded?.manuscripts || [];
+      setManuscripts(manuscriptList);
+    } catch (error) {
+      setManuscripts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Load manuscripts on component mount
   useEffect(() => {
-    const loadManuscripts = async () => {
-      try {
-        const authorId = user.authorData?.authorId || user.id;
-        const response = await manuscriptAPI.getByAuthor(authorId);
-        setManuscripts(response._embedded?.manuscripts || []);
-      } catch (error) {
-        console.error('Failed to load manuscripts:', error);
-        setManuscripts([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     loadManuscripts();
   }, [user]);
 
@@ -138,7 +147,19 @@ export const AuthorCenter = ({ user, onBack, onWriteClick }: AuthorCenterProps) 
         {/* My Works */}
         <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50">
           <CardHeader>
-            <CardTitle className="text-xl font-medium text-gray-800">내 작품 관리</CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-xl font-medium text-gray-800">내 작품 관리</CardTitle>
+              <Button
+                onClick={loadManuscripts}
+                variant="outline"
+                size="sm"
+                disabled={loading}
+                className="text-gray-600 hover:text-gray-800"
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                새로고침
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             {loading ? (
@@ -153,7 +174,7 @@ export const AuthorCenter = ({ user, onBack, onWriteClick }: AuthorCenterProps) 
                   <div className="space-y-1">
                     <h4 className="font-medium text-gray-800">{manuscript.title}</h4>
                     <div className="flex items-center space-x-4 text-sm text-gray-600">
-                      <span>조회수: {Math.floor(Math.random() * 1000).toLocaleString()}</span>
+                      <span>조회수: {manuscript.views || 0}</span>
                       <Badge variant={manuscript.status === 'COMPLETED' ? 'default' : 'secondary'}>
                         {manuscript.status === 'DRAFT' ? '초안' : 
                          manuscript.status === 'COMPLETED' ? '완성' : manuscript.status}
@@ -161,7 +182,18 @@ export const AuthorCenter = ({ user, onBack, onWriteClick }: AuthorCenterProps) 
                       <span>최종 수정: {manuscript.updatedAt ? new Date(manuscript.updatedAt).toLocaleDateString() : '방금 전'}</span>
                     </div>
                   </div>
-                  <Button variant="outline" size="sm">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => {
+                      if (onEditClick) {
+                        onEditClick(manuscript);
+                      } else {
+                        // 편집 기능이 구현되지 않은 경우
+                        alert('편집 기능은 준비 중입니다.');
+                      }
+                    }}
+                  >
                     편집
                   </Button>
                 </div>

@@ -16,6 +16,7 @@ const Index = () => {
   const [selectedBook, setSelectedBook] = useState<any>(null);
   const [coins, setCoins] = useState(100);
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [editingManuscript, setEditingManuscript] = useState<any>(null);
 
   // Check if user is logged in on mount
   useEffect(() => {
@@ -150,14 +151,25 @@ const Index = () => {
         <AuthorCenter
           user={user}
           onBack={() => setCurrentScreen('library')}
-          onWriteClick={() => setCurrentScreen('editor')}
+          onWriteClick={() => {
+            setEditingManuscript(null); // 새 작성 모드
+            setCurrentScreen('editor');
+          }}
+          onEditClick={(manuscript) => {
+            setEditingManuscript(manuscript); // 편집 모드
+            setCurrentScreen('editor');
+          }}
         />
       )}
       
       {currentScreen === 'editor' && (
         <AuthorEditor
           user={user}
-          onBack={() => setCurrentScreen('author')}
+          onBack={() => {
+            setEditingManuscript(null); // 편집 모드 해제
+            setCurrentScreen('author');
+          }}
+          editingManuscript={editingManuscript}
         />
       )}
     </div>

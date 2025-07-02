@@ -11,14 +11,15 @@ import { manuscriptAPI, aiAPI, Manuscript } from '@/services/api';
 interface AuthorEditorProps {
   user: any;
   onBack: () => void;
+  editingManuscript?: Manuscript;
 }
 
-export const AuthorEditor = ({ user, onBack }: AuthorEditorProps) => {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+export const AuthorEditor = ({ user, onBack, editingManuscript }: AuthorEditorProps) => {
+  const [title, setTitle] = useState(editingManuscript?.title || '');
+  const [content, setContent] = useState(editingManuscript?.content || '');
   const [isPolishing, setIsPolishing] = useState(false);
   const [isGeneratingCover, setIsGeneratingCover] = useState(false);
-  const [generatedCover, setGeneratedCover] = useState('');
+  const [generatedCover, setGeneratedCover] = useState(editingManuscript?.coverImageUrl || '');
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
 
@@ -50,7 +51,6 @@ export const AuthorEditor = ({ user, onBack }: AuthorEditorProps) => {
         description: "작품이 더욱 세련되게 다듬어졌습니다.",
       });
     } catch (error) {
-      console.error('Polish text error:', error);
       toast({
         title: "AI 다듬기 실패",
         description: error instanceof Error ? error.message : "다시 시도해주세요.",
@@ -84,7 +84,6 @@ export const AuthorEditor = ({ user, onBack }: AuthorEditorProps) => {
         description: "작품에 어울리는 표지가 생성되었습니다.",
       });
     } catch (error) {
-      console.error('Generate cover error:', error);
       toast({
         title: "AI 표지 생성 실패",
         description: error instanceof Error ? error.message : "다시 시도해주세요.",
@@ -105,30 +104,55 @@ export const AuthorEditor = ({ user, onBack }: AuthorEditorProps) => {
       return;
     }
 
+    const authorId = user.authorData?.authorId || user.id;
+    
+    if (!authorId) {
+      toast({
+        title: "사용자 정보 오류",
+        description: "사용자 ID를 찾을 수 없습니다. 다시 로그인해주세요.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsSaving(true);
 
     try {
-      const manuscriptData: Omit<Manuscript, 'manuscriptId'> = {
-        authorId: user.authorData?.authorId || user.id,
-        title,
-        content,
-        status: 'DRAFT'
-      };
+      if (editingManuscript?.manuscriptId) {
+        // 편집 모드: 기존 manuscript 업데이트
+        const updatedData = {
+          title,
+          content,
+          coverImageUrl: generatedCover || undefined
+        };
+        
+        await manuscriptAPI.update(editingManuscript.manuscriptId, updatedData);
+        
+        toast({
+          title: "작품이 수정되었습니다!",
+          description: "작가 센터에서 새로고침 버튼을 눌러 확인해보세요.",
+        });
+      } else {
+        // 새 작성 모드
+        const manuscriptData: Omit<Manuscript, 'manuscriptId'> = {
+          authorId: Number(authorId),
+          title,
+          content,
+          status: 'DRAFT',
+          coverImageUrl: generatedCover || undefined
+        };
+        
+        await manuscriptAPI.create(manuscriptData);
+        
+        toast({
+          title: "작품이 저장되었습니다!",
+          description: "작가 센터에서 새로고침 버튼을 눌러 확인해보세요.",
+        });
+      }
 
-      const savedManuscript = await manuscriptAPI.create(manuscriptData);
-
-      toast({
-        title: "작품이 저장되었습니다!",
-        description: "작가 센터에서 확인할 수 있습니다.",
-      });
-
-      // Clear form
-      setTitle('');
-      setContent('');
-      setGeneratedCover('');
+      // Keep form content after saving (don't clear)
       
     } catch (error) {
-      console.error('Save error:', error);
       toast({
         title: "저장 실패",
         description: error instanceof Error ? error.message : "작품 저장 중 오류가 발생했습니다.",
@@ -175,7 +199,9 @@ export const AuthorEditor = ({ user, onBack }: AuthorEditorProps) => {
           <div className="lg:col-span-2 space-y-6">
             <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50">
               <CardHeader>
-                <CardTitle className="text-2xl font-light text-gray-800">새 작품 집필</CardTitle>
+                <CardTitle className="text-2xl font-light text-gray-800">
+                  {editingManuscript ? '작품 편집' : '새 작품 집필'}
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div>

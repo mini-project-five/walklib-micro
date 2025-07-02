@@ -55,48 +55,82 @@ export const AuthorLogin = ({ onLogin, onBack }: AuthorLoginProps) => {
           setFormData({ name: '', email: '', password: '', confirmPassword: '', penName: '' });
         }, 1500);
       } else {
-        // Login - find author by email
+        // Login using proper authentication endpoint
         try {
-          const authors = await authorAPI.getAll();
+          const loginResponse = await authorAPI.login(formData.email, formData.password);
           
-          // Find approved author first, then pending, then rejected
-          const matchingAuthors = authors.filter(a => a.email === formData.email);
-          const author = matchingAuthors.find(a => a.authorRegisterStatus === 'APPROVED') ||
-                         matchingAuthors.find(a => a.authorRegisterStatus === 'PENDING') ||
-                         matchingAuthors[0];
-          
-          if (!author) {
-            setMessage('등록되지 않은 이메일입니다.');
-            setLoading(false);
-            return;
-          }
-          
-          if (author.authorRegisterStatus === 'PENDING') {
-            setMessage('아직 승인 대기 중입니다. 잠시 후 다시 시도해주세요.');
-            setLoading(false);
-            return;
-          }
-          
-          if (author.authorRegisterStatus === 'REJECTED') {
-            setMessage('승인이 거절되었습니다. 관리자에게 문의하세요.');
-            setLoading(false);
-            return;
-          }
+          // Extract author from response
+          const author = loginResponse.author || loginResponse;
+          const authorId = loginResponse.authorId || author.authorId || author.id;
           
           const userData = {
-            id: author.authorId,
+            id: authorId,
             name: author.realName,
             penName: author.authorName,
             email: author.email,
             userType: 'author',
-            authorData: author,
+            authorData: {
+              ...author,
+              authorId: authorId
+            },
             works: [],
             totalViews: 0
           };
           
           onLogin(userData);
         } catch (loginError) {
-          setMessage('로그인 중 오류가 발생했습니다.');
+          // Fallback to old method if new endpoint fails
+          try {
+            const authors = await authorAPI.getAll();
+            
+            const matchingAuthors = authors.filter(a => a.email === formData.email);
+            
+            const author = matchingAuthors.find(a => a.authorRegisterStatus === 'APPROVED') ||
+                           matchingAuthors.find(a => a.authorRegisterStatus === 'PENDING') ||
+                           matchingAuthors[0];
+            
+            if (!author) {
+              setMessage('등록되지 않은 이메일입니다.');
+              return;
+            }
+            
+            if (author.authorRegisterStatus === 'PENDING') {
+              setMessage('아직 승인 대기 중입니다. 잠시 후 다시 시도해주세요.');
+              return;
+            }
+            
+            if (author.authorRegisterStatus === 'REJECTED') {
+              setMessage('승인이 거절되었습니다. 관리자에게 문의하세요.');
+              return;
+            }
+            
+            // Extract authorId from response or _links
+            const authorId = author.authorId || 
+                           (author._links?.self?.href?.match(/\/(\d+)$/)?.[1]);
+            
+            if (!authorId) {
+              setMessage('로그인 중 사용자 ID를 가져올 수 없습니다. 관리자에게 문의하세요.');
+              return;
+            }
+            
+            const userData = {
+              id: Number(authorId),
+              name: author.realName,
+              penName: author.authorName,
+              email: author.email,
+              userType: 'author',
+              authorData: {
+                ...author,
+                authorId: Number(authorId)
+              },
+              works: [],
+              totalViews: 0
+            };
+            
+            onLogin(userData);
+          } catch (fallbackError) {
+            setMessage('로그인 중 오류가 발생했습니다.');
+          }
         }
       }
     } catch (error) {
