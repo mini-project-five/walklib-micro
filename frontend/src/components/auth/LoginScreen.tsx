@@ -35,7 +35,7 @@ export const LoginScreen = ({ onLogin }: LoginScreenProps) => {
         id: Date.now(),
         name: formData.name,
         email: formData.email,
-        coins: 100,
+        points: 100, // coins → points로 변경
         isSubscribed: false
       };
       
@@ -51,7 +51,7 @@ export const LoginScreen = ({ onLogin }: LoginScreenProps) => {
         id: Date.now(),
         name: '독서가',
         email: formData.email,
-        coins: 100,
+        points: 100, // coins → points로 변경
         isSubscribed: false
       };
       onLogin(userData);

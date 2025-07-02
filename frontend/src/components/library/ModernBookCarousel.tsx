@@ -9,7 +9,6 @@ interface Book {
   genre: string;
   price: number;
   views?: number;
-  likes?: number;
   isNew?: boolean;
   isBestseller?: boolean;
 }

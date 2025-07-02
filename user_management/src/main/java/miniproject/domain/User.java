@@ -28,7 +28,7 @@ public class User {
 
     private String userType; // 'reader' 또는 'author'
 
-    private Integer coins; // 독자의 코인 보유량
+    // private Integer coins; // 포인트는 별도 서비스에서 관리
 
     private Boolean isSubscribed; // 구독 여부
 

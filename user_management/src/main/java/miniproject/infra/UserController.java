@@ -23,9 +23,6 @@ public class UserController {
     @PostMapping("")
     public ResponseEntity<User> createUser(@RequestBody User user) {
         // 기본값 설정
-        if (user.getCoins() == null) {
-            user.setCoins(100);
-        }
         if (user.getIsSubscribed() == null) {
             user.setIsSubscribed(false);
         }
@@ -58,9 +55,6 @@ public class UserController {
             user.setEmail(userDetails.getEmail());
             if (userDetails.getUserPassword() != null) {
                 user.setUserPassword(userDetails.getUserPassword());
-            }
-            if (userDetails.getCoins() != null) {
-                user.setCoins(userDetails.getCoins());
             }
             if (userDetails.getIsSubscribed() != null) {
                 user.setIsSubscribed(userDetails.getIsSubscribed());

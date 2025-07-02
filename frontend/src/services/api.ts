@@ -16,7 +16,7 @@ export interface User {
   email: string;
   userPassword: string;
   userType: 'reader' | 'author';
-  coins?: number;
+  // coins?: number; // 포인트는 별도 서비스에서 관리
   isSubscribed?: boolean;
   isKtCustomer?: boolean;
   ktAuthRequested?: boolean;
@@ -197,7 +197,7 @@ export const userAPI = {
         email: userData.email,
         userPassword: userData.password,
         userType: 'reader',
-        coins: 0, // 초기값은 0, 포인트 시스템에서 별도 관리
+        // coins: 0, // 포인트는 별도 서비스에서 관리
         isSubscribed: false,
         ktAuthRequested: userData.ktAuthRequested || false,
         ktAuthApproved: userData.ktAuthApproved || false

@@ -1,6 +1,6 @@
 
 import { Badge } from '@/components/ui/badge';
-import { Star, Eye, Heart } from 'lucide-react';
+import { Eye } from 'lucide-react';
 
 interface Book {
   id: number;
@@ -10,7 +10,6 @@ interface Book {
   genre: string;
   price: number;
   views?: number;
-  likes?: number;
   isNew?: boolean;
   isBestseller?: boolean;
 }
@@ -71,14 +70,10 @@ export const ModernBookCard = ({ book, onBookSelect }: ModernBookCardProps) => {
 
             {/* Hover Stats */}
             <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-              <div className="flex items-center justify-between text-white text-xs">
+              <div className="flex items-center justify-center text-white text-xs">
                 <div className="flex items-center space-x-1">
                   <Eye className="h-3 w-3" />
-                  <span>{book.views?.toLocaleString() || '0'}</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Heart className="h-3 w-3" />
-                  <span>{book.likes?.toLocaleString() || '0'}</span>
+                  <span>{book.views?.toLocaleString() || '0'} 조회</span>
                 </div>
               </div>
             </div>
@@ -99,7 +94,7 @@ export const ModernBookCard = ({ book, onBookSelect }: ModernBookCardProps) => {
                 {book.genre}
               </span>
               <div className="flex items-center space-x-1">
-                <span className="text-xs font-bold text-indigo-600">🪙 {book.price}</span>
+                <span className="text-xs font-bold text-indigo-600">💰 {book.price.toLocaleString()}P</span>
               </div>
             </div>
           </div>

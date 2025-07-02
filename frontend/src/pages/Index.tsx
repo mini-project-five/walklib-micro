@@ -122,23 +122,12 @@ const Index = () => {
   };
 
   const handlePaymentSuccess = async (type: 'point' | 'subscription', amount?: number) => {
-    if (type === 'point' && amount && user?.userId) {
+    if (user?.userId) {
       try {
-        // 포인트 충전 API 호출
-        await pointAPI.chargePoints(user.userId, amount);
-        // 포인트 잔액 새로고침
+        // PaymentCenter에서 이미 API 호출했으므로 상태만 새로고침
         await loadUserPointsAndSubscription(user.userId);
       } catch (error) {
-        console.error('포인트 충전 실패:', error);
-      }
-    } else if (type === 'subscription' && user?.userId) {
-      try {
-        // 구독 신청 API 호출
-        await subscriptionAPI.subscribe(user.userId);
-        // 구독 상태 새로고침
-        await loadUserPointsAndSubscription(user.userId);
-      } catch (error) {
-        console.error('구독 신청 실패:', error);
+        console.error('상태 새로고침 실패:', error);
       }
     }
     setCurrentScreen('library');

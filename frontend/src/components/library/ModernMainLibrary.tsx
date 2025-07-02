@@ -12,7 +12,6 @@ interface Book {
   genre: string;
   price: number;
   views?: number;
-  likes?: number;
   isNew?: boolean;
   isBestseller?: boolean;
   content?: string;
@@ -26,9 +25,8 @@ const mockBooks: Book[] = [
     author: '윤동주',
     cover: '✨',
     genre: '시',
-    price: 10,
+    price: 1000,
     views: 1234,
-    likes: 567,
     isNew: true,
   },
   {
@@ -37,9 +35,8 @@ const mockBooks: Book[] = [
     author: 'Antoine de Saint-Exupéry',
     cover: '👑',
     genre: '소설',
-    price: 10,
+    price: 1000,
     views: 15,
-    likes: 1234,
     isBestseller: true,
   },
   {
@@ -48,9 +45,8 @@ const mockBooks: Book[] = [
     author: 'Jane Austen',
     cover: '📜',
     genre: '소설',
-    price: 10,
+    price: 1000,
     views: 4321,
-    likes: 987,
   },
   {
     id: 4,
@@ -58,9 +54,8 @@ const mockBooks: Book[] = [
     author: 'George Orwell',
     cover: '👁️',
     genre: '소설',
-    price: 10,
+    price: 1000,
     views: 9876,
-    likes: 2345,
     isNew: true,
     isBestseller: true,
   },
@@ -70,9 +65,8 @@ const mockBooks: Book[] = [
     author: 'Harper Lee',
     cover: '🐦',
     genre: '소설',
-    price: 10,
+    price: 1000,
     views: 3456,
-    likes: 678,
   },
   {
     id: 6,
@@ -80,9 +74,8 @@ const mockBooks: Book[] = [
     author: 'F. Scott Fitzgerald',
     cover: '🍸',
     genre: '소설',
-    price: 10,
+    price: 1000,
     views: 6789,
-    likes: 3456,
     isBestseller: true,
   },
   {
@@ -91,9 +84,8 @@ const mockBooks: Book[] = [
     author: 'Gabriel García Márquez',
     cover: '🦋',
     genre: '소설',
-    price: 10,
+    price: 1000,
     views: 10234,
-    likes: 4567,
     isNew: true,
   },
   {
@@ -102,9 +94,8 @@ const mockBooks: Book[] = [
     author: 'Herman Melville',
     cover: '🐳',
     genre: '소설',
-    price: 10,
+    price: 1000,
     views: 2345,
-    likes: 789,
   },
 ];
 
@@ -172,9 +163,8 @@ export const ModernMainLibrary = ({
           author: authorsData[book.authorId]?.authorName || '알 수 없는 작가',
           cover: book.coverImage || '📖',
           genre: '소설', // 기본값
-          price: 10, // 모든 책 가격 10코인으로 통일
+          price: 1000, // 모든 책 가격 1000포인트로 통일
           views: book.viewCount || 0, // 실제 조회수 (기본값 0)
-          likes: Math.floor(Math.random() * 1000),
           isNew: new Date(book.createdAt).getTime() > Date.now() - 7 * 24 * 60 * 60 * 1000, // 7일 이내
           isBestseller: (book.viewCount || 0) >= 10, // 조회수 10 이상이면 베스트셀러
           content: book.content,
