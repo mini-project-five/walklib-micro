@@ -7,15 +7,16 @@ import { BookDetail } from '@/components/books/BookDetail';
 import { PaymentCenter } from '@/components/payment/PaymentCenter';
 import { AuthorCenter } from '@/components/author/AuthorCenter';
 import { AuthorEditor } from '@/components/author/AuthorEditor';
-import { bookAPI, manuscriptAPI } from '@/services/api';
+import { AdminKtAuth } from '@/components/admin/AdminKtAuth';
+import { bookAPI, manuscriptAPI, pointAPI, subscriptionAPI } from '@/services/api';
 
-type Screen = 'type-selector' | 'reader-login' | 'author-login' | 'library' | 'book-detail' | 'payment' | 'author' | 'editor';
+type Screen = 'type-selector' | 'reader-login' | 'author-login' | 'library' | 'book-detail' | 'payment' | 'author' | 'editor' | 'admin-kt';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('type-selector');
   const [user, setUser] = useState<any>(null);
   const [selectedBook, setSelectedBook] = useState<any>(null);
-  const [coins, setCoins] = useState(100);
+  const [points, setPoints] = useState(0); // 코인 → 포인트로 변경
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0); // 작가 센터 갱신용
 
@@ -25,16 +26,38 @@ const Index = () => {
     if (savedUser) {
       const userData = JSON.parse(savedUser);
       setUser(userData);
+      
+      // 독자의 경우 포인트와 구독 상태 로드
+      if (userData.userType === 'reader' && userData.userId) {
+        loadUserPointsAndSubscription(userData.userId);
+      }
+      
       // 작가면 작가 센터로, 독자면 라이브러리로
       if (userData.userType === 'author') {
         setCurrentScreen('author');
       } else {
         setCurrentScreen('library');
       }
-      setCoins(userData.coins || 100);
-      setIsSubscribed(userData.isSubscribed || false);
     }
   }, []);
+
+  // 사용자 포인트와 구독 상태 로드
+  const loadUserPointsAndSubscription = async (userId: number) => {
+    try {
+      // 포인트 잔액 조회
+      const pointBalance = await pointAPI.getBalance(userId);
+      setPoints(pointBalance);
+      
+      // 구독 상태 조회
+      const subscriptionStatus = await subscriptionAPI.getSubscriptionStatus(userId);
+      setIsSubscribed(subscriptionStatus.isSubscriber);
+      
+      console.log('사용자 포인트 및 구독 상태 로드:', { points: pointBalance, isSubscribed: subscriptionStatus.isSubscriber });
+    } catch (error) {
+      console.warn('포인트/구독 정보 로드 실패:', error);
+      // 실패해도 앱은 계속 동작하도록
+    }
+  };
 
   const handleUserTypeSelect = (type: 'reader' | 'author') => {
     if (type === 'reader') {
@@ -46,6 +69,12 @@ const Index = () => {
 
   const handleLogin = (userData: any) => {
     setUser(userData);
+    
+    // 독자의 경우 포인트와 구독 상태 로드
+    if (userData.userType === 'reader' && userData.userId) {
+      loadUserPointsAndSubscription(userData.userId);
+    }
+    
     // 작가면 작가 센터로, 독자면 라이브러리로
     if (userData.userType === 'author') {
       setCurrentScreen('author');
@@ -54,7 +83,7 @@ const Index = () => {
     }
     localStorage.setItem('walkingLibraryUser', JSON.stringify({
       ...userData,
-      coins: userData.userType === 'reader' ? coins : undefined,
+      // localStorage에는 더 이상 coins 저장하지 않음 (API에서 실시간 조회)
       isSubscribed: userData.userType === 'reader' ? isSubscribed : undefined
     }));
   };
@@ -92,18 +121,25 @@ const Index = () => {
     setCurrentScreen('book-detail');
   };
 
-  const handlePaymentSuccess = (type: 'coin' | 'subscription', amount?: number) => {
-    if (type === 'coin' && amount) {
-      const newCoins = coins + amount;
-      setCoins(newCoins);
-      const updatedUser = { ...user, coins: newCoins };
-      setUser(updatedUser);
-      localStorage.setItem('walkingLibraryUser', JSON.stringify(updatedUser));
-    } else if (type === 'subscription') {
-      setIsSubscribed(true);
-      const updatedUser = { ...user, isSubscribed: true };
-      setUser(updatedUser);
-      localStorage.setItem('walkingLibraryUser', JSON.stringify(updatedUser));
+  const handlePaymentSuccess = async (type: 'point' | 'subscription', amount?: number) => {
+    if (type === 'point' && amount && user?.userId) {
+      try {
+        // 포인트 충전 API 호출
+        await pointAPI.chargePoints(user.userId, amount);
+        // 포인트 잔액 새로고침
+        await loadUserPointsAndSubscription(user.userId);
+      } catch (error) {
+        console.error('포인트 충전 실패:', error);
+      }
+    } else if (type === 'subscription' && user?.userId) {
+      try {
+        // 구독 신청 API 호출
+        await subscriptionAPI.subscribe(user.userId);
+        // 구독 상태 새로고침
+        await loadUserPointsAndSubscription(user.userId);
+      } catch (error) {
+        console.error('구독 신청 실패:', error);
+      }
     }
     setCurrentScreen('library');
   };
@@ -122,7 +158,10 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       {currentScreen === 'type-selector' && (
-        <UserTypeSelector onSelectType={handleUserTypeSelect} />
+        <UserTypeSelector 
+          onSelectType={handleUserTypeSelect}
+          onAdminClick={() => setCurrentScreen('admin-kt')}
+        />
       )}
       
       {currentScreen === 'reader-login' && (
@@ -142,7 +181,7 @@ const Index = () => {
       {currentScreen === 'library' && (
         <ModernMainLibrary
           user={user}
-          coins={coins}
+          points={points} // coins → points 변경
           isSubscribed={isSubscribed}
           onBookSelect={handleBookSelect}
           onPaymentClick={() => setCurrentScreen('payment')}
@@ -154,13 +193,21 @@ const Index = () => {
         <BookDetail
           book={selectedBook}
           user={user}
-          coins={coins}
+          points={points} // coins → points 변경
           isSubscribed={isSubscribed}
           onBack={() => setCurrentScreen('library')}
           onPaymentNeeded={() => setCurrentScreen('payment')}
-          onCoinsUpdate={(newCoins) => {
-            setCoins(newCoins);
-            updateUserData({ coins: newCoins });
+          onPointsUpdate={async (usedPoints) => {
+            // 포인트 사용 API 호출
+            if (user?.userId) {
+              try {
+                await pointAPI.usePoints(user.userId, usedPoints, `도서 "${selectedBook.title}" 구매`);
+                // 포인트 잔액 새로고침
+                await loadUserPointsAndSubscription(user.userId);
+              } catch (error) {
+                console.error('포인트 사용 실패:', error);
+              }
+            }
           }}
         />
       )}
@@ -168,7 +215,7 @@ const Index = () => {
       {currentScreen === 'payment' && (
         <PaymentCenter
           user={user}
-          coins={coins}
+          points={points} // coins → points 변경
           isSubscribed={isSubscribed}
           onBack={() => setCurrentScreen('library')}
           onPaymentSuccess={handlePaymentSuccess}
@@ -189,6 +236,12 @@ const Index = () => {
           user={user}
           onBack={() => setCurrentScreen('author')}
           onManuscriptSaved={handleManuscriptSaved}
+        />
+      )}
+      
+      {currentScreen === 'admin-kt' && (
+        <AdminKtAuth
+          onBack={() => setCurrentScreen('type-selector')}
         />
       )}
     </div>

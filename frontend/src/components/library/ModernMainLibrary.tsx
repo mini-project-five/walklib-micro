@@ -110,7 +110,7 @@ const mockBooks: Book[] = [
 
 interface ModernMainLibraryProps {
   user: any;
-  coins: number;
+  points: number; // coins → points 변경
   isSubscribed: boolean;
   onBookSelect: (book: any) => void;
   onPaymentClick: () => void;
@@ -119,7 +119,7 @@ interface ModernMainLibraryProps {
 
 export const ModernMainLibrary = ({ 
   user, 
-  coins, 
+  points, // coins → points 변경
   isSubscribed, 
   onBookSelect, 
   onPaymentClick, 
@@ -233,7 +233,7 @@ export const ModernMainLibrary = ({
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-amber-50/30">
       <ModernHeader
         user={user}
-        coins={coins}
+        points={points} // coins → points 변경
         isSubscribed={isSubscribed}
         onPaymentClick={onPaymentClick}
         onLogout={onLogout}

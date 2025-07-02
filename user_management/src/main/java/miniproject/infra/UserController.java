@@ -83,5 +83,59 @@ public class UserController {
         }
         return ResponseEntity.notFound().build();
     }
+    
+    // KT 인증 요청
+    @PostMapping("/{id}/kt-auth-request")
+    public ResponseEntity<User> requestKtAuth(@PathVariable Long id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setKtAuthRequested(true);
+            user.setKtAuthApproved(false); // 승인 대기 상태
+            User updatedUser = userRepository.save(user);
+            return ResponseEntity.ok(updatedUser);
+        }
+        return ResponseEntity.notFound().build();
+    }
+    
+    // KT 인증 승인 (admin만 가능)
+    @PostMapping("/{id}/kt-auth-approve")
+    public ResponseEntity<User> approveKtAuth(@PathVariable Long id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if (Boolean.TRUE.equals(user.getKtAuthRequested())) {
+                user.setKtAuthApproved(true);
+                user.setIsKtCustomer(true); // KT 고객으로 승인
+                User updatedUser = userRepository.save(user);
+                return ResponseEntity.ok(updatedUser);
+            } else {
+                return ResponseEntity.badRequest().build(); // 요청하지 않은 경우
+            }
+        }
+        return ResponseEntity.notFound().build();
+    }
+    
+    // KT 인증 거절 (admin만 가능)
+    @PostMapping("/{id}/kt-auth-reject")
+    public ResponseEntity<User> rejectKtAuth(@PathVariable Long id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setKtAuthRequested(false);
+            user.setKtAuthApproved(false);
+            user.setIsKtCustomer(false);
+            User updatedUser = userRepository.save(user);
+            return ResponseEntity.ok(updatedUser);
+        }
+        return ResponseEntity.notFound().build();
+    }
+    
+    // KT 인증 대기 목록 조회 (admin용)
+    @GetMapping("/kt-auth-pending")
+    public ResponseEntity<Iterable<User>> getKtAuthPendingUsers() {
+        Iterable<User> pendingUsers = userRepository.findByKtAuthRequestedTrueAndKtAuthApprovedFalse();
+        return ResponseEntity.ok(pendingUsers);
+    }
 }
 //>>> Clean Arch / Inbound Adaptor

@@ -33,6 +33,10 @@ public class User {
     private Boolean isSubscribed; // 구독 여부
 
     private Boolean isKtCustomer;
+    
+    private Boolean ktAuthRequested; // KT 인증 요청 여부
+    
+    private Boolean ktAuthApproved; // KT 인증 승인 여부 (admin이 승인)
 
     private String role;
 

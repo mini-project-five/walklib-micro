@@ -28,9 +28,22 @@ public class Point {
     private Long userId;
 
     private Integer pointBalance;
+    
+    private String pointType; // "SIGNUP", "KT_BONUS", "PURCHASE", "USAGE"
+    
+    private Integer amount; // 증감 포인트
+    
+    private String description; // 포인트 변경 사유
+    
+    private Date createdAt;
 
     @PostPersist
     public void onPostPersist() {
+        // 생성 시간 설정
+        if (this.createdAt == null) {
+            this.createdAt = new Date();
+        }
+        
         PointsAdded pointsAdded = new PointsAdded(this);
         pointsAdded.publishAfterCommit();
 
@@ -45,6 +58,13 @@ public class Point {
 
         KtPointsAdded ktPointsAdded = new KtPointsAdded(this);
         ktPointsAdded.publishAfterCommit();
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (this.createdAt == null) {
+            this.createdAt = new Date();
+        }
     }
 
     public static PointRepository repository() {

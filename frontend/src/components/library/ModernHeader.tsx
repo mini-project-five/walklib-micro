@@ -12,7 +12,7 @@ import {
 
 interface ModernHeaderProps {
   user: any;
-  coins: number;
+  points: number; // coins → points 변경
   isSubscribed: boolean;
   onPaymentClick: () => void;
   onLogout: () => void;
@@ -20,7 +20,7 @@ interface ModernHeaderProps {
 
 export const ModernHeader = ({ 
   user, 
-  coins, 
+  points, // coins → points 변경
   isSubscribed, 
   onPaymentClick, 
   onLogout 
@@ -65,7 +65,7 @@ export const ModernHeader = ({
               className="flex items-center space-x-2 bg-white/50 backdrop-blur-sm border-amber-200 hover:bg-amber-50 hover:border-amber-300 transition-all duration-200"
             >
               <Coins className="h-4 w-4 text-amber-600" />
-              <span className="font-medium text-amber-700">🪙 {coins}</span>
+              <span className="font-medium text-blue-700">🎯 {points}P</span> {/* 코인 → 포인트로 변경 */}
             </Button>
 
             {/* User Menu */}

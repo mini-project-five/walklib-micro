@@ -18,7 +18,9 @@ export const ReaderLogin = ({ onLogin, onBack }: ReaderLoginProps) => {
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    isKtCustomer: false, // KT 고객 여부 (승인된 상태)
+    ktAuthRequest: false // KT 인증 요청 여부
   });
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -35,14 +37,25 @@ export const ReaderLogin = ({ onLogin, onBack }: ReaderLoginProps) => {
           return;
         }
         
-        // 회원가입
+        // 회원가입 (기본 1,000포인트만 지급)
         const userData = await userAPI.register({
           name: formData.name,
           email: formData.email,
-          password: formData.password
+          password: formData.password,
+          isKtCustomer: false, // 처음에는 false로 설정
+          ktAuthRequested: formData.ktAuthRequest, // KT 인증 요청 여부
+          ktAuthApproved: false // 아직 승인되지 않음
         });
         
         console.log('독자 회원가입 성공:', userData);
+        
+        // KT 인증을 요청했다면 추가 메시지 표시
+        if (formData.ktAuthRequest) {
+          setMessage('회원가입이 완료되었습니다! KT 인증 요청이 접수되었으며, 관리자 승인 후 추가 포인트가 지급됩니다.');
+        } else {
+          setMessage('회원가입이 완료되었습니다! 기본 1,000포인트가 지급되었습니다.');
+        }
+        
         // 회원가입 후 자동 로그인
         const loginData = await userAPI.login(formData.email, formData.password);
         localStorage.setItem('walkingLibraryUser', JSON.stringify(loginData));
@@ -156,17 +169,38 @@ export const ReaderLogin = ({ onLogin, onBack }: ReaderLoginProps) => {
             </div>
             
             {isSignup && (
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">비밀번호 확인</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                  className="border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl h-12"
-                  required
-                />
-              </div>
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">비밀번호 확인</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    value={formData.confirmPassword}
+                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                    className="border-gray-200 focus:border-indigo-500 focus:ring-indigo-500 rounded-xl h-12"
+                    required
+                  />
+                </div>
+                
+                {/* KT 인증 요청 체크박스 */}
+                <div className="flex items-center space-x-3 p-4 bg-gradient-to-r from-orange-50 to-red-50 rounded-xl border border-orange-200">
+                  <input
+                    id="ktAuthRequest"
+                    type="checkbox"
+                    checked={formData.ktAuthRequest}
+                    onChange={(e) => setFormData({ ...formData, ktAuthRequest: e.target.checked })}
+                    className="w-5 h-5 text-orange-600 bg-gray-100 border-gray-300 rounded focus:ring-orange-500 focus:ring-2"
+                  />
+                  <div className="flex-1">
+                    <Label htmlFor="ktAuthRequest" className="text-sm font-medium text-gray-700 cursor-pointer">
+                      KT 고객 인증을 요청합니다
+                    </Label>
+                    <p className="text-xs text-gray-500 mt-1">
+                      KT 고객 인증이 승인되면 추가로 5,000포인트를 받을 수 있습니다! (관리자 승인 후 지급)
+                    </p>
+                  </div>
+                </div>
+              </>
             )}
             
             <Button 
@@ -183,7 +217,7 @@ export const ReaderLogin = ({ onLogin, onBack }: ReaderLoginProps) => {
               onClick={() => {
                 setIsSignup(!isSignup);
                 setMessage('');
-                setFormData({ name: '', email: '', password: '', confirmPassword: '' });
+                setFormData({ name: '', email: '', password: '', confirmPassword: '', isKtCustomer: false, ktAuthRequest: false });
               }}
               className="text-sm text-gray-600 hover:text-indigo-600 transition-colors font-medium"
             >

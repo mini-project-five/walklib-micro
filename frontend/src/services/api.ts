@@ -18,6 +18,9 @@ export interface User {
   userType: 'reader' | 'author';
   coins?: number;
   isSubscribed?: boolean;
+  isKtCustomer?: boolean;
+  ktAuthRequested?: boolean;
+  ktAuthApproved?: boolean;
 }
 
 export interface Author {
@@ -57,18 +60,23 @@ export interface Manuscript {
 export interface Point {
   pointId?: number;
   userId: number;
+  pointBalance: number;
   amount: number;
-  pointType: 'PURCHASE' | 'USAGE';
+  pointType: 'SIGNUP' | 'KT_SIGNUP' | 'CHARGE' | 'USAGE';
   description?: string;
+  createdAt?: string;
 }
 
 export interface Subscription {
   subscriptionId?: number;
   userId: number;
+  status: 'ACTIVE' | 'INACTIVE' | 'EXPIRED';
   planType: string;
+  monthlyFee?: number;
   startDate: string;
   endDate: string;
-  isActive: boolean;
+  isActive?: boolean;
+  createdAt?: string;
 }
 
 // Generic API functions
@@ -174,7 +182,14 @@ export const userAPI = {
   },
 
   // 독자 회원가입 API
-  register: async (userData: {name: string, email: string, password: string}) => {
+  register: async (userData: {
+    name: string, 
+    email: string, 
+    password: string, 
+    isKtCustomer?: boolean,
+    ktAuthRequested?: boolean,
+    ktAuthApproved?: boolean
+  }) => {
     console.log('📝 User Register API 호출:', userData);
     try {
       const newUser: User = {
@@ -182,21 +197,73 @@ export const userAPI = {
         email: userData.email,
         userPassword: userData.password,
         userType: 'reader',
-        coins: 100,
-        isSubscribed: false
+        coins: 0, // 초기값은 0, 포인트 시스템에서 별도 관리
+        isSubscribed: false,
+        ktAuthRequested: userData.ktAuthRequested || false,
+        ktAuthApproved: userData.ktAuthApproved || false
       };
       
-      const result = await apiRequest<User>(API_BASE_URLS.user, 'users', {
+      // 1. 사용자 생성
+      const createdUser = await apiRequest<User>(API_BASE_URLS.user, 'users', {
         method: 'POST',
         body: JSON.stringify(newUser),
       });
       
-      console.log('✅ 독자 회원가입 성공:', result);
-      return result;
+      console.log('✅ 독자 회원가입 성공:', createdUser);
+      
+      // 2. 기본 신규 가입 포인트 지급 (1,000P)
+      if (createdUser.userId) {
+        try {
+          const pointResult = await pointAPI.giveSignupPoints(createdUser.userId, false); // 기본 포인트만
+          console.log('✅ 기본 신규 가입 포인트 지급 성공:', pointResult);
+        } catch (pointError) {
+          console.warn('⚠️ 포인트 지급 실패:', pointError);
+          // 포인트 지급 실패해도 회원가입은 성공으로 처리
+        }
+        
+        // 3. KT 인증 요청이 있다면 처리
+        if (userData.ktAuthRequested) {
+          try {
+            await apiRequest(API_BASE_URLS.user, `users/${createdUser.userId}/kt-auth-request`, {
+              method: 'POST'
+            });
+            console.log('✅ KT 인증 요청 처리 완료');
+          } catch (ktError) {
+            console.warn('⚠️ KT 인증 요청 처리 실패:', ktError);
+          }
+        }
+      }
+      
+      return createdUser;
     } catch (error) {
       console.error('❌ 독자 회원가입 오류:', error);
       throw error;
     }
+  },
+
+  // KT 인증 관련 API들
+  requestKtAuth: async (userId: number) => {
+    return await apiRequest(API_BASE_URLS.user, `users/${userId}/kt-auth-request`, {
+      method: 'POST'
+    });
+  },
+  
+  approveKtAuth: async (userId: number) => {
+    return await apiRequest(API_BASE_URLS.user, `users/${userId}/kt-auth-approve`, {
+      method: 'POST'
+    });
+  },
+  
+  rejectKtAuth: async (userId: number) => {
+    return await apiRequest(API_BASE_URLS.user, `users/${userId}/kt-auth-reject`, {
+      method: 'POST'
+    });
+  },
+  
+  getKtAuthPendingUsers: async () => {
+    return await apiRequest<User[]>(API_BASE_URLS.user, 'users/kt-auth-pending', {
+      method: 'GET'
+    });
   },
 };
 
@@ -415,26 +482,63 @@ export const manuscriptAPI = {
 
 // Point API
 export const pointAPI = {
-  create: (point: Point) => apiRequest<Point>(API_BASE_URLS.point, 'points', {
+  // 사용자 포인트 잔액 조회
+  getBalance: (userId: number) => apiRequest<number>(API_BASE_URLS.point, `points/user/${userId}/balance`),
+  
+  // 사용자 포인트 내역 조회
+  getByUser: (userId: number) => apiRequest<Point[]>(API_BASE_URLS.point, `points/user/${userId}`),
+  
+  // 신규 가입 포인트 지급
+  giveSignupPoints: (userId: number, isKtCustomer: boolean = false) => apiRequest<Point>(API_BASE_URLS.point, 'points/signup', {
     method: 'POST',
-    body: JSON.stringify(point),
+    body: JSON.stringify({ userId, ktCustomer: isKtCustomer }),
   }),
   
-  getByUser: (userId: number) => apiRequest<{_embedded: {points: Point[]}}>(API_BASE_URLS.point, `points?userId=${userId}`),
+  // 포인트 사용 (도서 구매)
+  usePoints: (userId: number, amount: number, description?: string) => apiRequest<Point>(API_BASE_URLS.point, 'points/use', {
+    method: 'POST',
+    body: JSON.stringify({ userId, amount, description }),
+  }),
   
-  getTotalByUser: (userId: number) => apiRequest<number>(API_BASE_URLS.point, `points/user/${userId}/total`),
+  // 포인트 충전
+  chargePoints: (userId: number, amount: number) => apiRequest<Point>(API_BASE_URLS.point, 'points/charge', {
+    method: 'POST',
+    body: JSON.stringify({ userId, amount }),
+  }),
+  
+  // KT 인증 승인 후 보너스 포인트 지급
+  giveKtBonus: (userId: number, amount: number = 5000) => apiRequest<Point>(API_BASE_URLS.point, 'points/kt-bonus', {
+    method: 'POST',
+    body: JSON.stringify({ userId, amount }),
+  }),
 };
 
 // Subscription API
 export const subscriptionAPI = {
-  create: (subscription: Subscription) => apiRequest<Subscription>(API_BASE_URLS.subscription, 'subscriptions', {
+  // 활성 구독 조회
+  getActiveSubscription: (userId: number) => apiRequest<Subscription>(API_BASE_URLS.subscription, `subscriptions/user/${userId}/active`),
+  
+  // 프리미엄 구독 신청
+  subscribe: (userId: number) => apiRequest<Subscription>(API_BASE_URLS.subscription, 'subscriptions/subscribe', {
     method: 'POST',
-    body: JSON.stringify(subscription),
+    body: JSON.stringify({ userId }),
   }),
   
-  getByUser: (userId: number) => apiRequest<{_embedded: {subscriptions: Subscription[]}}>(API_BASE_URLS.subscription, `subscriptions?userId=${userId}`),
+  // 구독 취소
+  cancelSubscription: (subscriptionId: number) => apiRequest<Subscription>(API_BASE_URLS.subscription, `subscriptions/${subscriptionId}/cancel`, {
+    method: 'PATCH',
+  }),
   
-  getActiveByUser: (userId: number) => apiRequest<Subscription>(API_BASE_URLS.subscription, `subscriptions/user/${userId}/active`),
+  // 사용자 구독 내역 조회
+  getByUser: (userId: number) => apiRequest<Subscription[]>(API_BASE_URLS.subscription, `subscriptions/user/${userId}`),
+  
+  // 구독 상태 확인
+  getSubscriptionStatus: (userId: number) => apiRequest<{
+    userId: number;
+    isSubscriber: boolean;
+    planType?: string;
+    endDate?: string;
+  }>(API_BASE_URLS.subscription, `subscriptions/user/${userId}/status`),
 };
 
 // AI API

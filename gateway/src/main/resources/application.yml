@@ -14,11 +14,11 @@ spring:
           predicates:
             - Path=/users/**, 
         - id: point management
-          uri: http://localhost:8083
+          uri: http://localhost:8090
           predicates:
             - Path=/points/**, /pointLists/**
         - id: subscription management
-          uri: http://localhost:8084
+          uri: http://localhost:8091
           predicates:
             - Path=/subscriptions/**, 
         - id: book management
