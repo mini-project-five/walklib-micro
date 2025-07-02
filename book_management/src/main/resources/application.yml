@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8082
 
 spring:
   application:
@@ -8,6 +8,9 @@ spring:
 
 spring:
   profiles: default
+  data:
+    rest:
+      enabled: false
   jpa:
     properties:
       hibernate:

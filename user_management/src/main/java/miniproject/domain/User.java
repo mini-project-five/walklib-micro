@@ -26,6 +26,12 @@ public class User {
 
     private String userName;
 
+    private String userType; // 'reader' 또는 'author'
+
+    private Integer coins; // 독자의 코인 보유량
+
+    private Boolean isSubscribed; // 구독 여부
+
     private Boolean isKtCustomer;
 
     private String role;

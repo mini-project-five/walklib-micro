@@ -27,12 +27,26 @@ public class Manuscript {
 
     private String title;
 
+    @Lob
     private String content;
 
     private String status;
+    
+    @Lob
+    private String coverImage; // 표지 이미지 URL (긴 URL 지원)
+    
+    private Date createdAt;
+    
+    private Date updatedAt;
 
     @PostPersist
     public void onPostPersist() {
+        // 생성 시간 설정
+        if (this.createdAt == null) {
+            this.createdAt = new Date();
+        }
+        this.updatedAt = new Date();
+        
         ManuscriptCreated manuscriptCreated = new ManuscriptCreated(this);
         manuscriptCreated.publishAfterCommit();
 
@@ -43,6 +57,19 @@ public class Manuscript {
             this
         );
         publicationRequested.publishAfterCommit();
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (this.createdAt == null) {
+            this.createdAt = new Date();
+        }
+        this.updatedAt = new Date();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = new Date();
     }
 
     public static ManuscriptRepository repository() {

@@ -1,10 +1,10 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { BookOpen, Eye, EyeOff, ArrowLeft, Sparkles } from 'lucide-react';
+import { userAPI } from '@/services/api';
 
 interface ReaderLoginProps {
   onLogin: (userData: any) => void;
@@ -21,41 +21,47 @@ export const ReaderLogin = ({ onLogin, onBack }: ReaderLoginProps) => {
     confirmPassword: ''
   });
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (isSignup) {
-      if (formData.password !== formData.confirmPassword) {
-        setMessage('비밀번호가 일치하지 않습니다.');
-        return;
+    setLoading(true);
+
+    try {
+      if (isSignup) {
+        if (formData.password !== formData.confirmPassword) {
+          setMessage('비밀번호가 일치하지 않습니다.');
+          setLoading(false);
+          return;
+        }
+        
+        // 회원가입
+        const userData = await userAPI.register({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password
+        });
+        
+        console.log('독자 회원가입 성공:', userData);
+        // 회원가입 후 자동 로그인
+        const loginData = await userAPI.login(formData.email, formData.password);
+        localStorage.setItem('walkingLibraryUser', JSON.stringify(loginData));
+        onLogin(loginData);
+      } else {
+        // 로그인
+        const userData = await userAPI.login(formData.email, formData.password);
+        
+        // 로컬 스토리지에 사용자 정보 저장
+        localStorage.setItem('walkingLibraryUser', JSON.stringify(userData));
+        
+        console.log('독자 로그인 성공:', userData);
+        onLogin(userData);
       }
-      
-      const userData = {
-        id: Date.now(),
-        name: formData.name,
-        email: formData.email,
-        coins: 100,
-        isSubscribed: false,
-        userType: 'reader'
-      };
-      
-      setMessage('가입이 완료되었습니다. 로그인해주세요.');
-      setTimeout(() => {
-        setIsSignup(false);
-        setMessage('');
-        setFormData({ ...formData, name: '', confirmPassword: '' });
-      }, 1500);
-    } else {
-      const userData = {
-        id: Date.now(),
-        name: '독서가',
-        email: formData.email,
-        coins: 100,
-        isSubscribed: false,
-        userType: 'reader'
-      };
-      onLogin(userData);
+    } catch (error) {
+      console.error('독자 인증 오류:', error);
+      setMessage(isSignup ? '회원가입에 실패했습니다.' : '로그인에 실패했습니다.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -165,9 +171,10 @@ export const ReaderLogin = ({ onLogin, onBack }: ReaderLoginProps) => {
             
             <Button 
               type="submit" 
+              disabled={loading}
               className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white py-3 rounded-xl transition-all duration-300 font-medium h-12"
             >
-              {isSignup ? '가입하기' : '로그인'}
+              {loading ? '처리 중...' : (isSignup ? '가입하기' : '로그인')}
             </Button>
           </form>
           

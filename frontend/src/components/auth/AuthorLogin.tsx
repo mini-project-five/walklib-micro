@@ -38,15 +38,14 @@ export const AuthorLogin = ({ onLogin, onBack }: AuthorLoginProps) => {
         }
         
         // Create new author
-        const newAuthor: Author = {
+        await authorAPI.register({
           authorName: formData.penName,
           email: formData.email,
-          introduction: `안녕하세요, ${formData.penName}입니다.`,
           authorPassword: formData.password,
-          realName: formData.name,
-        };
+          introduction: `안녕하세요, ${formData.penName}입니다.`,
+          realName: formData.name
+        });
         
-        const createdAuthor = await authorAPI.create(newAuthor);
         setMessage('작가 가입이 완료되었습니다. 로그인해주세요.');
         
         setTimeout(() => {
@@ -55,25 +54,9 @@ export const AuthorLogin = ({ onLogin, onBack }: AuthorLoginProps) => {
           setFormData({ name: '', email: '', password: '', confirmPassword: '', penName: '' });
         }, 1500);
       } else {
-        // Login - find author by email
+        // Login - use dedicated login API
         try {
-          const authorsResponse = await authorAPI.getAll();
-          
-          // Handle both Spring Data REST format and simple array format
-          let authors: Author[] = [];
-          if (Array.isArray(authorsResponse)) {
-            authors = authorsResponse;
-          } else if (authorsResponse._embedded?.authors) {
-            authors = authorsResponse._embedded.authors;
-          }
-          
-          const author = authors.find(a => a.email === formData.email);
-          
-          if (!author) {
-            setMessage('등록되지 않은 이메일입니다.');
-            setLoading(false);
-            return;
-          }
+          const author = await authorAPI.login(formData.email, formData.password);
           
           if (author.authorRegisterStatus === 'PENDING') {
             setMessage('아직 승인 대기 중입니다. 잠시 후 다시 시도해주세요.');
@@ -89,6 +72,7 @@ export const AuthorLogin = ({ onLogin, onBack }: AuthorLoginProps) => {
           
           const userData = {
             id: author.authorId,
+            authorId: author.authorId, // 명시적으로 authorId 추가
             name: author.realName,
             penName: author.authorName,
             email: author.email,
@@ -100,7 +84,8 @@ export const AuthorLogin = ({ onLogin, onBack }: AuthorLoginProps) => {
           
           onLogin(userData);
         } catch (loginError) {
-          setMessage('로그인 중 오류가 발생했습니다.');
+          console.error('로그인 API 오류:', loginError);
+          setMessage(loginError instanceof Error ? loginError.message : '로그인 중 오류가 발생했습니다.');
         }
       }
     } catch (error) {

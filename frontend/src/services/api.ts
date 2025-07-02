@@ -1,5 +1,14 @@
 // API client for microservices
-const API_BASE_URL = '/'; // Gateway URL
+const API_BASE_URLS = {
+  user: '',  // 프록시를 통해 /users로 요청
+  author: '', // 프록시를 통해 /authors로 요청 
+  book: '',  // 프록시를 통해 /books로 요청
+  manuscript: '', // 프록시를 통해 /manuscripts로 요청
+  point: '', // 프록시를 통해 /points로 요청
+  subscription: '', // 프록시를 통해 /subscriptions로 요청
+  ai: '', // 프록시를 통해 /ai로 요청
+  gateway: 'http://localhost:8080'
+};
 
 export interface User {
   userId?: number;
@@ -25,10 +34,13 @@ export interface Book {
   bookId?: number;
   title: string;
   content: string;
-  price: number;
   authorId: number;
-  publishedDate?: string;
-  category?: string;
+  status?: string;
+  coverImage?: string;
+  viewCount?: number;
+  isBestseller?: boolean;
+  createdAt?: string;
+  publishedAt?: string;
 }
 
 export interface Manuscript {
@@ -36,7 +48,8 @@ export interface Manuscript {
   authorId: number;
   title: string;
   content: string;
-  status?: string;
+  status?: 'DRAFT' | 'PUBLISHED';
+  coverImage?: string;
   updatedAt?: string;
 }
 
@@ -58,8 +71,22 @@ export interface Subscription {
 }
 
 // Generic API functions
-async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint}`;
+async function apiRequest<T>(baseUrl: string, endpoint: string, options: RequestInit = {}): Promise<T> {
+  const url = `${baseUrl}/${endpoint}`;
+  
+  // 요청 로그 출력
+  console.log('=== API REQUEST ===');
+  console.log('URL:', url);
+  console.log('Method:', options.method || 'GET');
+  console.log('Headers:', {
+    'Content-Type': 'application/json',
+    ...options.headers,
+  });
+  if (options.body) {
+    console.log('Body:', options.body);
+    console.log('Parsed Body:', JSON.parse(options.body as string));
+  }
+  console.log('==================');
   
   const response = await fetch(url, {
     headers: {
@@ -69,132 +96,344 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promi
     ...options,
   });
 
+  // 응답 로그 출력
+  console.log('=== API RESPONSE ===');
+  console.log('Status:', response.status, response.statusText);
+  console.log('URL:', url);
+  
   if (!response.ok) {
+    console.log('Error Response:', response);
+    console.log('===================');
     throw new Error(`API Error: ${response.status} ${response.statusText}`);
   }
 
-  return response.json();
+  const result = await response.json();
+  console.log('Response Data:', result);
+  console.log('===================');
+  
+  return result;
 }
 
 // User API
 export const userAPI = {
-  create: (user: User) => apiRequest<User>('users', {
+  create: (user: User) => apiRequest<User>(API_BASE_URLS.user, 'users', {
     method: 'POST',
     body: JSON.stringify(user),
   }),
   
-  getAll: () => apiRequest<{_embedded: {users: User[]}}>('users'),
+  getAll: () => apiRequest<{_embedded: {users: User[]}}>(API_BASE_URLS.user, 'users'),
   
-  getById: (id: number) => apiRequest<User>(`users/${id}`),
+  getById: (id: number) => apiRequest<User>(API_BASE_URLS.user, `users/${id}`),
   
-  update: (id: number, user: Partial<User>) => apiRequest<User>(`users/${id}`, {
+  update: (id: number, user: Partial<User>) => apiRequest<User>(API_BASE_URLS.user, `users/${id}`, {
     method: 'PATCH',
     body: JSON.stringify(user),
   }),
+
+  // 독자 로그인 API
+  login: async (email: string, password: string) => {
+    console.log('💻 User Login API 호출:', { email });
+    try {
+      const response = await apiRequest<User[] | {_embedded?: {users: User[]}, users?: User[]}>(API_BASE_URLS.user, 'users');
+      console.log('📋 모든 사용자 조회 결과:', response);
+      
+      // 응답이 배열인지 객체인지 확인
+      let userList: User[] = [];
+      if (Array.isArray(response)) {
+        userList = response;
+      } else if (response._embedded?.users) {
+        userList = response._embedded.users;
+      } else if (response.users) {
+        userList = response.users;
+      }
+      
+      console.log('📝 파싱된 사용자 목록:', userList);
+      console.log('🔍 찾는 조건:', { email, password, userType: 'reader' });
+      
+      const user = userList.find(u => {
+        console.log('👤 비교 중인 사용자:', {
+          storedEmail: u.email,
+          storedPassword: u.userPassword,
+          storedType: u.userType
+        });
+        return u.email === email && u.userPassword === password && u.userType === 'reader';
+      });
+      
+      if (user) {
+        console.log('✅ 독자 로그인 성공:', user);
+        return user;
+      } else {
+        console.log('❌ 독자 로그인 실패: 사용자를 찾을 수 없음');
+        throw new Error('이메일 또는 비밀번호가 올바르지 않습니다.');
+      }
+    } catch (error) {
+      console.error('❌ 독자 로그인 오류:', error);
+      throw error;
+    }
+  },
+
+  // 독자 회원가입 API
+  register: async (userData: {name: string, email: string, password: string}) => {
+    console.log('📝 User Register API 호출:', userData);
+    try {
+      const newUser: User = {
+        userName: userData.name,
+        email: userData.email,
+        userPassword: userData.password,
+        userType: 'reader',
+        coins: 100,
+        isSubscribed: false
+      };
+      
+      const result = await apiRequest<User>(API_BASE_URLS.user, 'users', {
+        method: 'POST',
+        body: JSON.stringify(newUser),
+      });
+      
+      console.log('✅ 독자 회원가입 성공:', result);
+      return result;
+    } catch (error) {
+      console.error('❌ 독자 회원가입 오류:', error);
+      throw error;
+    }
+  },
 };
 
 // Author API
 export const authorAPI = {
-  create: (author: Author) => apiRequest<Author>('authors', {
+  create: (author: Author) => apiRequest<Author>(API_BASE_URLS.author, 'authors', {
     method: 'POST',
     body: JSON.stringify(author),
   }),
   
-  getAll: () => apiRequest<Author[] | {_embedded: {authors: Author[]}}>('authors'),
+  getAll: () => apiRequest<Author[] | {_embedded: {authors: Author[]}}>(API_BASE_URLS.author, 'authors'),
   
-  getById: (id: number) => apiRequest<Author>(`authors/${id}`),
+  getById: (id: number) => apiRequest<Author>(API_BASE_URLS.author, `authors/${id}`),
   
-  update: (id: number, author: Partial<Author>) => apiRequest<Author>(`authors/${id}`, {
+  update: (id: number, author: Partial<Author>) => apiRequest<Author>(API_BASE_URLS.author, `authors/${id}`, {
     method: 'PATCH',
     body: JSON.stringify(author),
   }),
+
+  // 작가 로그인 API
+  login: async (email: string, password: string) => {
+    console.log('💻 Author Login API 호출:', { email });
+    try {
+      const response = await apiRequest<Author[] | {_embedded?: {authors: Author[]}, authors?: Author[]}>(API_BASE_URLS.author, 'authors');
+      console.log('📋 모든 작가 조회 결과:', response);
+      
+      // 응답이 배열인지 객체인지 확인
+      let authorList: Author[] = [];
+      if (Array.isArray(response)) {
+        authorList = response;
+      } else if (response._embedded?.authors) {
+        authorList = response._embedded.authors;
+      } else if (response.authors) {
+        authorList = response.authors;
+      }
+      
+      console.log('📝 파싱된 작가 목록:', authorList);
+      console.log('🔍 찾는 조건:', { email, password });
+      
+      const author = authorList.find(a => {
+        console.log('👤 비교 중인 작가:', {
+          storedEmail: a.email,
+          storedPassword: a.authorPassword
+        });
+        return a.email === email && a.authorPassword === password;
+      });
+      
+      if (author) {
+        console.log('✅ 작가 로그인 성공:', author);
+        return author;
+      } else {
+        console.log('❌ 작가 로그인 실패: 작가를 찾을 수 없음');
+        throw new Error('이메일 또는 비밀번호가 올바르지 않습니다.');
+      }
+    } catch (error) {
+      console.error('❌ 작가 로그인 오류:', error);
+      throw error;
+    }
+  },
+
+  // 작가 회원가입 API
+  register: async (authorData: {authorName: string, email: string, authorPassword: string, introduction: string, realName: string}) => {
+    console.log('📝 Author Register API 호출:', authorData);
+    try {
+      const newAuthor: Author = {
+        authorName: authorData.authorName,
+        email: authorData.email,
+        authorPassword: authorData.authorPassword,
+        introduction: authorData.introduction,
+        realName: authorData.realName,
+        authorRegisterStatus: 'PENDING'
+      };
+      
+      const result = await apiRequest<Author>(API_BASE_URLS.author, 'authors', {
+        method: 'POST',
+        body: JSON.stringify(newAuthor),
+      });
+      
+      console.log('✅ 작가 회원가입 성공:', result);
+      return result;
+    } catch (error) {
+      console.error('❌ 작가 회원가입 오류:', error);
+      throw error;
+    }
+  },
 };
 
 // Book API
 export const bookAPI = {
-  create: (book: Book) => apiRequest<Book>('books', {
+  create: (book: Book) => apiRequest<Book>(API_BASE_URLS.book, 'books', {
     method: 'POST',
     body: JSON.stringify(book),
   }),
   
-  getAll: () => apiRequest<{_embedded: {books: Book[]}}>('books'),
+  getAll: () => apiRequest<Book[]>(API_BASE_URLS.book, 'books'),
   
-  getById: (id: number) => apiRequest<Book>(`books/${id}`),
+  getById: (id: number) => apiRequest<Book>(API_BASE_URLS.book, `books/${id}`),
   
-  update: (id: number, book: Partial<Book>) => apiRequest<Book>(`books/${id}`, {
-    method: 'PATCH',
+  getByAuthor: (authorId: number) => apiRequest<Book[]>(API_BASE_URLS.book, `books/author/${authorId}`),
+  
+  // 출간된 책만 조회
+  getPublished: () => apiRequest<Book[]>(API_BASE_URLS.book, 'books/published'),
+  
+  // 작가별 출간된 책 조회
+  getPublishedByAuthor: (authorId: number) => apiRequest<Book[]>(API_BASE_URLS.book, `books/author/${authorId}/published`),
+  
+  update: (id: number, book: Partial<Book>) => apiRequest<Book>(API_BASE_URLS.book, `books/${id}`, {
+    method: 'PUT',
     body: JSON.stringify(book),
+  }),
+  
+  publish: (id: number) => apiRequest<Book>(API_BASE_URLS.book, `books/${id}/publish`, {
+    method: 'PATCH',
+  }),
+  
+  delete: (id: number) => apiRequest<void>(API_BASE_URLS.book, `books/${id}`, {
+    method: 'DELETE',
   }),
 };
 
-// Manuscript API
+// Manuscript API (진짜 원고 관리)
 export const manuscriptAPI = {
-  create: (manuscript: Manuscript) => apiRequest<Manuscript>('manuscripts', {
+  create: (manuscript: Manuscript) => apiRequest<Manuscript>(API_BASE_URLS.manuscript, 'manuscripts', {
     method: 'POST',
     body: JSON.stringify(manuscript),
   }),
   
-  getAll: () => apiRequest<{_embedded: {manuscripts: Manuscript[]}}>('manuscripts'),
+  getAll: () => apiRequest<Manuscript[]>(API_BASE_URLS.manuscript, 'manuscripts'),
   
-  getById: (id: number) => apiRequest<Manuscript>(`manuscripts/${id}`),
+  getById: (id: number) => apiRequest<Manuscript>(API_BASE_URLS.manuscript, `manuscripts/${id}`),
   
-  getByAuthor: (authorId: number) => apiRequest<{_embedded: {manuscripts: Manuscript[]}}>(`manuscripts?authorId=${authorId}`),
+  getByAuthor: (authorId: number) => apiRequest<Manuscript[]>(API_BASE_URLS.manuscript, `manuscripts/author/${authorId}`),
   
-  update: (id: number, manuscript: Partial<Manuscript>) => apiRequest<Manuscript>(`manuscripts/${id}`, {
-    method: 'PATCH',
+  update: (id: number, manuscript: Partial<Manuscript>) => apiRequest<Manuscript>(API_BASE_URLS.manuscript, `manuscripts/${id}`, {
+    method: 'PUT',
     body: JSON.stringify(manuscript),
+  }),
+  
+  // 원고를 Book으로 출간
+  publish: async (manuscriptId: number) => {
+    console.log('=== MANUSCRIPT PUBLISH PROCESS START ===');
+    console.log('Publishing manuscript ID:', manuscriptId);
+    
+    try {
+      // 1. 원고 조회
+      console.log('Step 1: Fetching manuscript...');
+      const manuscript = await apiRequest<Manuscript>(API_BASE_URLS.manuscript, `manuscripts/${manuscriptId}`);
+      console.log('Manuscript fetched:', manuscript);
+      
+      // 2. Book으로 변환하여 생성
+      console.log('Step 2: Creating book from manuscript...');
+      const book: Book = {
+        title: manuscript.title,
+        content: manuscript.content,
+        authorId: manuscript.authorId,
+        status: 'DRAFT',
+        coverImage: manuscript.coverImage,
+      };
+      console.log('Book data to create:', book);
+      
+      const createdBook = await bookAPI.create(book);
+      console.log('Book created:', createdBook);
+      
+      // 3. 즉시 출간
+      console.log('Step 3: Publishing book...');
+      const publishedBook = await bookAPI.publish(createdBook.bookId!);
+      console.log('Book published:', publishedBook);
+      console.log('=== MANUSCRIPT PUBLISH PROCESS COMPLETE ===');
+      
+      return publishedBook;
+    } catch (error) {
+      console.error('=== MANUSCRIPT PUBLISH PROCESS FAILED ===');
+      console.error('Error at manuscript ID:', manuscriptId);
+      console.error('Error details:', error);
+      console.log('=== MANUSCRIPT PUBLISH PROCESS FAILED ===');
+      throw error;
+    }
+  },
+  
+  delete: (id: number) => apiRequest<void>(API_BASE_URLS.manuscript, `manuscripts/${id}`, {
+    method: 'DELETE',
   }),
 };
 
 // Point API
 export const pointAPI = {
-  create: (point: Point) => apiRequest<Point>('points', {
+  create: (point: Point) => apiRequest<Point>(API_BASE_URLS.point, 'points', {
     method: 'POST',
     body: JSON.stringify(point),
   }),
   
-  getByUser: (userId: number) => apiRequest<{_embedded: {points: Point[]}}>(`points?userId=${userId}`),
+  getByUser: (userId: number) => apiRequest<{_embedded: {points: Point[]}}>(API_BASE_URLS.point, `points?userId=${userId}`),
   
-  getTotalByUser: (userId: number) => apiRequest<number>(`points/user/${userId}/total`),
+  getTotalByUser: (userId: number) => apiRequest<number>(API_BASE_URLS.point, `points/user/${userId}/total`),
 };
 
 // Subscription API
 export const subscriptionAPI = {
-  create: (subscription: Subscription) => apiRequest<Subscription>('subscriptions', {
+  create: (subscription: Subscription) => apiRequest<Subscription>(API_BASE_URLS.subscription, 'subscriptions', {
     method: 'POST',
     body: JSON.stringify(subscription),
   }),
   
-  getByUser: (userId: number) => apiRequest<{_embedded: {subscriptions: Subscription[]}}>(`subscriptions?userId=${userId}`),
+  getByUser: (userId: number) => apiRequest<{_embedded: {subscriptions: Subscription[]}}>(API_BASE_URLS.subscription, `subscriptions?userId=${userId}`),
   
-  getActiveByUser: (userId: number) => apiRequest<Subscription>(`subscriptions/user/${userId}/active`),
+  getActiveByUser: (userId: number) => apiRequest<Subscription>(API_BASE_URLS.subscription, `subscriptions/user/${userId}/active`),
 };
 
 // AI API
 export const aiAPI = {
-  polishText: (title: string, content: string) => apiRequest<{
+  polishText: (content: string, style?: string) => apiRequest<{
     success: boolean;
-    polishedTitle: string;
-    polishedContent: string;
-  }>('ai/polish', {
+    data: string;
+    message?: string;
+  }>(API_BASE_URLS.ai, 'ai/polish', {
     method: 'POST',
-    body: JSON.stringify({ title, content }),
+    body: JSON.stringify({ content, style }),
   }),
   
-  generateCover: (title: string) => apiRequest<{
+  generateCover: (title: string, genre?: string, description?: string) => apiRequest<{
     success: boolean;
-    coverImageUrl: string;
-    coverEmoji: string;
-  }>('ai/cover', {
+    data: string;
+    message?: string;
+  }>(API_BASE_URLS.ai, 'ai/generate-cover', {
     method: 'POST',
-    body: JSON.stringify({ title }),
+    body: JSON.stringify({ title, genre, description }),
   }),
   
-  generateSummary: (content: string) => apiRequest<{
+  suggestPlot: (genre: string, keywords?: string) => apiRequest<{
     success: boolean;
-    summary: string;
-  }>('ai/summary', {
+    data: string;
+    message?: string;
+  }>(API_BASE_URLS.ai, `ai/suggest-plot?genre=${encodeURIComponent(genre)}${keywords ? `&keywords=${encodeURIComponent(keywords)}` : ''}`, {
     method: 'POST',
-    body: JSON.stringify({ content }),
   }),
+  
+  healthCheck: () => apiRequest<{
+    success: boolean;
+    data: string;
+  }>(API_BASE_URLS.ai, 'ai/health'),
 };

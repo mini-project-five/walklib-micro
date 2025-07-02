@@ -22,7 +22,7 @@ public class AIController {
                 return ResponseEntity.badRequest().body(AIResponse.error("Content is required"));
             }
             
-            String polishedContent = openAIService.polishText(request.getContent());
+            String polishedContent = openAIService.polishText(request.getContent(), request.getStyle());
             return ResponseEntity.ok(AIResponse.success(polishedContent));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(AIResponse.error("Error polishing text: " + e.getMessage()));

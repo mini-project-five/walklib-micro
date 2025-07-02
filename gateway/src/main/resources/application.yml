@@ -10,7 +10,7 @@ spring:
 #<<< API Gateway / Routes
       routes:
         - id: user management
-          uri: http://localhost:8082
+          uri: http://localhost:8081
           predicates:
             - Path=/users/**, 
         - id: point management
