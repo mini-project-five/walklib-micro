@@ -81,6 +81,12 @@ WalkLib Micro("걷다가, 서재")는 AI 기반 콘텐츠 생성, 작가 지원 
 
 ### 🎯 권장 실행 방법
 
+#### 환경 설치
+
+```bash
+scripts/init.sh
+```
+
 #### Option 1: Kubernetes 배포 (운영 환경, 권장) ⭐
 
 ```bash
