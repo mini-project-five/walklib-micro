@@ -7,8 +7,10 @@ import { BookDetail } from '@/components/books/BookDetail';
 import { PaymentCenter } from '@/components/payment/PaymentCenter';
 import { AuthorCenter } from '@/components/author/AuthorCenter';
 import { AuthorEditor } from '@/components/author/AuthorEditor';
+import AdminLogin from '@/components/admin/AdminLogin';
+import AdminDashboard from '@/components/admin/AdminDashboard';
 
-type Screen = 'type-selector' | 'reader-login' | 'author-login' | 'library' | 'book-detail' | 'payment' | 'author' | 'editor';
+type Screen = 'type-selector' | 'reader-login' | 'author-login' | 'library' | 'book-detail' | 'payment' | 'author' | 'editor' | 'admin-login' | 'admin-dashboard';
 
 const Index = () => {
   const [currentScreen, setCurrentScreen] = useState<Screen>('type-selector');
@@ -17,11 +19,20 @@ const Index = () => {
   const [coins, setCoins] = useState(100);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [editingManuscript, setEditingManuscript] = useState<any>(null);
+  const [adminData, setAdminData] = useState<any>(null);
 
   // Check if user is logged in on mount
   useEffect(() => {
     const savedUser = localStorage.getItem('walkingLibraryUser');
-    if (savedUser) {
+    const savedAdmin = localStorage.getItem('adminData');
+    
+    if (savedAdmin) {
+      // 관리자 로그인 상태
+      const adminInfo = JSON.parse(savedAdmin);
+      setAdminData(adminInfo);
+      setCurrentScreen('admin-dashboard');
+    } else if (savedUser) {
+      // 일반 사용자 로그인 상태
       const userData = JSON.parse(savedUser);
       setUser(userData);
       // 작가면 작가 센터로, 독자면 라이브러리로
@@ -91,10 +102,25 @@ const Index = () => {
     localStorage.setItem('walkingLibraryUser', JSON.stringify(updatedUser));
   };
 
+  const handleAdminLogin = (adminInfo: any) => {
+    setAdminData(adminInfo);
+    setCurrentScreen('admin-dashboard');
+  };
+
+  const handleAdminLogout = () => {
+    setAdminData(null);
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminData');
+    setCurrentScreen('type-selector');
+  };
+
   return (
     <div className="min-h-screen">
       {currentScreen === 'type-selector' && (
-        <UserTypeSelector onSelectType={handleUserTypeSelect} />
+        <UserTypeSelector 
+          onSelectType={handleUserTypeSelect}
+          onAdminClick={() => setCurrentScreen('admin-login')}
+        />
       )}
       
       {currentScreen === 'reader-login' && (
@@ -119,6 +145,7 @@ const Index = () => {
           onBookSelect={handleBookSelect}
           onPaymentClick={() => setCurrentScreen('payment')}
           onLogout={handleLogout}
+          onAuthorHomeClick={user?.userType === 'author' ? () => setCurrentScreen('author') : undefined}
         />
       )}
       
@@ -170,6 +197,20 @@ const Index = () => {
             setCurrentScreen('author');
           }}
           editingManuscript={editingManuscript}
+        />
+      )}
+
+      {currentScreen === 'admin-login' && (
+        <AdminLogin
+          onLoginSuccess={handleAdminLogin}
+          onBackToMain={() => setCurrentScreen('type-selector')}
+        />
+      )}
+
+      {currentScreen === 'admin-dashboard' && adminData && (
+        <AdminDashboard
+          adminData={adminData}
+          onLogout={handleAdminLogout}
         />
       )}
     </div>

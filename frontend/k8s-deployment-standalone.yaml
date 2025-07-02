@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
       - name: walklib-frontend
-        image: buildingbite/walklib_frontend:v1.1
+        image: walklib/frontend:v1.3.0
+        imagePullPolicy: Never
         ports:
         - containerPort: 80
         resources:

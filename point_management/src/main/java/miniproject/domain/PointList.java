@@ -13,11 +13,13 @@ import lombok.Data;
 public class PointList {
 
     @Id
-    //@GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    private Long userId;
     private Integer currentBalance;
     private Date transactionDate;
     private Integer amount;
     private String reason;
+    private String transactionType; // PURCHASE, USE, REFUND
 }

@@ -1,22 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: author management
+  name: author-management
   labels:
-    app: author management
+    app: author-management
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: author management
+      app: author-management
   template:
     metadata:
       labels:
-        app: author management
+        app: author-management
     spec:
       containers:
-        - name: author management
-          image: "username/author management:latest"
+        - name: author-management
+          image: "walklib/author:v1.3.0"
+          imagePullPolicy: Never
           ports:
             - containerPort: 8080
           readinessProbe:

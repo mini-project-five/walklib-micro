@@ -1,5 +1,5 @@
 
-import { Search, User, LogOut, Coins } from 'lucide-react';
+import { Search, User, LogOut, Coins, PenTool } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -16,6 +16,7 @@ interface ModernHeaderProps {
   isSubscribed: boolean;
   onPaymentClick: () => void;
   onLogout: () => void;
+  onAuthorHomeClick?: () => void;
 }
 
 export const ModernHeader = ({ 
@@ -23,7 +24,8 @@ export const ModernHeader = ({
   coins, 
   isSubscribed, 
   onPaymentClick, 
-  onLogout 
+  onLogout,
+  onAuthorHomeClick 
 }: ModernHeaderProps) => {
   return (
     <header className="bg-white/90 backdrop-blur-xl border-b border-gray-200/50 sticky top-0 z-50">
@@ -88,6 +90,15 @@ export const ModernHeader = ({
                   <p className="text-xs text-gray-500">{user?.email}</p>
                 </div>
                 <DropdownMenuSeparator />
+                {user?.userType === 'author' && onAuthorHomeClick && (
+                  <>
+                    <DropdownMenuItem onClick={onAuthorHomeClick}>
+                      <PenTool className="mr-2 h-4 w-4" />
+                      작가 홈
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
                 <DropdownMenuItem onClick={onPaymentClick}>
                   <Coins className="mr-2 h-4 w-4" />
                   코인 충전

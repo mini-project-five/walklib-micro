@@ -2,13 +2,14 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { BookOpen, PenTool, User, Sparkles } from 'lucide-react';
+import { BookOpen, PenTool, User, Sparkles, Shield } from 'lucide-react';
 
 interface UserTypeSelectorProps {
   onSelectType: (type: 'reader' | 'author') => void;
+  onAdminClick?: () => void;
 }
 
-export const UserTypeSelector = ({ onSelectType }: UserTypeSelectorProps) => {
+export const UserTypeSelector = ({ onSelectType, onAdminClick }: UserTypeSelectorProps) => {
   const [selectedType, setSelectedType] = useState<'reader' | 'author' | null>(null);
 
   const handleSelect = (type: 'reader' | 'author') => {
@@ -121,6 +122,21 @@ export const UserTypeSelector = ({ onSelectType }: UserTypeSelectorProps) => {
             </CardContent>
           </Card>
         </div>
+
+        {/* 관리자 접속 버튼 */}
+        {onAdminClick && (
+          <div className="text-center mt-8">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onAdminClick}
+              className="text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+            >
+              <Shield className="w-4 h-4 mr-2" />
+              관리자 접속
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -10,4 +10,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
     path = "pointLists"
 )
 public interface PointListRepository
-    extends PagingAndSortingRepository<PointList, Long> {}
+    extends PagingAndSortingRepository<PointList, Long> {
+    
+    List<PointList> findByUserId(Long userId);
+}

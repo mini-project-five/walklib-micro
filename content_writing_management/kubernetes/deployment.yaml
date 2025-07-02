@@ -1,22 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: content writing management
+  name: content-management
   labels:
-    app: content writing management
+    app: content-management
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: content writing management
+      app: content-management
   template:
     metadata:
       labels:
-        app: content writing management
+        app: content-management
     spec:
       containers:
-        - name: content writing management
-          image: "username/content writing management:latest"
+        - name: content-management
+          image: "walklib/content:v1.3.0"
+          imagePullPolicy: Never
           ports:
             - containerPort: 8080
           readinessProbe:

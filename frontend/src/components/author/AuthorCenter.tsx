@@ -177,7 +177,7 @@ export const AuthorCenter = ({ user, onBack, onWriteClick, onEditClick }: Author
                       <span>조회수: {manuscript.views || 0}</span>
                       <Badge variant={manuscript.status === 'COMPLETED' ? 'default' : 'secondary'}>
                         {manuscript.status === 'DRAFT' ? '초안' : 
-                         manuscript.status === 'COMPLETED' ? '완성' : manuscript.status}
+                         manuscript.status === 'PENDING_PUBLICATION' ? '업로드 중' : manuscript.status}
                       </Badge>
                       <span>최종 수정: {manuscript.updatedAt ? new Date(manuscript.updatedAt).toLocaleDateString() : '방금 전'}</span>
                     </div>

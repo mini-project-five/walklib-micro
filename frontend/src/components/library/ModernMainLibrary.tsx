@@ -40,6 +40,7 @@ interface ModernMainLibraryProps {
   onBookSelect: (book: any) => void;
   onPaymentClick: () => void;
   onLogout: () => void;
+  onAuthorHomeClick?: () => void;
 }
 
 export const ModernMainLibrary = ({ 
@@ -48,7 +49,8 @@ export const ModernMainLibrary = ({
   isSubscribed, 
   onBookSelect, 
   onPaymentClick, 
-  onLogout 
+  onLogout,
+  onAuthorHomeClick 
 }: ModernMainLibraryProps) => {
   const [featuredBooks, setFeaturedBooks] = useState<LibraryBook[]>([]);
   const [newBooks, setNewBooks] = useState<LibraryBook[]>([]);
@@ -102,6 +104,7 @@ export const ModernMainLibrary = ({
         isSubscribed={isSubscribed}
         onPaymentClick={onPaymentClick}
         onLogout={onLogout}
+        onAuthorHomeClick={onAuthorHomeClick}
       />
       
       <main className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 space-y-8">

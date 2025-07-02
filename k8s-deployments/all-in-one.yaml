@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: zookeeper
-        image: confluentinc/cp-zookeeper:latest
+        image: confluentinc/cp-zookeeper:v1.3.0
         ports:
         - containerPort: 2181
         env:
@@ -109,7 +109,7 @@ spec:
     spec:
       containers:
       - name: walklib-user
-        image: buildingbite/walklib_user:latest
+        image: buildingbite/walklib_user:v1.3.0
         ports:
         - containerPort: 8080
         env:
@@ -145,7 +145,7 @@ spec:
     spec:
       containers:
       - name: walklib-author
-        image: buildingbite/walklib_author:latest
+        image: buildingbite/walklib_author:v1.3.0
         ports:
         - containerPort: 8080
         env:
@@ -181,7 +181,7 @@ spec:
     spec:
       containers:
       - name: walklib-book
-        image: buildingbite/walklib_book:latest
+        image: buildingbite/walklib_book:v1.3.0
         ports:
         - containerPort: 8080
         env:
@@ -217,7 +217,7 @@ spec:
     spec:
       containers:
       - name: walklib-point
-        image: buildingbite/walklib_point:latest
+        image: buildingbite/walklib_point:v1.3.0
         ports:
         - containerPort: 8080
         env:
@@ -253,7 +253,7 @@ spec:
     spec:
       containers:
       - name: walklib-subscription
-        image: buildingbite/walklib_subscription:latest
+        image: buildingbite/walklib_subscription:v1.3.0
         ports:
         - containerPort: 8080
         env:
@@ -289,7 +289,7 @@ spec:
     spec:
       containers:
       - name: walklib-writing
-        image: buildingbite/walklib_writing:latest
+        image: buildingbite/walklib_writing:v1.3.0
         ports:
         - containerPort: 8080
         env:
@@ -325,7 +325,7 @@ spec:
     spec:
       containers:
       - name: walklib-aisystem
-        image: buildingbite/walklib_aisystem:latest
+        image: buildingbite/walklib_aisystem:v1.3.0
         ports:
         - containerPort: 8080
         env:

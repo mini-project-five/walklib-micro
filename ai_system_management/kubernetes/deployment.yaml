@@ -16,7 +16,12 @@ spec:
     spec:
       containers:
         - name: ai-system-management
-          image: "buildingbite/walklib_aisystem:latest"
+          image: "buildingbite/walklib_aisystem:v1.3.0"
+          env:
+            - name: OPENAI_API_KEY
+              value: "sk-dummy-key-for-testing-1234567890"
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: "kafka:9092"
           ports:
             - containerPort: 8080
           readinessProbe:

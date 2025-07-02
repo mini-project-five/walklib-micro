@@ -1,22 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: point management
+  name: point-management
   labels:
-    app: point management
+    app: point-management
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: point management
+      app: point-management
   template:
     metadata:
       labels:
-        app: point management
+        app: point-management
     spec:
       containers:
-        - name: point management
-          image: "username/point management:latest"
+        - name: point-management
+          image: "walklib/point:v1.3.0"
+          imagePullPolicy: Never
           ports:
             - containerPort: 8080
           readinessProbe:

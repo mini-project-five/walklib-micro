@@ -37,7 +37,7 @@ SERVICES=(
     "walklib-writing:buildingbite/walklib_writing:latest"
     "walklib-aisystem:buildingbite/walklib_aisystem:latest"
     "walklib-gateway:buildingbite/walklib_gateway:latest"
-    "walklib-frontend:buildingbite/walklib_frontend:internal-v1"
+    "walklib-frontend:buildingbite/walklib_frontend:latest"
 )
 
 # 기본 함수

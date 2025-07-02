@@ -1,12 +1,12 @@
 
 import { useState } from 'react';
-import { ArrowLeft, Save, Sparkles, Image, LogOut } from 'lucide-react';
+import { ArrowLeft, Save, Sparkles, Image, LogOut, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { manuscriptAPI, aiAPI, Manuscript } from '@/services/api';
+import { manuscriptAPI, aiAPI, bookAPI, Manuscript } from '@/services/api';
 
 interface AuthorEditorProps {
   user: any;
@@ -21,6 +21,8 @@ export const AuthorEditor = ({ user, onBack, editingManuscript }: AuthorEditorPr
   const [isGeneratingCover, setIsGeneratingCover] = useState(false);
   const [generatedCover, setGeneratedCover] = useState(editingManuscript?.coverImageUrl || '');
   const [isSaving, setIsSaving] = useState(false);
+  const [isPublishing, setIsPublishing] = useState(false);
+  const [currentManuscriptId, setCurrentManuscriptId] = useState(editingManuscript?.manuscriptId);
   const { toast } = useToast();
 
   const handleLogout = () => {
@@ -142,7 +144,12 @@ export const AuthorEditor = ({ user, onBack, editingManuscript }: AuthorEditorPr
           coverImageUrl: generatedCover || undefined
         };
         
-        await manuscriptAPI.create(manuscriptData);
+        const savedManuscript = await manuscriptAPI.create(manuscriptData);
+        
+        // 저장된 manuscript의 ID를 저장
+        if (savedManuscript.manuscriptId) {
+          setCurrentManuscriptId(savedManuscript.manuscriptId);
+        }
         
         toast({
           title: "작품이 저장되었습니다!",
@@ -160,6 +167,71 @@ export const AuthorEditor = ({ user, onBack, editingManuscript }: AuthorEditorPr
       });
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handlePublish = async () => {
+    if (!title || !content) {
+      toast({
+        title: "필수 항목을 입력해주세요",
+        description: "제목과 내용을 모두 작성해주세요.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // 먼저 저장이 필요한 경우 저장
+    let manuscriptIdToPublish = currentManuscriptId || editingManuscript?.manuscriptId;
+    
+    if (!manuscriptIdToPublish) {
+      toast({
+        title: "먼저 저장해주세요",
+        description: "발행하기 전에 작품을 저장해야 합니다.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsPublishing(true);
+
+    try {
+      // 1. Manuscript 상태를 PENDING_PUBLICATION으로 업데이트
+      await manuscriptAPI.requestPublication(manuscriptIdToPublish);
+      
+      // 2. Book 생성을 위한 데이터 준비
+      const bookData = {
+        authorId: user.authorData?.authorId || user.id,
+        title,
+        description: content.substring(0, 200) + '...', // 내용의 일부를 설명으로
+        content,
+        coverImageUrl: generatedCover || undefined,
+        category: 'GENERAL',
+        price: 10, // 기본 가격
+        viewCount: 0,
+        publishedDate: new Date().toISOString()
+      };
+      
+      // 3. Book 생성
+      await bookAPI.create(bookData);
+      
+      toast({
+        title: "작품이 발행되었습니다!",
+        description: "독자들이 이제 작품을 읽을 수 있습니다.",
+      });
+      
+      // 발행 후 작가 센터로 돌아가기
+      setTimeout(() => {
+        onBack();
+      }, 1500);
+      
+    } catch (error) {
+      toast({
+        title: "발행 실패",
+        description: error instanceof Error ? error.message : "작품 발행 중 오류가 발생했습니다.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsPublishing(false);
     }
   };
 
@@ -250,6 +322,15 @@ export const AuthorEditor = ({ user, onBack, editingManuscript }: AuthorEditorPr
                   >
                     <Save className="h-4 w-4 mr-2" />
                     {isSaving ? '저장 중...' : '저장하기'}
+                  </Button>
+                  
+                  <Button
+                    onClick={handlePublish}
+                    disabled={isPublishing || isSaving}
+                    className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white disabled:opacity-50"
+                  >
+                    <Send className="h-4 w-4 mr-2" />
+                    {isPublishing ? '발행 중...' : '발행하기'}
                   </Button>
                 </div>
               </CardContent>
