@@ -151,3 +151,92 @@ author-m:local
 -e SPRING_PROFILES_ACTIVE=docker \
 ai-m:local
 ```
+
+## 쿠버네티스 등록
+
+### 사전 설치
+
+```
+# mac
+brew update && brew install azure-cli
+
+# ubuntu
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+
+# window
+https://learn.microsoft.com/ko-kr/cli/azure/install-azure-cli?view=azure-cli-latest 
+# 링크에 접속하여 다운로드 및 설치
+```
+
+- 설치 확인 -> 터미널에서 `az version`
+
+### 로그인
+
+```
+az login --use-device-code
+```
+
+- 터미널에 뜨는 링크에 접속하여 발급 받은 microsoft 아이디로 로그인
+- 터미널에 있는 코드입력하여 로그인 완료
+
+```
+az aks get-credentials --resource-group project03-rsrcgrp --name project03-aks
+az aks update -n project03-aks -g project03-rsrcgrp --attach-acr project03registry
+```
+
+- microsoft azure 구성이 되어있어야 함.
+
+```
+# 리소스 그룹 조회
+az group list --output table
+
+# AKS 클러스터 확인
+az aks list --output table
+
+# 현재 로그인된 계정 확인
+az account show
+```
+
+### 쿠버네티스 접속 확인
+
+```
+kubectl get nodes
+```
+
+- kubectl이 설치되어 있어야 합니다.
+- 설치 안 된 경우:
+```
+# mac
+brew install kubectl
+
+# Ubuntu
+sudo apt install kubectl
+
+# Windows
+공식 설치 가이드를 따를 것.
+```
+
+### 쿠버네티스 pod 등록
+
+```
+kubectl apply -f ./kubernetes/all-in-one-pod.yml
+
+# 확인
+kubectl get pods
+
+# 삭제
+kubectl delete -f ./kubernetes/all-in-one-pod.yml
+```
+
+### 쿠버네티스 서비스 등록
+
+```
+kubectl apply -f ./kubernetes/all-in-one-service.yml
+
+# 확인
+kubectl get svc
+
+# 삭제
+kubectl delete -f ./kubernetes/all-in-one-service.yml
+```
+
