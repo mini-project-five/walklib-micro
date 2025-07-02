@@ -7,6 +7,7 @@ import { BookDetail } from '@/components/books/BookDetail';
 import { PaymentCenter } from '@/components/payment/PaymentCenter';
 import { AuthorCenter } from '@/components/author/AuthorCenter';
 import { AuthorEditor } from '@/components/author/AuthorEditor';
+import { bookAPI, manuscriptAPI } from '@/services/api';
 
 type Screen = 'type-selector' | 'reader-login' | 'author-login' | 'library' | 'book-detail' | 'payment' | 'author' | 'editor';
 
@@ -64,8 +65,30 @@ const Index = () => {
     localStorage.removeItem('walkingLibraryUser');
   };
 
-  const handleBookSelect = (book: any) => {
-    setSelectedBook(book);
+  const handleBookSelect = async (book: any) => {
+    try {
+      // 조회수 증가 API 호출 (manuscripts 서비스 사용)
+      await manuscriptAPI.incrementView(book.id);
+      console.log(`도서 "${book.title}" 선택됨 - 조회수 증가 완료`);
+    } catch (error) {
+      console.warn('조회수 증가 실패:', error);
+    }
+    
+    // ModernMainLibrary의 Book 형태를 API Book 형태로 변환
+    const apiBook = {
+      bookId: book.id,
+      title: book.title,
+      content: book.content || '내용을 불러오는 중...',
+      authorId: book.authorId,
+      status: 'PUBLISHED',
+      coverImage: book.cover,
+      viewCount: book.views || 0,
+      isBestseller: book.isBestseller || false,
+      createdAt: new Date().toISOString(),
+      publishedAt: new Date().toISOString()
+    };
+    
+    setSelectedBook(apiBook);
     setCurrentScreen('book-detail');
   };
 

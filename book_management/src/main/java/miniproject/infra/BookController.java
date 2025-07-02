@@ -141,5 +141,29 @@ public class BookController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    // 도서 조회수 증가 (독자가 책을 열 때)
+    @PatchMapping("/{id}/view")
+    public ResponseEntity<Book> incrementViewCount(@PathVariable Long id) {
+        logger.info("PATCH /books/{}/view - 도서 조회수 증가", id);
+        Optional<Book> bookOptional = bookRepository.findById(id);
+        if (bookOptional.isPresent()) {
+            Book book = bookOptional.get();
+            book.setViewCount(book.getViewCount() + 1);
+            
+            // 조회수가 10 이상이면 베스트셀러로 자동 설정
+            if (book.getViewCount() >= 10) {
+                book.setIsBestseller(true);
+                logger.info("도서 ID={}가 베스트셀러로 승격됨 (조회수: {})", id, book.getViewCount());
+            }
+            
+            Book updatedBook = bookRepository.save(book);
+            logger.info("도서 조회수 증가 성공: ID={}, 조회수={}", updatedBook.getBookId(), updatedBook.getViewCount());
+            return ResponseEntity.ok(updatedBook);
+        } else {
+            logger.warn("조회수 증가할 도서를 찾을 수 없음: {}", id);
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
 //>>> Clean Arch / Inbound Adaptor

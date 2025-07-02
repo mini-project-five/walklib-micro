@@ -50,6 +50,7 @@ export interface Manuscript {
   content: string;
   status?: 'DRAFT' | 'PUBLISHED';
   coverImage?: string;
+  viewCount?: number; // 조회수 (기본값 0)
   updatedAt?: string;
 }
 
@@ -311,6 +312,11 @@ export const bookAPI = {
     method: 'PATCH',
   }),
   
+  // 조회수 증가
+  incrementView: (id: number) => apiRequest<Book>(API_BASE_URLS.book, `books/${id}/view`, {
+    method: 'PATCH',
+  }),
+  
   delete: (id: number) => apiRequest<void>(API_BASE_URLS.book, `books/${id}`, {
     method: 'DELETE',
   }),
@@ -390,6 +396,21 @@ export const manuscriptAPI = {
   delete: (id: number) => apiRequest<void>(API_BASE_URLS.manuscript, `manuscripts/${id}`, {
     method: 'DELETE',
   }),
+
+  // 조회수 증가 (독자가 도서를 클릭할 때)
+  incrementView: async (id: number) => {
+    console.log('📈 manuscripts 조회수 증가 API 호출:', id);
+    try {
+      const result = await apiRequest<Manuscript>(API_BASE_URLS.manuscript, `manuscripts/${id}/view`, {
+        method: 'PATCH',
+      });
+      console.log('✅ manuscripts 조회수 증가 성공:', result);
+      return result;
+    } catch (error) {
+      console.error('❌ manuscripts 조회수 증가 실패:', error);
+      throw error;
+    }
+  },
 };
 
 // Point API

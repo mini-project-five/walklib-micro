@@ -35,6 +35,9 @@ public class Manuscript {
     @Lob
     private String coverImage; // 표지 이미지 URL (긴 URL 지원)
     
+    @Column(name = "view_count")
+    private Long viewCount = 0L; // 조회수 (기본값 0)
+    
     private Date createdAt;
     
     private Date updatedAt;
@@ -70,6 +73,14 @@ public class Manuscript {
     @PreUpdate
     public void preUpdate() {
         this.updatedAt = new Date();
+    }
+
+    // 조회수 증가 메서드
+    public void incrementViewCount() {
+        if (this.viewCount == null) {
+            this.viewCount = 0L;
+        }
+        this.viewCount++;
     }
 
     public static ManuscriptRepository repository() {

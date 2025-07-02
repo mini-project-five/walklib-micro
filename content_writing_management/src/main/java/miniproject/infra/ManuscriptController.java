@@ -100,5 +100,25 @@ public class ManuscriptController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    // 원고 조회수 증가 (독자가 책을 열 때)
+    @PatchMapping("/{id}/view")
+    public ResponseEntity<Manuscript> incrementViewCount(@PathVariable Long id) {
+        logger.info("PATCH /manuscripts/{}/view - 원고 조회수 증가", id);
+        Optional<Manuscript> manuscriptOptional = manuscriptRepository.findById(id);
+        if (manuscriptOptional.isPresent()) {
+            Manuscript manuscript = manuscriptOptional.get();
+            
+            // 조회수 증가
+            manuscript.incrementViewCount();
+            
+            Manuscript updatedManuscript = manuscriptRepository.save(manuscript);
+            logger.info("원고 조회수 증가 성공: ID={}, 새 조회수={}", id, updatedManuscript.getViewCount());
+            return ResponseEntity.ok(updatedManuscript);
+        } else {
+            logger.warn("조회수를 증가시킬 원고를 찾을 수 없음: {}", id);
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
 //>>> Clean Arch / Inbound Adaptor
