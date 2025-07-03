@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user management
+  name: user-management
   labels:
-    app: user management
+    app: user-management
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: user management
+      app: user-management
   template:
     metadata:
       labels:
-        app: user management
+        app: user-management
     spec:
       containers:
-        - name: user management
-          image: "username/user management:latest"
+        - name: user-management
+          image: "lmo2914/user-m:latest"
           ports:
             - containerPort: 8080
           readinessProbe:

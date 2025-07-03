@@ -6,13 +6,13 @@ PROFILE="docker"
 
 # 서비스별 정보 정의 (디렉토리명, 이미지명, 컨테이너명, 외부 포트)
 SERVICES=(
-  "user_management user-m userManagement 8082"
-  "subscription_management subs-m subscriptionManagement 8084"
-  "point_management point-m pointManagement 8083"
-  "content_writing_management content-m contentWritingManagement 8087"
-  "book_management book-m bookManagement 8085"
-  "author_management author-m authorManagement 8086"
-  "ai_system_management ai-m aiSystemManagement 8088"
+  "user_management lmo2914/user-m userManagement 8082"
+  "subscription_management lmo2914/subs-m subscriptionManagement 8084"
+  "point_management lmo2914/point-m pointManagement 8083"
+  "content_writing_management lmo2914/content-m contentWritingManagement 8087"
+  "book_management lmo2914/book-m bookManagement 8085"
+  "author_management lmo2914/author-m authorManagement 8086"
+  "ai_system_management lmo2914/ai-m aiSystemManagement 8088"
 )
 
 for SERVICE in "${SERVICES[@]}"; do
@@ -28,7 +28,7 @@ for SERVICE in "${SERVICES[@]}"; do
   mvn clean package -DskipTests || { echo "❌ Maven 빌드 실패: $DIR"; exit 1; }
 
   # 도커 이미지 빌드
-  docker build -t "$IMAGE:local" . || { echo "❌ Docker 빌드 실패: $DIR"; exit 1; }
+  docker build -t "$IMAGE:latest" . || { echo "❌ Docker 빌드 실패: $DIR"; exit 1; }
 
   # 기존 컨테이너 삭제
   docker rm -f "$CONTAINER" 2>/dev/null
@@ -38,7 +38,7 @@ for SERVICE in "${SERVICES[@]}"; do
     -p "$PORT:8080" \
     --network "$NETWORK" \
     -e SPRING_PROFILES_ACTIVE="$PROFILE" \
-    "$IMAGE:local"
+    "$IMAGE:latest"
 
   # 원래 경로로 복귀
   cd - >/dev/null
