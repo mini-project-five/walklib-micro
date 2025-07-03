@@ -1,22 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: subscription management
+  name: user-management
   labels:
-    app: subscription management
+    app: user-management
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: subscription management
+      app: user-management
   template:
     metadata:
       labels:
-        app: subscription management
+        app: user-management
     spec:
       containers:
-        - name: subscription management
-          image: "username/subscription management:latest"
+        - name: user-management
+          image: "${HUB_ID}/user:latest"
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "kubernetes" 
           ports:
             - containerPort: 8080
           readinessProbe:

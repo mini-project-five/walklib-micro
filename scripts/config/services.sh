@@ -12,5 +12,5 @@ SERVICES=(
   "content_writing_management content content 8084"
   "book_management book book 8085"
   "author_management author author 8086"
-  "ai_system_management ai-m aiSystemManagement 8087"
+  "ai_system_management ai ai 8087"
 )

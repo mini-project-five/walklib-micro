@@ -103,3 +103,56 @@ spring:
 
 server:
   port: 8080
+
+---
+
+spring:
+  profiles: kubernetes
+  cloud:
+    gateway:
+      routes:
+        - id: user management
+          uri: lb://user:8080
+          predicates:
+            - Path=/users/**, 
+        - id: point management
+          uri: lb://point:8080
+          predicates:
+            - Path=/points/**, 
+        - id: subscription management
+          uri: lb://subscription:8080
+          predicates:
+            - Path=/subscriptions/**, 
+        - id: book management
+          uri: lb://book:8080
+          predicates:
+            - Path=/books/**, 
+        - id: author management
+          uri: lb://author:8080
+          predicates:
+            - Path=/authors/**, /authorManagements/**, 
+        - id: content writing management
+          uri: lb://content:8080
+          predicates:
+            - Path=/manuscripts/**, 
+        - id: ai system management
+          uri: lb://ai:8080
+          predicates:
+            - Path=/ais/**, 
+        - id: frontend
+          uri: lb://frontend:80
+          predicates:
+            - Path=/**
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedMethods:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+
+server:
+  port: 8080

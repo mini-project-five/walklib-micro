@@ -1,22 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: author management
+  name: point-management
   labels:
-    app: author management
+    app: point-management
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: author management
+      app: point-management
   template:
     metadata:
       labels:
-        app: author management
+        app: point-management
     spec:
       containers:
-        - name: author management
-          image: "username/author management:latest"
+        - name: point-management
+          image: "${HUB_ID}/point:latest"
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "kubernetes" 
           ports:
             - containerPort: 8080
           readinessProbe:

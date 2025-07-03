@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: user management
+  name: author
   labels:
-    app: user management
+    app: author-management
 spec:
   ports:
     - port: 8080
       targetPort: 8080
   selector:
-    app: user management
+    app: author-management
