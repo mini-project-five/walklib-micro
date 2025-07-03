@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: user-data-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: default
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-management-persistent
+  labels:
+    app: user-management-persistent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-management-persistent
+  template:
+    metadata:
+      labels:
+        app: user-management-persistent
+    spec:
+      containers:
+        - name: user-management
+          image: "buildingbite/walklib_user:v1.3.5"
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: user-data
+              mountPath: /data
+          readinessProbe:
+            httpGet:
+              path: '/actuator/health'
+              port: 8080
+            initialDelaySeconds: 180
+            timeoutSeconds: 2
+            periodSeconds: 5
+            failureThreshold: 10
+          livenessProbe:
+            httpGet:
+              path: '/actuator/health'
+              port: 8080
+            initialDelaySeconds: 180
+            timeoutSeconds: 2
+            periodSeconds: 5
+            failureThreshold: 5
+      volumes:
+        - name: user-data
+          persistentVolumeClaim:
+            claimName: user-data-pvc

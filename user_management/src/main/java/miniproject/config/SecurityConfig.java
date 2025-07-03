@@ -52,7 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .authorizeRequests()
                 // 공개 엔드포인트
-                .antMatchers("/users/register", "/users/login").permitAll()
+                .antMatchers("/users/register", "/users/login", "/users/admin/login").permitAll()
                 .antMatchers("/actuator/**").permitAll() // 헬스체크용
                 .antMatchers("/h2-console/**").permitAll() // 개발용 H2 콘솔
                 

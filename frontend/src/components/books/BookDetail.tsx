@@ -250,7 +250,20 @@ export const BookDetail = ({
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Book Cover Section */}
         <div className="relative h-80 bg-gradient-to-br from-amber-100 to-orange-200 rounded-2xl mb-8 flex items-center justify-center overflow-hidden">
-          <div className="text-8xl">{book.cover}</div>
+          {book.cover && book.cover.startsWith('http') ? (
+            <img 
+              src={book.cover} 
+              alt={book.title}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none';
+                (e.target as HTMLImageElement).nextElementSibling!.style.display = 'block';
+              }}
+            />
+          ) : null}
+          <div className={`text-8xl ${book.cover && book.cover.startsWith('http') ? 'hidden' : ''}`}>
+            {book.cover && !book.cover.startsWith('http') ? book.cover : '📚'}
+          </div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
           {book.isNew && (
             <Badge className="absolute top-4 right-4 bg-green-500 text-white">NEW</Badge>

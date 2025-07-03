@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { ModernHeader } from './ModernHeader';
 import { ModernBookCarousel } from './ModernBookCarousel';
 import { Footer } from '@/components/ui/footer';
-import { bookAPI, Book } from '@/services/api';
+import { bookAPI, authorAPI, Book, Author } from '@/services/api';
 
 interface LibraryBook {
   id: number;
@@ -18,20 +18,31 @@ interface LibraryBook {
   isBestseller?: boolean;
 }
 
-// Transform backend Book to LibraryBook
-const transformBook = (book: Book): LibraryBook => ({
-  id: book.bookId || 0,
-  title: book.title,
-  author: `작가 ${book.authorId}`, // This should be populated with actual author name
-  cover: book.coverImageUrl || '📚',
-  genre: book.category || '일반',
-  price: book.price || 0,
-  rating: 4.5, // Default rating
-  views: book.viewCount || 0,
-  likes: Math.floor((book.viewCount || 0) * 0.3), // Approximate likes
-  isNew: false, // This could be calculated based on publishedDate
-  isBestseller: book.isBestseller || false,
-});
+// Transform backend Book to LibraryBook with author name
+const transformBookWithAuthor = async (book: Book): Promise<LibraryBook> => {
+  let authorName = `작가 ${book.authorId}`;
+  
+  try {
+    const author = await authorAPI.getById(book.authorId);
+    authorName = author.authorName || author.realName || `작가 ${book.authorId}`;
+  } catch (error) {
+    console.warn(`Failed to fetch author ${book.authorId}:`, error);
+  }
+
+  return {
+    id: book.bookId || 0,
+    title: book.title,
+    author: authorName,
+    cover: book.coverImageUrl || '📚',
+    genre: book.category || '일반',
+    price: book.price || 0,
+    rating: 4.5, // Default rating
+    views: book.viewCount || 0,
+    likes: Math.floor((book.viewCount || 0) * 0.3), // Approximate likes
+    isNew: false, // This could be calculated based on publishedDate
+    isBestseller: book.isBestseller || false,
+  };
+};
 
 interface ModernMainLibraryProps {
   user: any;
@@ -70,10 +81,10 @@ export const ModernMainLibrary = ({
           bookAPI.getNewBooks()
         ]);
 
-        // Transform data
-        const transformedAllBooks = allBooksData.map(transformBook);
-        const transformedBestsellers = bestsellerData.map(transformBook);
-        const transformedNewBooks = newBooksData.map(transformBook);
+        // Transform data with author names
+        const transformedAllBooks = await Promise.all(allBooksData.map(transformBookWithAuthor));
+        const transformedBestsellers = await Promise.all(bestsellerData.map(transformBookWithAuthor));
+        const transformedNewBooks = await Promise.all(newBooksData.map(transformBookWithAuthor));
 
         setAllBooks(transformedAllBooks);
         setBestSellerBooks(transformedBestsellers);
@@ -156,7 +167,22 @@ export const ModernMainLibrary = ({
                       onClick={() => onBookSelect(book)}
                     >
                       <div className="text-center">
-                        <div className="text-4xl mb-2">{book.cover}</div>
+                        <div className="w-full h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg mb-2 flex items-center justify-center overflow-hidden">
+                          {book.cover && book.cover.startsWith('http') ? (
+                            <img 
+                              src={book.cover} 
+                              alt={book.title}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = 'none';
+                                (e.target as HTMLImageElement).nextElementSibling!.style.display = 'flex';
+                              }}
+                            />
+                          ) : null}
+                          <div className={`w-full h-full flex items-center justify-center text-3xl ${book.cover && book.cover.startsWith('http') ? 'hidden' : ''}`}>
+                            {book.cover && !book.cover.startsWith('http') ? book.cover : '📚'}
+                          </div>
+                        </div>
                         <h3 className="font-medium text-sm line-clamp-2">{book.title}</h3>
                         <p className="text-xs text-gray-600 mt-1">{book.author}</p>
                         <p className="text-xs text-amber-600 mt-1">조회수: {book.views}</p>

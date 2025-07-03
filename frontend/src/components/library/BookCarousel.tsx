@@ -29,8 +29,21 @@ export const BookCarousel = ({ books, onBookSelect }: BookCarouselProps) => {
         >
           <CardContent className="p-4 space-y-3">
             <div className="relative">
-              <div className="w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-4xl group-hover:from-gray-200 group-hover:to-gray-300 transition-colors">
-                {book.cover}
+              <div className="w-full h-32 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-4xl group-hover:from-gray-200 group-hover:to-gray-300 transition-colors overflow-hidden">
+                {book.cover && book.cover.startsWith('http') ? (
+                  <img 
+                    src={book.cover} 
+                    alt={book.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                      (e.target as HTMLImageElement).nextElementSibling!.style.display = 'flex';
+                    }}
+                  />
+                ) : null}
+                <div className={`w-full h-full flex items-center justify-center text-4xl ${book.cover && book.cover.startsWith('http') ? 'hidden' : ''}`}>
+                  {book.cover && !book.cover.startsWith('http') ? book.cover : '📚'}
+                </div>
               </div>
               {book.isNew && (
                 <Badge className="absolute -top-2 -right-2 bg-green-500 text-white">NEW</Badge>

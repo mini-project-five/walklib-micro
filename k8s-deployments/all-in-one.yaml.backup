@@ -417,7 +417,6 @@ spec:
       containers:
       - name: walklib-frontend
         image: buildingbite/walklib_frontend:latest
-        imagePullPolicy: Always
         ports:
         - containerPort: 80
 ---

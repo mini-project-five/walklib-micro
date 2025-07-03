@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: zookeeper
-        image: confluentinc/cp-zookeeper:v1.3.0
+        image: confluentinc/cp-zookeeper:7.3.0
         ports:
         - containerPort: 2181
         env:
@@ -113,7 +113,8 @@ spec:
     spec:
       containers:
       - name: walklib-aisystem
-        image: buildingbite/walklib_aisystem:v1.2-secure
+        image: buildingbite/walklib_aisystem:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         env:
@@ -155,7 +156,8 @@ spec:
     spec:
       containers:
       - name: walklib-user
-        image: buildingbite/walklib_user:v1.3.0
+        image: buildingbite/walklib_user:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         env:
@@ -191,7 +193,8 @@ spec:
     spec:
       containers:
       - name: walklib-author
-        image: buildingbite/walklib_author:v1.3.0
+        image: buildingbite/walklib_author:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         env:
@@ -227,7 +230,8 @@ spec:
     spec:
       containers:
       - name: walklib-book
-        image: buildingbite/walklib_book:v1.3.0
+        image: buildingbite/walklib_book:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         env:
@@ -263,7 +267,8 @@ spec:
     spec:
       containers:
       - name: walklib-point
-        image: buildingbite/walklib_point:v1.3.0
+        image: buildingbite/walklib_point:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         env:
@@ -299,7 +304,8 @@ spec:
     spec:
       containers:
       - name: walklib-subscription
-        image: buildingbite/walklib_subscription:v1.3.0
+        image: buildingbite/walklib_subscription:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         env:
@@ -335,7 +341,8 @@ spec:
     spec:
       containers:
       - name: walklib-writing
-        image: buildingbite/walklib_writing:v1.3.0
+        image: buildingbite/walklib_writing:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         env:
@@ -371,7 +378,8 @@ spec:
     spec:
       containers:
       - name: walklib-gateway
-        image: buildingbite/walklib_gateway:v1.1
+        image: buildingbite/walklib_gateway:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         env:
@@ -408,7 +416,8 @@ spec:
     spec:
       containers:
       - name: walklib-frontend
-        image: buildingbite/walklib_frontend:v1.1
+        image: buildingbite/walklib_frontend:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
 ---

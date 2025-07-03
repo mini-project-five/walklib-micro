@@ -50,7 +50,14 @@ server:
 
 spring:
   profiles: docker
+  datasource:
+    url: jdbc:h2:file:/data/walklib-users;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
   jpa:
+    hibernate:
+      ddl-auto: update
     properties:
       hibernate:
         show_sql: true

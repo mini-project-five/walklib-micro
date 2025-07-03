@@ -28,6 +28,7 @@ public class Book {
     
     private String summary;
     
+    @Column(length = 1000)
     private String coverImageUrl;
     
     private Long manuscriptId;

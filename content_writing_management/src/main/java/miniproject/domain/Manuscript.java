@@ -37,7 +37,7 @@ public class Manuscript {
 
     private int views;
     
-    @Column(name = "cover_image_url")
+    @Column(name = "cover_image_url", length = 1000)
     private String coverImageUrl;
 
     @PrePersist

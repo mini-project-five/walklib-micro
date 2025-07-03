@@ -31,8 +31,19 @@ export const ModernBookCard = ({ book, onBookSelect }: ModernBookCardProps) => {
         <div className="relative bg-white rounded-2xl border border-gray-100 overflow-hidden hover:border-gray-200 transition-all duration-500">
           {/* Book Cover */}
           <div className="relative aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 group-hover:from-gray-200 group-hover:to-gray-300 transition-all duration-500">
-            <div className="absolute inset-0 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-500">
-              {book.cover}
+            {book.cover && book.cover.startsWith('http') ? (
+              <img 
+                src={book.cover} 
+                alt={book.title}
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                  (e.target as HTMLImageElement).nextElementSibling!.style.display = 'flex';
+                }}
+              />
+            ) : null}
+            <div className={`absolute inset-0 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-500 ${book.cover && book.cover.startsWith('http') ? 'hidden' : ''}`}>
+              {book.cover && !book.cover.startsWith('http') ? book.cover : '📚'}
             </div>
             
             {/* Overlay gradient */}
