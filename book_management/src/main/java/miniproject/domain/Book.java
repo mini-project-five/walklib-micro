@@ -24,8 +24,10 @@ public class Book {
 
     private String title;
     
+    @Column(columnDefinition = "LONGTEXT")
     private String content;
     
+    @Column(columnDefinition = "TEXT")
     private String summary;
     
     @Column(length = 1000)
@@ -36,6 +38,10 @@ public class Book {
     private Long authorId;
 
     private Integer viewCount;
+
+    private Integer totalRating = 0;
+
+    private Integer ratingCount = 0;
 
     private Boolean isBestseller;
 
@@ -124,6 +130,29 @@ public class Book {
             // Check if it should become bestseller
             checkBestsellerStatus(bookId);
         });
+    }
+
+    public Integer getTotalRating() {
+        return totalRating != null ? totalRating : 0;
+    }
+
+    public void setTotalRating(Integer totalRating) {
+        this.totalRating = totalRating;
+    }
+
+    public Integer getRatingCount() {
+        return ratingCount != null ? ratingCount : 0;
+    }
+
+    public void setRatingCount(Integer ratingCount) {
+        this.ratingCount = ratingCount;
+    }
+
+    public Double getAverageRating() {
+        if (ratingCount == null || ratingCount == 0) {
+            return 0.0;
+        }
+        return Math.round((double) getTotalRating() / getRatingCount() * 10.0) / 10.0;
     }
     //>>> Clean Arch / Port Method
 }

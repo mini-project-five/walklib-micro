@@ -258,6 +258,46 @@ public class BookController {
         }
     }
 
+    @PostMapping("/{id}/rating")
+    public ResponseEntity<Map<String, Object>> addRating(@PathVariable("id") Long id, @RequestBody Map<String, Integer> ratingData) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            Integer rating = ratingData.get("rating");
+            if (rating == null || rating < 1 || rating > 5) {
+                response.put("success", false);
+                response.put("error", "Rating must be between 1 and 5");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            }
+            
+            Optional<Book> bookOptional = bookRepository.findById(id);
+            if (bookOptional.isPresent()) {
+                Book book = bookOptional.get();
+                book.setTotalRating(book.getTotalRating() + rating);
+                book.setRatingCount(book.getRatingCount() + 1);
+                bookRepository.save(book);
+                
+                double averageRating = (double) book.getTotalRating() / book.getRatingCount();
+                
+                response.put("success", true);
+                response.put("book", book);
+                response.put("averageRating", Math.round(averageRating * 10.0) / 10.0);
+                response.put("message", "Rating added successfully");
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("success", false);
+                response.put("error", "Book not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Error adding rating: " + e.getMessage());
+            response.put("success", false);
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, Object>> deleteBook(@PathVariable("id") Long id) {
         Map<String, Object> response = new HashMap<>();

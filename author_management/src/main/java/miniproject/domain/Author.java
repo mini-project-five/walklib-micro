@@ -41,8 +41,8 @@ public class Author {
     @NotBlank(message = "이메일은 필수입니다")
     private String email;
 
-    @Column(length = 1000)
-    @Size(max = 1000, message = "소개글은 1000자 이하여야 합니다")
+    @Column(columnDefinition = "TEXT")
+    @Size(max = 5000, message = "소개글은 5000자 이하여야 합니다")
     private String introduction;
 
     @Column(nullable = false)
@@ -152,11 +152,18 @@ public class Author {
                 
                 // 승인 상태 확인
                 if (!AuthorRegisterStatus.APPROVED.equals(author.getAuthorRegisterStatus())) {
-                    String message = switch (author.getAuthorRegisterStatus()) {
-                        case PENDING -> "계정 승인 대기 중입니다. 관리자의 승인을 기다려주세요.";
-                        case REJECTED -> "계정이 거부되었습니다. 관리자에게 문의하세요.";
-                        default -> "계정 상태를 확인할 수 없습니다.";
-                    };
+                    String message;
+                    switch (author.getAuthorRegisterStatus()) {
+                        case PENDING:
+                            message = "계정 승인 대기 중입니다. 관리자의 승인을 기다려주세요.";
+                            break;
+                        case REJECTED:
+                            message = "계정이 거부되었습니다. 관리자에게 문의하세요.";
+                            break;
+                        default:
+                            message = "계정 상태를 확인할 수 없습니다.";
+                            break;
+                    }
                     throw new IllegalStateException(message);
                 }
                 

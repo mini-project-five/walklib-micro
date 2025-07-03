@@ -35,6 +35,8 @@ export interface Book {
   coverImageUrl?: string;
   manuscriptId?: number;
   viewCount?: number;
+  totalRating?: number;
+  ratingCount?: number;
   isBestseller?: boolean;
   status?: string;
 }
@@ -289,6 +291,19 @@ export const bookAPI = {
       return response.book || response.data;
     } else {
       throw new Error(response.error || 'Failed to increment view count');
+    }
+  },
+
+  addRating: async (id: number, rating: number) => {
+    const response = await apiRequest<ApiResponse<Book & { averageRating: number }>>(`/books/${id}/rating`, {
+      method: 'POST',
+      body: JSON.stringify({ rating }),
+    });
+    
+    if (response.success) {
+      return response;
+    } else {
+      throw new Error(response.error || 'Failed to add rating');
     }
   },
 };

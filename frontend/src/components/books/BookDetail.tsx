@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { bookAPI } from '@/services/api';
 
 interface BookDetailProps {
   book: any;
@@ -46,14 +47,30 @@ export const BookDetail = ({
     "클라이맥스가 다가오고 있습니다. 지금까지의 모든 복선들이 하나로 모이며 놀라운 진실이 밝혀집니다. 독자들은 숨을 고르며 다음 페이지를 기다리게 됩니다."
   ];
 
-  const handleReadBook = () => {
-    if (isSubscribed) {
-      setIsReading(true);
-    } else if (coins >= 10) {
-      onCoinsUpdate(coins - 10);
-      setIsReading(true);
-    } else {
-      onPaymentNeeded();
+  const handleReadBook = async () => {
+    try {
+      // 조회수 증가
+      await bookAPI.incrementView(book.id || book.bookId);
+      
+      if (isSubscribed) {
+        setIsReading(true);
+      } else if (coins >= 10) {
+        onCoinsUpdate(coins - 10);
+        setIsReading(true);
+      } else {
+        onPaymentNeeded();
+      }
+    } catch (error) {
+      console.error('Failed to increment view count:', error);
+      // 에러가 있어도 읽기는 진행
+      if (isSubscribed) {
+        setIsReading(true);
+      } else if (coins >= 10) {
+        onCoinsUpdate(coins - 10);
+        setIsReading(true);
+      } else {
+        onPaymentNeeded();
+      }
     }
   };
 
@@ -72,7 +89,7 @@ export const BookDetail = ({
     }
   };
 
-  const handleRatingSubmit = () => {
+  const handleRatingSubmit = async () => {
     if (userRating === 0) {
       toast({
         title: "별점을 선택해주세요",
@@ -82,13 +99,24 @@ export const BookDetail = ({
       return;
     }
 
-    toast({
-      title: "평가해주셔서 감사합니다!",
-      description: `${book.title}에 ${userRating}점을 주셨습니다.`,
-    });
-    
-    setShowRating(false);
-    setIsReading(false);
+    try {
+      await bookAPI.addRating(book.id || book.bookId, userRating);
+      
+      toast({
+        title: "평가해주셔서 감사합니다!",
+        description: `${book.title}에 ${userRating}점을 주셨습니다.`,
+      });
+      
+      setShowRating(false);
+      setIsReading(false);
+    } catch (error) {
+      console.error('Failed to submit rating:', error);
+      toast({
+        title: "평가 저장 실패",
+        description: "별점 저장 중 오류가 발생했습니다. 다시 시도해주세요.",
+        variant: "destructive"
+      });
+    }
   };
 
   const getCurrentPageContent = () => {

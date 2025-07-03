@@ -29,6 +29,11 @@ const transformBookWithAuthor = async (book: Book): Promise<LibraryBook> => {
     console.warn(`Failed to fetch author ${book.authorId}:`, error);
   }
 
+  // 실제 평점 계산
+  const averageRating = book.ratingCount && book.ratingCount > 0 
+    ? Math.round((book.totalRating / book.ratingCount) * 10) / 10 
+    : 0;
+
   return {
     id: book.bookId || 0,
     title: book.title,
@@ -36,7 +41,7 @@ const transformBookWithAuthor = async (book: Book): Promise<LibraryBook> => {
     cover: book.coverImageUrl || '📚',
     genre: book.category || '일반',
     price: book.price || 0,
-    rating: 4.5, // Default rating
+    rating: averageRating,
     views: book.viewCount || 0,
     likes: Math.floor((book.viewCount || 0) * 0.3), // Approximate likes
     isNew: false, // This could be calculated based on publishedDate
