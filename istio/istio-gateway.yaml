@@ -25,10 +25,10 @@ spec:
   gateways:
   - walklib-gateway
   http:
-  # 매우 구체적인 Auth 경로들을 먼저 매치
+  # Auth 경로들을 먼저 매치 (더 유연하게)
   - match:
     - uri:
-        regex: "^/auth/(users|authors)/(register|login)$"
+        prefix: /auth/
     route:
     - destination:
         host: walklib-gateway
