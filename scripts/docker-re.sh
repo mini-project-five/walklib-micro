@@ -6,11 +6,11 @@ NETWORK="infra_default"
 PROFILE="docker"
 
 # 공통 서비스 목록 불러오기
-source "$(dirname "$0")/services.sh"
+source "$(dirname "$0")/config/services.sh"
 
 # 사용 가능한 서비스 목록을 동적으로 생성하고 사용법을 출력하는 함수
 print_usage() {
-  echo "❌ 사용법: $0 <service_name>"
+  echo "❌ 사용법: $0 <service_name> <docker_hub_id>"
   echo "사용 가능한 서비스 (디렉토리명 또는 접두사):"
   for SERVICE in "${SERVICES[@]}"; do
     read -r DIR _ _ _ <<< "$SERVICE"
@@ -20,12 +20,14 @@ print_usage() {
 }
 
 # 인자가 없는 경우 사용법 출력 후 종료
-if [ -z "$1" ]; then
+if [ -z "$1" ] || [ -z "$2" ]; then
   print_usage
   exit 1
 fi
 
+
 TARGET_SERVICE=$1
+DOCKER_HUB_ID=$2
 SERVICE_FOUND=false
 
 for SERVICE in "${SERVICES[@]}"; do
@@ -58,18 +60,23 @@ for SERVICE in "${SERVICES[@]}"; do
     echo "   - 기존 컨테이너를 중지하고 삭제합니다: $CONTAINER"
     docker rm -f "$CONTAINER" 2>/dev/null || true
 
+    HUB_TAG="$DOCKER_HUB_ID/$IMAGE:latest"
+
     # 기존 이미지 삭제
-    echo "   - 기존 Docker 이미지를 삭제합니다: $IMAGE:local"
-    docker rmi -f "$IMAGE:local" 2>/dev/null || true
+    echo "   - 기존 Docker 이미지를 삭제합니다: $HUB_TAG"
+    docker rmi -f "$HUB_TAG" 2>/dev/null || true
 
     # 도커 이미지 빌드
     echo "   - 새 Docker 이미지를 빌드합니다."
-    if ! docker build -t "$IMAGE:local" .; then
+    if ! docker build -t "$HUB_TAG" .; then
       echo "❌ Docker 이미지 빌드 실패: $DIR"
       cd - >/dev/null
       exit 1
     fi
     echo "   - Docker 이미지 빌드 완료."
+
+    # Docker Hub에 푸시
+    docker push "$HUB_TAG" || { echo "❌ Docker 푸시 실패: $HUB_TAG"; exit 1; }
 
     # 도커 컨테이너 실행
     echo "   - 새 Docker 컨테이너를 실행합니다."
@@ -77,10 +84,13 @@ for SERVICE in "${SERVICES[@]}"; do
       -p "$PORT:8080" \
       --network "$NETWORK" \
       -e SPRING_PROFILES_ACTIVE="$PROFILE" \
-      "$IMAGE:local"
+      "$HUB_TAG"
 
     # 원래 경로로 복귀
     cd - >/dev/null
+
+    # 불필요한 이미지 및 컨테이너 정리
+    docker image prune -f
 
     echo ""
     echo "✅ [${DIR}] 서비스가 성공적으로 재실행되었습니다."

@@ -1,9 +1,7 @@
-server:
-  port: 8080
-
 spring:
   application:
     name: user management
+
 ---
 
 spring:
@@ -45,9 +43,8 @@ logging:
     org.hibernate.type: trace
     org.springframework.cloud: debug
 
-
 server:
-  port: 8082
+  port: 8081
 
 ---
 
@@ -81,4 +78,6 @@ spring:
           destination: miniproject
           contentType: application/json
 
+server:
+  port: 8080
 
