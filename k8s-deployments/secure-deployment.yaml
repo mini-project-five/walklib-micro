@@ -361,6 +361,43 @@ spec:
     app: walklib-writing
 
 ---
+# auth Service
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: walklib-auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: walklib-auth
+  template:
+    metadata:
+      labels:
+        app: walklib-auth
+    spec:
+      containers:
+      - name: walklib-auth
+        image: buildingbite/walklib_auth:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "docker"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: walklib-auth
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: walklib-auth
+
+---
 # Gateway
 apiVersion: apps/v1
 kind: Deployment

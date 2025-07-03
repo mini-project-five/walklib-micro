@@ -100,7 +100,7 @@ async function apiRequest<T>(endpoint: string, options: RequestInit = {}): Promi
 // User API
 export const userAPI = {
   create: async (user: Omit<User, 'userId'>) => {
-    const response = await apiRequest<ApiResponse<User>>('/users', {
+    const response = await apiRequest<ApiResponse<User>>('/auth/users/register', {
       method: 'POST',
       body: JSON.stringify({
         email: user.email,
@@ -118,7 +118,7 @@ export const userAPI = {
   },
   
   login: async (email: string, password: string) => {
-    const response = await apiRequest<ApiResponse<User>>('/users/login', {
+    const response = await apiRequest<ApiResponse<User>>('/auth/users/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
@@ -131,14 +131,14 @@ export const userAPI = {
   },
   
   getAll: async () => {
-    const response = await apiRequest<ApiResponse<User[]>>('/users');
+    const response = await apiRequest<ApiResponse<User[]>>('/api/users');
     return response._embedded?.users || [];
   },
   
-  getById: (id: number) => apiRequest<User>(`/users/${id}`),
+  getById: (id: number) => apiRequest<User>(`/api/users/${id}`),
   
   update: async (id: number, updates: Partial<User>) => {
-    const response = await apiRequest<ApiResponse<User>>(`/users/${id}`, {
+    const response = await apiRequest<ApiResponse<User>>(`/api/users/${id}`, {
       method: 'PUT',
       body: JSON.stringify(updates),
     });
@@ -151,7 +151,7 @@ export const userAPI = {
   },
   
   promoteToAuthor: async (id: number) => {
-    const response = await apiRequest<ApiResponse<User>>(`/users/${id}/promote-to-author`, {
+    const response = await apiRequest<ApiResponse<User>>(`/api/users/${id}/promote-to-author`, {
       method: 'POST',
     });
     
@@ -163,7 +163,7 @@ export const userAPI = {
   },
   
   updateStatus: async (id: number, status: string) => {
-    const response = await apiRequest<ApiResponse<User>>(`/users/${id}/status`, {
+    const response = await apiRequest<ApiResponse<User>>(`/api/users/${id}/status`, {
       method: 'PUT',
       body: JSON.stringify({ status }),
     });
@@ -178,8 +178,27 @@ export const userAPI = {
 
 // Author API
 export const authorAPI = {
+  register: async (author: Omit<Author, 'authorId'>) => {
+    const response = await apiRequest<ApiResponse<Author>>('/auth/authors/register', {
+      method: 'POST',
+      body: JSON.stringify({
+        email: author.email,
+        password: author.authorPassword,
+        authorName: author.authorName,
+        realName: author.realName,
+        introduction: author.introduction
+      }),
+    });
+    
+    if (response.success) {
+      return response.author || response.data;
+    } else {
+      throw new Error(response.error || 'Failed to register author');
+    }
+  },
+
   login: async (email: string, password: string) => {
-    const response = await apiRequest<ApiResponse<Author>>('/auth/author/login', {
+    const response = await apiRequest<ApiResponse<Author>>('/auth/authors/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
@@ -203,7 +222,10 @@ export const authorAPI = {
     return response._embedded?.authors || [];
   },
   
-  getById: (id: number) => apiRequest<Author>(`/authors/${id}`),
+  getById: async (id: number) => {
+    const response = await apiRequest<any>(`/public/authors/${id}/name`);
+    return response;
+  },
   
   update: async (id: number, author: Partial<Author>) => {
     return await apiRequest<Author>(`/authors/${id}`, {

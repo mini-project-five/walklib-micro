@@ -7,7 +7,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.context.ApplicationContext;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {
+    org.springframework.boot.autoconfigure.data.rest.RepositoryRestMvcAutoConfiguration.class
+})
 @EnableBinding(KafkaProcessor.class)
 @EnableFeignClients
 public class UserManagementApplication {

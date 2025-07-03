@@ -1,0 +1,110 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: walklib-gateway
+  namespace: default
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: walklib-virtualservice
+  namespace: default
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - walklib-gateway
+  http:
+  # 매우 구체적인 Auth 경로들을 먼저 매치
+  - match:
+    - uri:
+        regex: "^/auth/(users|authors)/(register|login)$"
+    route:
+    - destination:
+        host: walklib-gateway
+        port:
+          number: 8080
+  # 다른 API 경로들은 Spring Cloud Gateway로
+  - match:
+    - uri:
+        prefix: /users
+    route:
+    - destination:
+        host: walklib-gateway
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /books
+    route:
+    - destination:
+        host: walklib-gateway
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /authors
+    route:
+    - destination:
+        host: walklib-gateway
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /public
+    route:
+    - destination:
+        host: walklib-gateway
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /manuscripts
+    route:
+    - destination:
+        host: walklib-gateway
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /ai
+    route:
+    - destination:
+        host: walklib-gateway
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /points
+    route:
+    - destination:
+        host: walklib-gateway
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /subscriptions
+    route:
+    - destination:
+        host: walklib-gateway
+        port:
+          number: 8080
+  # 나머지는 Frontend로 (정적 파일, React 앱)
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: walklib-frontend
+        port:
+          number: 80

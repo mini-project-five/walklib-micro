@@ -31,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CorsConfiguration configuration = new CorsConfiguration();
         
         // 개발 환경에서는 모든 출처 허용, 프로덕션에서는 특정 도메인만 허용해야 함
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.setAllowedOrigins(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
@@ -53,8 +53,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
                 // 공개 엔드포인트
                 .antMatchers("/auth/author/register", "/auth/author/login").permitAll()
+                .antMatchers("/public/**").permitAll() // 모든 public API는 공개
                 .antMatchers("/actuator/**").permitAll() // 헬스체크용
                 .antMatchers("/h2-console/**").permitAll() // 개발용 H2 콘솔
+                
+                // 내부 서비스 간 통신용 엔드포인트
+                .antMatchers("/authors/internal/**").permitAll()
                 
                 // 관리자 전용 엔드포인트
                 .antMatchers("/authors/admin/**").hasRole("ADMIN")

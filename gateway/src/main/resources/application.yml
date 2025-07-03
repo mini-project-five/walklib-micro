@@ -7,38 +7,51 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: auth_management
+          uri: http://localhost:8090
+          predicates:
+            - Path=/auth/**
+          order: 1
         - id: user_management
           uri: http://localhost:8082
           predicates:
             - Path=/users/**
+          order: 2
         - id: point_management
           uri: http://localhost:8083
           predicates:
             - Path=/points/**, /pointLists/**
+          order: 3
         - id: subscription_management
           uri: http://localhost:8084
           predicates:
             - Path=/subscriptions/**
+          order: 4
         - id: book_management
           uri: http://localhost:8085
           predicates:
             - Path=/books/**, /bookLists/**
+          order: 5
         - id: author_management
           uri: http://localhost:8086
           predicates:
-            - Path=/authors/**, /authorManagements/**, /authorManagementViews/**
+            - Path=/authors/**, /authorManagements/**, /authorManagementViews/**, /public/**
+          order: 6
         - id: content_writing_management
           uri: http://localhost:8087
           predicates:
             - Path=/manuscripts/**, /manuscriptLists/**
+          order: 7
         - id: ai_system_management
           uri: http://localhost:8089
           predicates:
             - Path=/ai/**, /ais/**
+          order: 8
         - id: frontend
           uri: http://localhost:3000
           predicates:
             - Path=/**
+          order: 1000
       globalcors:
         corsConfigurations:
           '[/**]':
@@ -60,38 +73,51 @@ spring:
   cloud:
     gateway:
       routes:
+        - id: auth_management
+          uri: http://walklib-auth:8080
+          predicates:
+            - Path=/auth/**
+          order: 1
         - id: user_management
           uri: http://walklib-user:8080
           predicates:
             - Path=/users/**
+          order: 2
         - id: point_management
           uri: http://walklib-point:8080
           predicates:
             - Path=/points/**, /pointLists/**
+          order: 3
         - id: subscription_management
           uri: http://walklib-subscription:8080
           predicates:
             - Path=/subscriptions/**
+          order: 4
         - id: book_management
           uri: http://walklib-book:8080
           predicates:
             - Path=/books/**, /bookLists/**
+          order: 5
         - id: author_management
           uri: http://walklib-author:8080
           predicates:
-            - Path=/authors/**, /authorManagements/**, /authorManagementViews/**
+            - Path=/authors/**, /authorManagements/**, /authorManagementViews/**, /public/**
+          order: 6
         - id: content_writing_management
           uri: http://walklib-writing:8080
           predicates:
             - Path=/manuscripts/**, /manuscriptLists/**
+          order: 7
         - id: ai_system_management
           uri: http://walklib-aisystem:8080
           predicates:
             - Path=/ai/**, /ais/**
+          order: 8
         - id: frontend
           uri: http://walklib-frontend:80
           predicates:
             - Path=/**
+          order: 1000
       globalcors:
         corsConfigurations:
           '[/**]':

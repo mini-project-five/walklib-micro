@@ -22,16 +22,16 @@ public interface AuthorManagementRepository
     Optional<AuthorManagement> findByAuthorId(Long authorId);
     
     // 상태별 조회 (페이지네이션 지원)
-    Page<AuthorManagement> findByStatusOrderByApplicationDateDesc(String status, Pageable pageable);
+    Page<AuthorManagement> findByManagementStatusOrderByReviewedAtDesc(ManagementStatus managementStatus, Pageable pageable);
     
     // 모든 요청 조회 (최신순)
-    Page<AuthorManagement> findAllByOrderByApplicationDateDesc(Pageable pageable);
+    Page<AuthorManagement> findAllByOrderByReviewedAtDesc(Pageable pageable);
     
     // 상태별 개수 조회
-    long countByStatus(String status);
+    long countByManagementStatus(ManagementStatus managementStatus);
     
     // 특정 기간 이후 신청 개수
-    long countByApplicationDateAfter(Date date);
+    long countByReviewedAtAfter(Date date);
     
     // 이메일로 조회
     Optional<AuthorManagement> findByEmail(String email);
@@ -43,11 +43,11 @@ public interface AuthorManagementRepository
     Page<AuthorManagement> findByEmailContainingIgnoreCase(String email, Pageable pageable);
     
     // 상태와 작가명으로 검색
-    Page<AuthorManagement> findByStatusAndAuthorNameContainingIgnoreCase(String status, String authorName, Pageable pageable);
+    Page<AuthorManagement> findByManagementStatusAndAuthorNameContainingIgnoreCase(ManagementStatus managementStatus, String authorName, Pageable pageable);
     
     // 승인 대기 중인 요청들 (오래된 순)
-    List<AuthorManagement> findByStatusOrderByApplicationDateAsc(String status);
+    List<AuthorManagement> findByManagementStatusOrderByReviewedAtAsc(ManagementStatus managementStatus);
     
     // 특정 날짜 범위의 신청들
-    Page<AuthorManagement> findByApplicationDateBetween(Date startDate, Date endDate, Pageable pageable);
+    Page<AuthorManagement> findByReviewedAtBetween(Date startDate, Date endDate, Pageable pageable);
 }

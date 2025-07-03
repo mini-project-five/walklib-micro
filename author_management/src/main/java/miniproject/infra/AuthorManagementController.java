@@ -1,5 +1,6 @@
 package miniproject.infra;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,7 @@ public class AuthorManagementController {
         try {
             Pageable pageable = PageRequest.of(page, size);
             Page<AuthorManagement> pendingAuthors = authorManagementRepository
-                .findByStatusOrderByApplicationDateDesc("PENDING", pageable);
+                .findByManagementStatusOrderByReviewedAtDesc(ManagementStatus.PENDING, pageable);
             
             response.put("success", true);
             response.put("authors", pendingAuthors.getContent());
@@ -84,9 +85,10 @@ public class AuthorManagementController {
             Page<AuthorManagement> authors;
             
             if (status != null && !status.trim().isEmpty()) {
-                authors = authorManagementRepository.findByStatusOrderByApplicationDateDesc(status.trim(), pageable);
+                ManagementStatus managementStatus = ManagementStatus.valueOf(status.trim().toUpperCase());
+                authors = authorManagementRepository.findByManagementStatusOrderByReviewedAtDesc(managementStatus, pageable);
             } else {
-                authors = authorManagementRepository.findAllByOrderByApplicationDateDesc(pageable);
+                authors = authorManagementRepository.findAllByOrderByReviewedAtDesc(pageable);
             }
             
             response.put("success", true);
@@ -126,7 +128,8 @@ public class AuthorManagementController {
             
             if (authorMgmtOpt.isPresent()) {
                 AuthorManagement authorMgmt = authorMgmtOpt.get();
-                authorMgmt.approve(adminNotes);
+                authorMgmt.setManagementStatus(ManagementStatus.APPROVED);
+                authorMgmt.setReviewedAt(new Date());
                 authorManagementRepository.save(authorMgmt);
                 
                 // Author 엔티티도 승인 상태로 변경
@@ -192,7 +195,8 @@ public class AuthorManagementController {
             
             if (authorMgmtOpt.isPresent()) {
                 AuthorManagement authorMgmt = authorMgmtOpt.get();
-                authorMgmt.reject(rejectionReason, adminNotes);
+                authorMgmt.setManagementStatus(ManagementStatus.REJECTED);
+                authorMgmt.setReviewedAt(new Date());
                 authorManagementRepository.save(authorMgmt);
                 
                 // Author 엔티티도 거부 상태로 변경
@@ -208,7 +212,6 @@ public class AuthorManagementController {
                 authorRejected.setAuthorId(authorId);
                 authorRejected.setAuthorName(authorMgmt.getAuthorName());
                 authorRejected.setEmail(authorMgmt.getEmail());
-                authorRejected.setRejectionReason(rejectionReason);
                 authorRejected.publishAfterCommit();
                 
                 response.put("success", true);
@@ -288,10 +291,10 @@ public class AuthorManagementController {
             Map<String, Object> stats = new HashMap<>();
             
             // 상태별 작가 수
-            long pendingCount = authorManagementRepository.countByStatus("PENDING");
-            long approvedCount = authorManagementRepository.countByStatus("APPROVED");
-            long rejectedCount = authorManagementRepository.countByStatus("REJECTED");
-            long underReviewCount = authorManagementRepository.countByStatus("UNDER_REVIEW");
+            long pendingCount = authorManagementRepository.countByManagementStatus(ManagementStatus.PENDING);
+            long approvedCount = authorManagementRepository.countByManagementStatus(ManagementStatus.APPROVED);
+            long rejectedCount = authorManagementRepository.countByManagementStatus(ManagementStatus.REJECTED);
+            long underReviewCount = 0; // UNDER_REVIEW status not in enum
             
             stats.put("pendingCount", pendingCount);
             stats.put("approvedCount", approvedCount);

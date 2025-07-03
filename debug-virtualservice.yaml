@@ -1,0 +1,56 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: walklib-debug-vs
+  namespace: default
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - walklib-gateway
+  http:
+  # 매우 구체적인 auth 경로 매칭
+  - match:
+    - uri:
+        exact: /auth/users/register
+    - uri:
+        exact: /auth/users/login
+    - uri:
+        exact: /auth/authors/register
+    - uri:
+        exact: /auth/authors/login
+    route:
+    - destination:
+        host: walklib-gateway
+        port:
+          number: 8080
+  # 나머지 API들
+  - match:
+    - uri:
+        prefix: /users
+    - uri:
+        prefix: /books
+    - uri:
+        prefix: /authors
+    - uri:
+        prefix: /manuscripts
+    - uri:
+        prefix: /ai
+    - uri:
+        prefix: /points
+    - uri:
+        prefix: /subscriptions
+    route:
+    - destination:
+        host: walklib-gateway
+        port:
+          number: 8080
+  # 나머지는 frontend로
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: walklib-frontend
+        port:
+          number: 80

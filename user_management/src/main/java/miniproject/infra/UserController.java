@@ -22,11 +22,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
+import org.springframework.core.annotation.Order;
+import org.springframework.core.Ordered;
 
 //<<< Clean Arch / Inbound Adaptor
 
 @RestController
-@RequestMapping(value="/users")
+@Order(Ordered.HIGHEST_PRECEDENCE)
 @Transactional
 public class UserController {
 
@@ -41,7 +43,7 @@ public class UserController {
     /**
      * 모든 사용자 조회 (관리자 전용, 페이지네이션 지원)
      */
-    @GetMapping("/admin/all")
+    @GetMapping("/users/admin/all")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, Object>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
@@ -72,7 +74,7 @@ public class UserController {
     /**
      * 사용자 정보 조회 (본인 또는 관리자만)
      */
-    @GetMapping("/{id}")
+    @GetMapping("/users/{id}")
     public ResponseEntity<Map<String, Object>> getUserById(
             @PathVariable("id") Long id,
             HttpServletRequest request) {
@@ -118,10 +120,52 @@ public class UserController {
     }
 
     /**
-     * 사용자 회원가입 (공개 엔드포인트)
+     * 내부 회원가입 엔드포인트 (Auth 서비스에서만 호출)
      */
-    @PostMapping("/register")
-    public ResponseEntity<Map<String, Object>> registerUser(@RequestBody Map<String, String> request) {
+    @PostMapping("/users/internal/register")
+    public ResponseEntity<Map<String, Object>> internalRegister(@RequestBody Map<String, String> request) {
+        return registerUser(request);
+    }
+    
+    /**
+     * 내부 로그인 엔드포인트 (Auth 서비스에서만 호출)
+     */
+    @PostMapping("/users/internal/login")
+    public ResponseEntity<Map<String, Object>> internalLogin(@RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            String email = request.get("email");
+            String password = request.get("password");
+            
+            logger.info("Internal login attempt for email: {}", email);
+            
+            User user = User.authenticateUser(email, password);
+            
+            response.put("success", true);
+            response.put("message", "로그인 성공");
+            response.put("user", user);
+            
+            logger.info("User authenticated successfully: {} (ID: {})", user.getUserName(), user.getUserId());
+            return ResponseEntity.ok(response);
+            
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            logger.warn("Login failed for email {}: {}", request.get("email"), e.getMessage());
+            response.put("success", false);
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (Exception e) {
+            logger.error("Login error: {}", e.getMessage(), e);
+            response.put("success", false);
+            response.put("error", "로그인 처리 중 시스템 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /**
+     * 사용자 회원가입 (이제는 내부에서만 사용)
+     */
+    private ResponseEntity<Map<String, Object>> registerUser(Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
         
         try {
@@ -162,53 +206,11 @@ public class UserController {
         }
     }
 
-    /**
-     * 사용자 로그인 (공개 엔드포인트)
-     */
-    @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> request) {
-        Map<String, Object> response = new HashMap<>();
-        
-        try {
-            String email = request.get("email");
-            String password = request.get("password");
-            
-            logger.info("Login attempt for email: {}", email);
-            
-            User user = User.authenticateUser(email, password);
-            
-            // JWT 토큰 생성
-            String token = jwtTokenUtil.generateToken(user.getUserId(), user.getEmail(), user.getRole());
-            
-            response.put("success", true);
-            response.put("message", "로그인 성공");
-            response.put("user", user);
-            response.put("token", token);
-            
-            // 응답 헤더에도 토큰 추가
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Authorization", "Bearer " + token);
-            
-            logger.info("User logged in successfully: {} (ID: {})", user.getUserName(), user.getUserId());
-            return ResponseEntity.ok().headers(headers).body(response);
-            
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            logger.warn("Login failed for email {}: {}", request.get("email"), e.getMessage());
-            response.put("success", false);
-            response.put("error", e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        } catch (Exception e) {
-            logger.error("Login error: {}", e.getMessage(), e);
-            response.put("success", false);
-            response.put("error", "로그인 처리 중 시스템 오류가 발생했습니다.");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-    }
 
     /**
      * 토큰 검증 및 사용자 정보 조회
      */
-    @PostMapping("/verify-token")
+    @PostMapping("/users/verify-token")
     public ResponseEntity<Map<String, Object>> verifyToken(HttpServletRequest request) {
         Map<String, Object> response = new HashMap<>();
         
@@ -255,7 +257,7 @@ public class UserController {
     /**
      * 패스워드 변경
      */
-    @PostMapping("/{id}/change-password")
+    @PostMapping("/users/{id}/change-password")
     public ResponseEntity<Map<String, Object>> changePassword(
             @PathVariable("id") Long id,
             @RequestBody Map<String, String> request,
@@ -314,7 +316,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/users/{id}")
     public ResponseEntity<Map<String, Object>> updateUser(
         @PathVariable("id") Long id,
         @RequestBody Map<String, Object> updates,
@@ -361,7 +363,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/{id}/promote-to-author")
+    @PostMapping("/users/{id}/promote-to-author")
     public ResponseEntity<Map<String, Object>> promoteToAuthor(@PathVariable("id") Long id) {
         Map<String, Object> response = new HashMap<>();
         
@@ -387,7 +389,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{id}/status")
+    @PutMapping("/users/{id}/status")
     public ResponseEntity<Map<String, Object>> updateUserStatus(
         @PathVariable("id") Long id,
         @RequestBody Map<String, String> request
@@ -424,7 +426,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/users/{id}")
     public ResponseEntity<Map<String, Object>> deleteUser(@PathVariable("id") Long id) {
         Map<String, Object> response = new HashMap<>();
         
@@ -451,7 +453,7 @@ public class UserController {
     /**
      * 관리자 대시보드용 통계 정보
      */
-    @GetMapping("/admin/dashboard-stats")
+    @GetMapping("/users/admin/dashboard-stats")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, Object>> getDashboardStats() {
         Map<String, Object> response = new HashMap<>();
@@ -505,7 +507,7 @@ public class UserController {
     /**
      * 관리자 로그인 (별도 엔드포인트)
      */
-    @PostMapping("/admin/login")
+    @PostMapping("/users/admin/login")
     public ResponseEntity<Map<String, Object>> adminLogin(@RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
         
@@ -556,7 +558,7 @@ public class UserController {
     /**
      * 사용자 검색 (관리자 전용)
      */
-    @GetMapping("/admin/search")
+    @GetMapping("/users/admin/search")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, Object>> searchUsers(
             @RequestParam(required = false) String email,

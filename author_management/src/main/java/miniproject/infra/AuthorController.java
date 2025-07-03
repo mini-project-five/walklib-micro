@@ -25,7 +25,6 @@ import org.springframework.http.HttpStatus;
 //<<< Clean Arch / Inbound Adaptor
 
 @RestController
-@RequestMapping(value="/auth")
 @Transactional
 public class AuthorController {
 
@@ -40,7 +39,7 @@ public class AuthorController {
     /**
      * 작가 회원가입 (공개 엔드포인트)
      */
-    @PostMapping("/author/register")
+    @PostMapping("/auth/author/register")
     public ResponseEntity<Map<String, Object>> registerAuthor(@RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
         
@@ -80,7 +79,7 @@ public class AuthorController {
     /**
      * 작가 로그인 (공개 엔드포인트)
      */
-    @PostMapping("/author/login")
+    @PostMapping("/auth/author/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
         
@@ -129,7 +128,7 @@ public class AuthorController {
     /**
      * 토큰 검증 및 작가 정보 조회
      */
-    @PostMapping("/author/verify-token")
+    @PostMapping("/auth/author/verify-token")
     public ResponseEntity<Map<String, Object>> verifyToken(HttpServletRequest request) {
         Map<String, Object> response = new HashMap<>();
         
@@ -175,9 +174,9 @@ public class AuthorController {
     }
 
     /**
-     * 작가 정보 조회 (본인만)
+     * 작가 정보 조회 (본인만 또는 기본 정보 공개)
      */
-    @GetMapping("/author/{id}")
+    @GetMapping("/auth/author/{id}")
     public ResponseEntity<Map<String, Object>> getAuthorById(
             @PathVariable("id") Long id,
             HttpServletRequest request) {
@@ -185,27 +184,31 @@ public class AuthorController {
         Map<String, Object> response = new HashMap<>();
         
         try {
-            // JWT 토큰에서 작가 정보 추출
-            String token = jwtTokenUtil.extractTokenFromHeader(request.getHeader("Authorization"));
-            if (token == null || !jwtTokenUtil.validateToken(token)) {
-                response.put("success", false);
-                response.put("error", "유효하지 않은 토큰입니다.");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-            }
-            
-            Long requestAuthorId = jwtTokenUtil.getAuthorIdFromToken(token);
-            
-            // 본인만 조회 가능
-            if (!requestAuthorId.equals(id)) {
-                response.put("success", false);
-                response.put("error", "본인의 정보만 조회할 수 있습니다.");
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-            }
-            
             Optional<Author> authorOpt = authorRepository.findById(id);
             if (authorOpt.isPresent()) {
+                Author author = authorOpt.get();
+                
+                // JWT 토큰 체크 (있으면 전체 정보, 없으면 기본 정보만)
+                String token = jwtTokenUtil.extractTokenFromHeader(request.getHeader("Authorization"));
+                
+                if (token != null && jwtTokenUtil.validateToken(token)) {
+                    Long requestAuthorId = jwtTokenUtil.getAuthorIdFromToken(token);
+                    if (requestAuthorId.equals(id)) {
+                        // 본인 조회 - 전체 정보
+                        response.put("success", true);
+                        response.put("author", author);
+                        return ResponseEntity.ok(response);
+                    }
+                }
+                
+                // 공개 정보만 반환
+                Map<String, Object> publicInfo = new HashMap<>();
+                publicInfo.put("authorId", author.getAuthorId());
+                publicInfo.put("authorName", author.getAuthorName());
+                publicInfo.put("realName", author.getRealName());
+                
                 response.put("success", true);
-                response.put("author", authorOpt.get());
+                response.put("author", publicInfo);
                 return ResponseEntity.ok(response);
             } else {
                 response.put("success", false);
@@ -222,9 +225,41 @@ public class AuthorController {
     }
 
     /**
+     * 공개 작가 이름 조회
+     */
+    @GetMapping("/auth/authors/{id}/authorName")
+    public ResponseEntity<Map<String, Object>> getAuthorName(@PathVariable("id") Long id) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            Optional<Author> authorOpt = authorRepository.findById(id);
+            if (authorOpt.isPresent()) {
+                Author author = authorOpt.get();
+                
+                response.put("success", true);
+                response.put("authorId", author.getAuthorId());
+                response.put("authorName", author.getAuthorName());
+                response.put("realName", author.getRealName());
+                
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("success", false);
+                response.put("error", "작가를 찾을 수 없습니다.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+            
+        } catch (Exception e) {
+            logger.error("Error retrieving author name: {}", e.getMessage(), e);
+            response.put("success", false);
+            response.put("error", "작가 이름 조회 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /**
      * 패스워드 변경
      */
-    @PostMapping("/author/{id}/change-password")
+    @PostMapping("/auth/author/{id}/change-password")
     public ResponseEntity<Map<String, Object>> changePassword(
             @PathVariable("id") Long id,
             @RequestBody Map<String, String> request,
@@ -279,6 +314,81 @@ public class AuthorController {
             logger.error("Author password change error: {}", e.getMessage(), e);
             response.put("success", false);
             response.put("error", "패스워드 변경 중 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /**
+     * 내부 회원가입 엔드포인트 (Auth 서비스에서만 호출)
+     */
+    @PostMapping("/authors/internal/register")
+    public ResponseEntity<Map<String, Object>> internalRegisterAuthor(@RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            String authorName = request.get("authorName");
+            String email = request.get("email");
+            String password = request.get("password");
+            String realName = request.get("realName");
+            String introduction = request.get("introduction");
+            
+            logger.info("Internal author registration attempt for email: {}", email);
+            
+            Author author = Author.registerAuthor(authorName, email, password, realName, introduction);
+            
+            response.put("success", true);
+            response.put("message", "작가 등록이 완료되었습니다. 관리자의 승인을 기다려주세요.");
+            response.put("author", author);
+            response.put("status", "PENDING");
+            
+            logger.info("Author registered successfully via internal endpoint: {} (ID: {})", author.getAuthorName(), author.getAuthorId());
+            return ResponseEntity.ok(response);
+            
+        } catch (IllegalArgumentException e) {
+            logger.warn("Internal author registration failed - validation error: {}", e.getMessage());
+            response.put("success", false);
+            response.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        } catch (Exception e) {
+            logger.error("Internal author registration failed - system error: {}", e.getMessage(), e);
+            response.put("success", false);
+            response.put("error", "작가 등록 처리 중 시스템 오류가 발생했습니다.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /**
+     * 내부 로그인 엔드포인트 (Auth 서비스에서만 호출)
+     */
+    @PostMapping("/authors/internal/login")
+    public ResponseEntity<Map<String, Object>> internalLoginAuthor(@RequestBody Map<String, String> request) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            String email = request.get("email");
+            String password = request.get("password");
+            
+            logger.info("Internal author login attempt for email: {}", email);
+            
+            Author author = Author.authenticateAuthor(email, password);
+            
+            response.put("success", true);
+            response.put("message", "로그인 성공");
+            response.put("author", author);
+            response.put("authorId", author.getAuthorId());
+            
+            logger.info("Author authenticated successfully via internal endpoint: {} (ID: {})", author.getAuthorName(), author.getAuthorId());
+            return ResponseEntity.ok(response);
+            
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            logger.warn("Internal author login failed for email {}: {}", request.get("email"), e.getMessage());
+            response.put("success", false);
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        } catch (Exception e) {
+            logger.error("Internal author login error: {}", e.getMessage(), e);
+            response.put("success", false);
+            response.put("error", "로그인 처리 중 시스템 오류가 발생했습니다.");
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }

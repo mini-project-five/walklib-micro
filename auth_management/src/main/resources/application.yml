@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: auth management
+  profiles:
+    active: default
+    
+server:
+  port: 8090
+
+---
+spring:
+  profiles: docker
+
+server:
+  port: 8080
+  
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info
+        
+logging:
+  level:
+    miniproject: DEBUG
