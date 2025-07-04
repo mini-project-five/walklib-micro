@@ -28,6 +28,8 @@ export interface Book {
   title: string;
   content: string;
   price?: number;
+  pointCost?: number;
+  isFree?: boolean;
   authorId: number;
   publishedDate?: string;
   category?: string;
@@ -328,6 +330,19 @@ export const bookAPI = {
       throw new Error(response.error || 'Failed to add rating');
     }
   },
+
+  readBook: async (id: number, userId: number) => {
+    const response = await apiRequest<ApiResponse<Book & { pointCost: number; isFree: boolean }>>(`/books/${id}/read`, {
+      method: 'POST',
+      body: JSON.stringify({ userId }),
+    });
+    
+    if (response.success) {
+      return response;
+    } else {
+      throw new Error(response.error || 'Failed to read book');
+    }
+  },
 };
 
 // Manuscript API
@@ -397,6 +412,29 @@ export const pointAPI = {
   getByUser: (userId: number) => apiRequest<{_embedded: {points: Point[]}}>(`/points?userId=${userId}`),
   
   getTotalByUser: (userId: number) => apiRequest<number>(`/points/user/${userId}/total`),
+
+  purchase: async (userId: number, amount: number) => {
+    const response = await apiRequest<ApiResponse<any>>('/points/purchase', {
+      method: 'POST',
+      body: JSON.stringify({ userId, amount }),
+    });
+    
+    if (response.success) {
+      return response;
+    } else {
+      throw new Error(response.error || 'Failed to purchase points');
+    }
+  },
+
+  getBalance: async (userId: number) => {
+    const response = await apiRequest<ApiResponse<{ pointBalance: number }>>(`/points/user/${userId}/balance`);
+    
+    if (response.success) {
+      return response;
+    } else {
+      throw new Error(response.error || 'Failed to get point balance');
+    }
+  },
 };
 
 // Subscription API

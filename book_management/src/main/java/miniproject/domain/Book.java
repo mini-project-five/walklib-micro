@@ -46,6 +46,10 @@ public class Book {
     private Boolean isBestseller;
 
     private String status; // DRAFT, PUBLISHED, BESTSELLER
+    
+    private Integer pointCost = 10; // 기본값 10 포인트
+    
+    private Boolean isFree = false; // 무료 책 여부
 
     @PostPersist
     public void onPostPersist() {

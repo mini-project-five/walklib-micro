@@ -49,28 +49,39 @@ export const BookDetail = ({
 
   const handleReadBook = async () => {
     try {
-      // 조회수 증가
-      await bookAPI.incrementView(book.id || book.bookId);
+      const bookId = book.id || book.bookId;
+      const userId = user.userId || user.id;
       
       if (isSubscribed) {
-        setIsReading(true);
-      } else if (coins >= 10) {
-        onCoinsUpdate(coins - 10);
+        // 구독자는 무료로 읽기
+        await bookAPI.readBook(bookId, userId);
         setIsReading(true);
       } else {
-        onPaymentNeeded();
+        // 비구독자는 포인트 확인 후 읽기
+        const requiredPoints = book.pointCost || 10;
+        const isFreeBook = book.isFree || false;
+        
+        if (isFreeBook) {
+          // 무료 책은 바로 읽기
+          await bookAPI.readBook(bookId, userId);
+          setIsReading(true);
+        } else if (coins >= requiredPoints) {
+          // 포인트가 충분하면 차감하고 읽기
+          await bookAPI.readBook(bookId, userId);
+          onCoinsUpdate(coins - requiredPoints);
+          setIsReading(true);
+        } else {
+          // 포인트가 부족하면 결제 필요
+          onPaymentNeeded();
+        }
       }
     } catch (error) {
-      console.error('Failed to increment view count:', error);
-      // 에러가 있어도 읽기는 진행
-      if (isSubscribed) {
-        setIsReading(true);
-      } else if (coins >= 10) {
-        onCoinsUpdate(coins - 10);
-        setIsReading(true);
-      } else {
-        onPaymentNeeded();
-      }
+      console.error('Failed to read book:', error);
+      toast({
+        title: "책 읽기 실패",
+        description: "책을 여는 중 오류가 발생했습니다. 다시 시도해주세요.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -343,9 +354,14 @@ export const BookDetail = ({
             onClick={handleReadBook}
             className="w-full bg-amber-700 hover:bg-amber-800 text-white py-4 text-lg font-medium rounded-xl transition-all duration-300 hover:scale-[1.02]"
           >
-            {isSubscribed ? '무제한 열람하기' : `🪙 ${book.price} 코인으로 열람하기`}
+            {isSubscribed 
+              ? '무제한 열람하기' 
+              : book.isFree 
+                ? '무료로 열람하기' 
+                : `🪙 ${book.pointCost || 10} 코인으로 열람하기`
+            }
           </Button>
-          {!isSubscribed && coins < 10 && (
+          {!isSubscribed && !book.isFree && coins < (book.pointCost || 10) && (
             <p className="text-center text-sm text-amber-700 mt-2">
               코인이 부족합니다. 충전이 필요해요!
             </p>

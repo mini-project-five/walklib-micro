@@ -23,6 +23,8 @@ export const AuthorEditor = ({ user, onBack, editingManuscript }: AuthorEditorPr
   const [isSaving, setIsSaving] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [currentManuscriptId, setCurrentManuscriptId] = useState(editingManuscript?.manuscriptId);
+  const [pointCost, setPointCost] = useState(10); // 기본 포인트 비용
+  const [isFree, setIsFree] = useState(false); // 무료 책 여부
   const { toast } = useToast();
 
   const handleLogout = () => {
@@ -207,6 +209,8 @@ export const AuthorEditor = ({ user, onBack, editingManuscript }: AuthorEditorPr
         coverImageUrl: generatedCover || undefined,
         category: 'GENERAL',
         price: 10, // 기본 가격
+        pointCost: isFree ? 0 : pointCost, // 포인트 비용
+        isFree: isFree, // 무료 책 여부
         viewCount: 0,
         publishedDate: new Date().toISOString()
       };
@@ -294,6 +298,46 @@ export const AuthorEditor = ({ user, onBack, editingManuscript }: AuthorEditorPr
                     placeholder="당신의 이야기를 들려주세요..."
                     className="min-h-96 resize-none border-gray-200 focus:border-purple-500 focus:ring-purple-500 leading-relaxed"
                   />
+                </div>
+
+                {/* 가격 설정 섹션 */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      읽기 비용 (포인트)
+                    </label>
+                    <Input
+                      type="number"
+                      min="0"
+                      max="1000"
+                      value={pointCost}
+                      onChange={(e) => setPointCost(parseInt(e.target.value) || 0)}
+                      disabled={isFree}
+                      className="border-gray-200 focus:border-purple-500 focus:ring-purple-500"
+                      placeholder="포인트 비용을 입력하세요"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      독자가 책을 읽기 위해 지불할 포인트 수
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-center space-x-3">
+                    <input
+                      type="checkbox"
+                      id="isFree"
+                      checked={isFree}
+                      onChange={(e) => {
+                        setIsFree(e.target.checked);
+                        if (e.target.checked) {
+                          setPointCost(0);
+                        }
+                      }}
+                      className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                    />
+                    <label htmlFor="isFree" className="text-sm font-medium text-gray-700">
+                      무료로 제공
+                    </label>
+                  </div>
                 </div>
                 
                 <div className="flex flex-wrap gap-4">

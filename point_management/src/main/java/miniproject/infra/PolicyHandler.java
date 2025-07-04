@@ -157,6 +157,54 @@ public class PolicyHandler {
     }
 
     /**
+     * 책 읽기 이벤트 처리 - 포인트 차감
+     */
+    @StreamListener(
+        value = KafkaProcessor.INPUT,
+        condition = "headers['type']=='BookRead'"
+    )
+    public void wheneverBookRead_DeductPointsForReading(
+        @Payload BookRead bookRead
+    ) {
+        try {
+            if (!bookRead.validate()) return;
+            
+            System.out.println(
+                "\n\n##### listener DeductPointsForReading : " + bookRead + "\n\n"
+            );
+
+            // 포인트 차감 로직
+            pointRepository.findByUserId(bookRead.getUserId()).ifPresentOrElse(
+                point -> {
+                    Integer pointCost = bookRead.getPointCost() != null ? bookRead.getPointCost() : 10;
+                    
+                    if (point.getPointBalance() >= pointCost) {
+                        point.setPointBalance(point.getPointBalance() - pointCost);
+                        point.setTransactionType("USE");
+                        point.setTransactionAmount(pointCost);
+                        point.setDescription("Book reading: " + bookRead.getTitle());
+                        pointRepository.save(point);
+                        
+                        // CQRS 업데이트
+                        updatePointList(point);
+                        
+                        System.out.println("Points deducted for book reading. Book: " + bookRead.getTitle() + 
+                                         ", Cost: " + pointCost + ", Remaining: " + point.getPointBalance());
+                    } else {
+                        System.out.println("Insufficient points for book reading. Required: " + pointCost + 
+                                         ", Available: " + point.getPointBalance());
+                    }
+                },
+                () -> System.out.println("No point account found for user: " + bookRead.getUserId())
+            );
+
+        } catch (Exception e) {
+            System.err.println("Error processing BookRead event: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * 일반 이벤트 처리기 (디버깅용)
      */
     @StreamListener(KafkaProcessor.INPUT)
@@ -258,6 +306,26 @@ public class PolicyHandler {
         public Boolean getIsKtCustomer() { return isKtCustomer; }
         public void setIsKtCustomer(Boolean isKtCustomer) { this.isKtCustomer = isKtCustomer; }
         public boolean validate() { return userId != null && Boolean.TRUE.equals(isKtCustomer); }
+    }
+
+    public static class BookRead {
+        private Long bookId;
+        private Long userId;
+        private String title;
+        private Integer pointCost;
+        private Boolean isFree;
+        
+        public Long getBookId() { return bookId; }
+        public void setBookId(Long bookId) { this.bookId = bookId; }
+        public Long getUserId() { return userId; }
+        public void setUserId(Long userId) { this.userId = userId; }
+        public String getTitle() { return title; }
+        public void setTitle(String title) { this.title = title; }
+        public Integer getPointCost() { return pointCost; }
+        public void setPointCost(Integer pointCost) { this.pointCost = pointCost; }
+        public Boolean getIsFree() { return isFree; }
+        public void setIsFree(Boolean isFree) { this.isFree = isFree; }
+        public boolean validate() { return userId != null && bookId != null && !Boolean.TRUE.equals(isFree); }
     }
 }
 //>>> Clean Arch / Inbound Adaptor

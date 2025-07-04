@@ -216,9 +216,9 @@ public class Point {
     private static void validatePurchaseAmount(Integer amount) {
         validateAmount(amount, "Purchase amount");
         
-        // 최소 구매 금액: 100 포인트
-        if (amount < 100) {
-            throw new IllegalArgumentException("Minimum purchase amount is 100 points");
+        // 최소 구매 금액: 10 포인트
+        if (amount < 10) {
+            throw new IllegalArgumentException("Minimum purchase amount is 10 points");
         }
         
         // 최대 구매 금액: 100,000 포인트

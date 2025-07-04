@@ -22,26 +22,11 @@ export const PaymentCenter = ({ user, coins, isSubscribed, onBack, onPaymentSucc
     setIsProcessing(true);
     
     try {
-      // Call point purchase API
-      const response = await fetch('http://20.249.140.195:8080/points/purchase', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: user.userId || user.id,  // fallback to user.id if userId is missing
-          amount: amount
-        }),
-      });
-
-      const data = await response.json();
+      const userId = user.userId || user.id;
+      const response = await pointAPI.purchase(userId, amount);
       
-      if (data.success) {
-        onPaymentSuccess('coin', amount);
-        toast.success(`${amount}코인이 충전되었습니다!`);
-      } else {
-        toast.error(data.error || '코인 충전에 실패했습니다.');
-      }
+      onPaymentSuccess('coin', amount);
+      toast.success(`${amount}코인이 충전되었습니다!`);
     } catch (error) {
       console.error('Coin purchase error:', error);
       toast.error('코인 충전 중 오류가 발생했습니다.');
@@ -54,18 +39,14 @@ export const PaymentCenter = ({ user, coins, isSubscribed, onBack, onPaymentSucc
     setIsProcessing(true);
     
     try {
-      // 디버깅을 위한 로그
-      console.log('PaymentCenter user object:', user);
-      console.log('user.userId:', user.userId);
-      console.log('user.id:', user.id);
-      // Call subscription activation API
-      const response = await fetch('http://20.249.140.195:8080/subscriptions/activate', {
+      // Call subscription activation API using subscriptionAPI
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || ''}/subscriptions/activate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: user.userId || user.id,  // fallback to user.id if userId is missing
+          userId: user.userId || user.id,
           planType: 'PREMIUM'
         }),
       });

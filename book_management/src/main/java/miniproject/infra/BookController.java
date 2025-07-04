@@ -167,6 +167,12 @@ public class BookController {
             if (request.containsKey("manuscriptId")) {
                 book.setManuscriptId(Long.valueOf(request.get("manuscriptId").toString()));
             }
+            if (request.containsKey("pointCost")) {
+                book.setPointCost(Integer.valueOf(request.get("pointCost").toString()));
+            }
+            if (request.containsKey("isFree")) {
+                book.setIsFree(Boolean.valueOf(request.get("isFree").toString()));
+            }
             
             Book savedBook = bookRepository.save(book);
             
@@ -210,6 +216,12 @@ public class BookController {
                 }
                 if (updates.containsKey("status")) {
                     book.setStatus((String) updates.get("status"));
+                }
+                if (updates.containsKey("pointCost")) {
+                    book.setPointCost(Integer.valueOf(updates.get("pointCost").toString()));
+                }
+                if (updates.containsKey("isFree")) {
+                    book.setIsFree(Boolean.valueOf(updates.get("isFree").toString()));
                 }
                 
                 Book savedBook = bookRepository.save(book);
@@ -292,6 +304,58 @@ public class BookController {
             
         } catch (Exception e) {
             System.err.println("Error adding rating: " + e.getMessage());
+            response.put("success", false);
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
+    /**
+     * 책 읽기 API - 포인트 차감 이벤트 발행
+     */
+    @PostMapping("/{id}/read")
+    public ResponseEntity<Map<String, Object>> readBook(@PathVariable("id") Long id, @RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            // 사용자 ID 추출
+            Object userIdObj = request.get("userId");
+            if (userIdObj == null) {
+                response.put("success", false);
+                response.put("error", "userId는 필수 항목입니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            Long userId = Long.valueOf(userIdObj.toString());
+            
+            Optional<Book> bookOpt = bookRepository.findById(id);
+            if (bookOpt.isPresent()) {
+                Book book = bookOpt.get();
+                
+                // 무료 책이 아닌 경우에만 포인트 차감 이벤트 발행
+                if (!book.getIsFree() && book.getPointCost() > 0) {
+                    BookRead bookRead = new BookRead(book, userId);
+                    bookRead.publishAfterCommit();
+                }
+                
+                // 조회수 증가
+                book.setViewCount((book.getViewCount() != null ? book.getViewCount() : 0) + 1);
+                bookRepository.save(book);
+                
+                response.put("success", true);
+                response.put("book", book);
+                response.put("message", "책 읽기가 시작되었습니다.");
+                response.put("pointCost", book.getPointCost());
+                response.put("isFree", book.getIsFree());
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("success", false);
+                response.put("error", "Book not found");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Error reading book: " + e.getMessage());
             response.put("success", false);
             response.put("error", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
