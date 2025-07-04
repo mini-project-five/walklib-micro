@@ -22,6 +22,11 @@ docker network create "$NETWORK" 2>/dev/null || echo "네트워크 '$NETWORK'이
 for SERVICE in "${SERVICES[@]}"; do
   read -r DIR IMAGE CONTAINER PORT <<< "$SERVICE"
 
+  if [ "$DIR" == "frontend" ]; then
+    echo "⏭️  [frontend] 서비스는 이 스크립트에서 제외됩니다."
+    continue
+  fi
+
   echo ""
   echo "🚀 [${DIR}] 빌드 및 컨테이너 실행 중..."
 

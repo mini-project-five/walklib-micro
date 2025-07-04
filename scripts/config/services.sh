@@ -13,4 +13,5 @@ SERVICES=(
   "book_management book book 8085"
   "author_management author author 8086"
   "ai_system_management ai ai 8087"
+  "frontend frontend frontend 80"
 )

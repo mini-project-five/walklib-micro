@@ -1,13 +1,15 @@
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:8080';
+
 // API client for microservices
 const API_BASE_URLS = {
-  user: '',  // 프록시를 통해 /users로 요청
-  author: '', // 프록시를 통해 /authors로 요청 
-  book: '',  // 프록시를 통해 /books로 요청
-  manuscript: '', // 프록시를 통해 /manuscripts로 요청
-  point: '', // 프록시를 통해 /points로 요청
-  subscription: '', // 프록시를 통해 /subscriptions로 요청
-  ai: '', // 프록시를 통해 /ai로 요청
-  gateway: 'http://localhost:8080'
+  user: API_BASE_URL,  // 프록시를 통해 /users로 요청
+  author: API_BASE_URL, // 프록시를 통해 /authors로 요청 
+  book: API_BASE_URL,  // 프록시를 통해 /books로 요청
+  manuscript: API_BASE_URL, // 프록시를 통해 /manuscripts로 요청
+  point: API_BASE_URL, // 프록시를 통해 /points로 요청
+  subscription: API_BASE_URL, // 프록시를 통해 /subscriptions로 요청
+  ai: API_BASE_URL, // 프록시를 통해 /ai로 요청
+  gateway: API_BASE_URL
 };
 
 export interface User {
