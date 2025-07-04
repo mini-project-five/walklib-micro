@@ -18,6 +18,10 @@ public class SubscriptionActivated extends AbstractEvent {
 
     public SubscriptionActivated(Subscription aggregate) {
         super(aggregate);
+        this.subscriptionId = aggregate.getSubscriptionId();
+        this.userId = aggregate.getUserId();
+        this.plan = aggregate.getPlanType() != null ? aggregate.getPlanType().name() : null;
+        this.endDate = aggregate.getEndDate() != null ? aggregate.getEndDate().toString() : null;
     }
 
     public SubscriptionActivated() {

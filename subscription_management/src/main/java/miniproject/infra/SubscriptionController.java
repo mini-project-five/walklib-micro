@@ -35,8 +35,24 @@ public class SubscriptionController {
         Map<String, Object> response = new HashMap<>();
         
         try {
-            Long userId = Long.valueOf(request.get("userId").toString());
-            String planTypeStr = request.get("planType").toString();
+            // 요청 데이터 검증
+            Object userIdObj = request.get("userId");
+            Object planTypeObj = request.get("planType");
+            
+            if (userIdObj == null) {
+                response.put("success", false);
+                response.put("error", "userId는 필수 항목입니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            if (planTypeObj == null) {
+                response.put("success", false);
+                response.put("error", "planType은 필수 항목입니다.");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            Long userId = Long.valueOf(userIdObj.toString());
+            String planTypeStr = planTypeObj.toString();
             
             // planType 문자열을 enum으로 변환
             Subscription.PlanType planType;

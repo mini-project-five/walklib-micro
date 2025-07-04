@@ -12,10 +12,12 @@ import miniproject.infra.AbstractEvent;
 public class SubscriptionCanceled extends AbstractEvent {
 
     private Long subscriptionId;
-    private String userId;
+    private Long userId;
 
     public SubscriptionCanceled(Subscription aggregate) {
         super(aggregate);
+        this.subscriptionId = aggregate.getSubscriptionId();
+        this.userId = aggregate.getUserId();
     }
 
     public SubscriptionCanceled() {

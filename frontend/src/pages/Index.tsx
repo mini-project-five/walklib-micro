@@ -9,6 +9,7 @@ import { AuthorCenter } from '@/components/author/AuthorCenter';
 import { AuthorEditor } from '@/components/author/AuthorEditor';
 import AdminLogin from '@/components/admin/AdminLogin';
 import AdminDashboard from '@/components/admin/AdminDashboard';
+import { subscriptionAPI, pointAPI } from '@/services/api';
 
 type Screen = 'type-selector' | 'reader-login' | 'author-login' | 'library' | 'book-detail' | 'payment' | 'author' | 'editor' | 'admin-login' | 'admin-dashboard';
 
@@ -54,14 +55,41 @@ const Index = () => {
     }
   };
 
-  const handleLogin = (userData: any) => {
+  const handleLogin = async (userData: any) => {
     setUser(userData);
+    
+    // 독자인 경우 구독 상태와 포인트 정보를 API에서 가져옴
+    const userId = userData.userId || userData.id;
+    if (userData.userType === 'reader' && userId) {
+      try {
+        // 구독 상태 확인
+        const subscriptionResponse = await fetch(`http://20.249.140.195:8080/subscriptions/user/${userId}/active`);
+        if (subscriptionResponse.ok) {
+          const subscriptionData = await subscriptionResponse.json();
+          setIsSubscribed(subscriptionData.success && subscriptionData.subscription);
+        }
+        
+        // 포인트 잔액 확인
+        const pointResponse = await fetch(`http://20.249.140.195:8080/points/user/${userId}/balance`);
+        if (pointResponse.ok) {
+          const pointData = await pointResponse.json();
+          setCoins(pointData.success ? pointData.pointBalance : 0);
+        }
+      } catch (error) {
+        console.error('Failed to fetch user subscription/point data:', error);
+        // 기본값 사용
+        setIsSubscribed(false);
+        setCoins(100);
+      }
+    }
+    
     // 작가면 작가 센터로, 독자면 라이브러리로
     if (userData.userType === 'author') {
       setCurrentScreen('author');
     } else {
       setCurrentScreen('library');
     }
+    
     localStorage.setItem('walkingLibraryUser', JSON.stringify({
       ...userData,
       coins: userData.userType === 'reader' ? coins : undefined,

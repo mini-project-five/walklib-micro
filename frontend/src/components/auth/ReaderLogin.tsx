@@ -65,7 +65,8 @@ export const ReaderLogin = ({ onLogin, onBack }: ReaderLoginProps) => {
         
         const user = loginResponse.user || loginResponse;
         const userData = {
-          id: user.userId,
+          userId: user.userId,  // userId로 통일
+          id: user.userId,      // 기존 호환성을 위해 id도 유지
           name: user.userName,
           email: user.email,
           coins: 100,

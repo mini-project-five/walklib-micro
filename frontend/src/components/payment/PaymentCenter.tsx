@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import { subscriptionAPI, pointAPI } from '@/services/api';
 
 interface PaymentCenterProps {
   user: any;
@@ -20,23 +21,69 @@ export const PaymentCenter = ({ user, coins, isSubscribed, onBack, onPaymentSucc
   const handleCoinPurchase = async (amount: number, price: number) => {
     setIsProcessing(true);
     
-    // Simulate payment process
-    setTimeout(() => {
-      onPaymentSuccess('coin', amount);
-      toast.success(`${amount}코인이 충전되었습니다!`);
+    try {
+      // Call point purchase API
+      const response = await fetch('http://20.249.140.195:8080/points/purchase', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.userId || user.id,  // fallback to user.id if userId is missing
+          amount: amount
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        onPaymentSuccess('coin', amount);
+        toast.success(`${amount}코인이 충전되었습니다!`);
+      } else {
+        toast.error(data.error || '코인 충전에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('Coin purchase error:', error);
+      toast.error('코인 충전 중 오류가 발생했습니다.');
+    } finally {
       setIsProcessing(false);
-    }, 1500);
+    }
   };
 
   const handleSubscription = async () => {
     setIsProcessing(true);
     
-    // Simulate subscription process
-    setTimeout(() => {
-      onPaymentSuccess('subscription');
-      toast.success('프리미엄 구독이 시작되었습니다!');
+    try {
+      // 디버깅을 위한 로그
+      console.log('PaymentCenter user object:', user);
+      console.log('user.userId:', user.userId);
+      console.log('user.id:', user.id);
+      // Call subscription activation API
+      const response = await fetch('http://20.249.140.195:8080/subscriptions/activate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.userId || user.id,  // fallback to user.id if userId is missing
+          planType: 'PREMIUM'
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        onPaymentSuccess('subscription');
+        toast.success('프리미엄 구독이 시작되었습니다!');
+      } else {
+        toast.error(data.error || '구독 신청에 실패했습니다.');
+      }
+    } catch (error) {
+      console.error('Subscription error:', error);
+      toast.error('구독 처리 중 오류가 발생했습니다.');
+    } finally {
       setIsProcessing(false);
-    }, 1500);
+    }
   };
 
   const coinPackages = [

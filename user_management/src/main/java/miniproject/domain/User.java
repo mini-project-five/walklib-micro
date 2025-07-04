@@ -261,6 +261,13 @@ public class User {
             throw new IllegalArgumentException("유효하지 않은 사용자 ID입니다.");
         }
     }
+
+    @PostPersist
+    public void onPostPersist() {
+        UserCreated userCreated = new UserCreated(this);
+        userCreated.publishAfterCommit();
+    }
+    
     //>>> Clean Arch / Port Method
 }
 //>>> DDD / Aggregate Root
