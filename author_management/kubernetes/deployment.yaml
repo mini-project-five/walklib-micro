@@ -19,6 +19,9 @@ spec:
           image: "lmo2914/author-m:latest"
           ports:
             - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker"
           readinessProbe:
             httpGet:
               path: '/actuator/health'

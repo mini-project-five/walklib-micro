@@ -19,3 +19,6 @@ spec:
           image: lmo2914/gateway:latest
           ports:
             - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "docker"
