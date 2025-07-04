@@ -3,22 +3,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user management
+  name: user-management
   labels:
-    app: user management
+    app: user-management
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: user management
+      app: user-management
   template:
     metadata:
       labels:
-        app: user management
+        app: user-management
     spec:
       containers:
-        - name: user management
-          image: username/user management:latest
+        - name: user-management
+          image: lmo2914/user-m:latest
           ports:
             - containerPort: 8080
           readinessProbe:
@@ -43,22 +43,22 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: point management
+  name: point-management
   labels:
-    app: point management
+    app: point-management
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: point management
+      app: point-management
   template:
     metadata:
       labels:
-        app: point management
+        app: point-management
     spec:
       containers:
-        - name: point management
-          image: username/point management:latest
+        - name: point-management
+          image: lmo2914/point-m:latest
           ports:
             - containerPort: 8080
           readinessProbe:
@@ -83,22 +83,22 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: subscription management
+  name: subscription-management
   labels:
-    app: subscription management
+    app: subscription-management
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: subscription management
+      app: subscription-management
   template:
     metadata:
       labels:
-        app: subscription management
+        app: subscription-management
     spec:
       containers:
-        - name: subscription management
-          image: username/subscription management:latest
+        - name: subscription-management
+          image: lmo2914/subs-m:latest
           ports:
             - containerPort: 8080
           readinessProbe:
@@ -123,22 +123,22 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: book management
+  name: book-management
   labels:
-    app: book management
+    app: book-management
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: book management
+      app: book-management
   template:
     metadata:
       labels:
-        app: book management
+        app: book-management
     spec:
       containers:
-        - name: book management
-          image: username/book management:latest
+        - name: book-management
+          image: lmo2914/book-m:latest
           ports:
             - containerPort: 8080
           readinessProbe:
@@ -163,22 +163,22 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: author management
+  name: author-management
   labels:
-    app: author management
+    app: author-management
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: author management
+      app: author-management
   template:
     metadata:
       labels:
-        app: author management
+        app: author-management
     spec:
       containers:
-        - name: author management
-          image: username/author management:latest
+        - name: author-management
+          image: lmo2914/author-m:latest
           ports:
             - containerPort: 8080
           readinessProbe:
@@ -203,22 +203,22 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: content writing management
+  name: content-writing-management
   labels:
-    app: content writing management
+    app: content-writing-management
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: content writing management
+      app: content-writing-management
   template:
     metadata:
       labels:
-        app: content writing management
+        app: content-writing-management
     spec:
       containers:
-        - name: content writing management
-          image: username/content writing management:latest
+        - name: content-writing-management
+          image: lmo2914/content-m:latest
           ports:
             - containerPort: 8080
           readinessProbe:
@@ -243,22 +243,22 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ai system management
+  name: ai-system-management
   labels:
-    app: ai system management
+    app: ai-system-management
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ai system management
+      app: ai-system-management
   template:
     metadata:
       labels:
-        app: ai system management
+        app: ai-system-management
     spec:
       containers:
-        - name: ai system management
-          image: username/ai system management:latest
+        - name: ai-system-management
+          image: lmo2914/ai-m:latest
           ports:
             - containerPort: 8080
           readinessProbe:
@@ -285,15 +285,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: user management
+  name: user-management
   labels:
-    app: user management
+    app: user-management
 spec:
   ports:
     - port: 8080
       targetPort: 8080
   selector:
-    app: user management
+    app: user-management
 
 
 ---
@@ -302,15 +302,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: point management
+  name: point-management
   labels:
-    app: point management
+    app: point-management
 spec:
   ports:
     - port: 8080
       targetPort: 8080
   selector:
-    app: point management
+    app: point-management
 
 
 ---
@@ -319,15 +319,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: subscription management
+  name: subscription-management
   labels:
-    app: subscription management
+    app: subscription-management
 spec:
   ports:
     - port: 8080
       targetPort: 8080
   selector:
-    app: subscription management
+    app: subscription-management
 
 
 ---
@@ -336,15 +336,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: book management
+  name: book-management
   labels:
-    app: book management
+    app: book-management
 spec:
   ports:
     - port: 8080
       targetPort: 8080
   selector:
-    app: book management
+    app: book-management
 
 
 ---
@@ -353,15 +353,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: author management
+  name: author-management
   labels:
-    app: author management
+    app: author-management
 spec:
   ports:
     - port: 8080
       targetPort: 8080
   selector:
-    app: author management
+    app: author-management
 
 
 ---
@@ -370,15 +370,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: content writing management
+  name: content-writing-management
   labels:
-    app: content writing management
+    app: content-writing-management
 spec:
   ports:
     - port: 8080
       targetPort: 8080
   selector:
-    app: content writing management
+    app: content-writing-management
 
 
 ---
@@ -387,13 +387,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: ai system management
+  name: ai-system-management
   labels:
-    app: ai system management
+    app: ai-system-management
 spec:
   ports:
     - port: 8080
       targetPort: 8080
   selector:
-    app: ai system management
+    app: ai-system-management
 
