@@ -34,6 +34,20 @@ spec:
         host: walklib-gateway
         port:
           number: 8080
+    corsPolicy:
+      allowOrigins:
+      - exact: "http://20.249.206.173"
+      - exact: "http://localhost:3000"
+      allowMethods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
+      allowHeaders:
+      - "*"
+      allowCredentials: true
+      maxAge: "24h"
   # 다른 API 경로들은 Spring Cloud Gateway로
   - match:
     - uri:
@@ -43,6 +57,20 @@ spec:
         host: walklib-gateway
         port:
           number: 8080
+    corsPolicy:
+      allowOrigins:
+      - exact: "http://20.249.206.173"
+      - exact: "http://localhost:3000"
+      allowMethods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
+      allowHeaders:
+      - "*"
+      allowCredentials: true
+      maxAge: "24h"
   - match:
     - uri:
         prefix: /books
@@ -51,6 +79,42 @@ spec:
         host: walklib-gateway
         port:
           number: 8080
+    corsPolicy:
+      allowOrigins:
+      - exact: "http://20.249.206.173"
+      - exact: "http://localhost:3000"
+      allowMethods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
+      allowHeaders:
+      - "*"
+      allowCredentials: true
+      maxAge: "24h"
+  - match:
+    - uri:
+        prefix: /admin
+    route:
+    - destination:
+        host: walklib-gateway
+        port:
+          number: 8080
+    corsPolicy:
+      allowOrigins:
+      - exact: "http://20.249.206.173"
+      - exact: "http://localhost:3000"
+      allowMethods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
+      allowHeaders:
+      - "*"
+      allowCredentials: true
+      maxAge: "24h"
   - match:
     - uri:
         prefix: /authors
@@ -59,6 +123,20 @@ spec:
         host: walklib-gateway
         port:
           number: 8080
+    corsPolicy:
+      allowOrigins:
+      - exact: "http://20.249.206.173"
+      - exact: "http://localhost:3000"
+      allowMethods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
+      allowHeaders:
+      - "*"
+      allowCredentials: true
+      maxAge: "24h"
   - match:
     - uri:
         prefix: /public
@@ -67,6 +145,20 @@ spec:
         host: walklib-gateway
         port:
           number: 8080
+    corsPolicy:
+      allowOrigins:
+      - exact: "http://20.249.206.173"
+      - exact: "http://localhost:3000"
+      allowMethods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
+      allowHeaders:
+      - "*"
+      allowCredentials: true
+      maxAge: "24h"
   - match:
     - uri:
         prefix: /manuscripts
@@ -75,6 +167,20 @@ spec:
         host: walklib-gateway
         port:
           number: 8080
+    corsPolicy:
+      allowOrigins:
+      - exact: "http://20.249.206.173"
+      - exact: "http://localhost:3000"
+      allowMethods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
+      allowHeaders:
+      - "*"
+      allowCredentials: true
+      maxAge: "24h"
   - match:
     - uri:
         prefix: /ai
@@ -83,6 +189,20 @@ spec:
         host: walklib-gateway
         port:
           number: 8080
+    corsPolicy:
+      allowOrigins:
+      - exact: "http://20.249.206.173"
+      - exact: "http://localhost:3000"
+      allowMethods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
+      allowHeaders:
+      - "*"
+      allowCredentials: true
+      maxAge: "24h"
   - match:
     - uri:
         prefix: /points
@@ -91,6 +211,20 @@ spec:
         host: walklib-gateway
         port:
           number: 8080
+    corsPolicy:
+      allowOrigins:
+      - exact: "http://20.249.206.173"
+      - exact: "http://localhost:3000"
+      allowMethods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
+      allowHeaders:
+      - "*"
+      allowCredentials: true
+      maxAge: "24h"
   - match:
     - uri:
         prefix: /subscriptions
@@ -99,6 +233,20 @@ spec:
         host: walklib-gateway
         port:
           number: 8080
+    corsPolicy:
+      allowOrigins:
+      - exact: "http://20.249.206.173"
+      - exact: "http://localhost:3000"
+      allowMethods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+      - OPTIONS
+      allowHeaders:
+      - "*"
+      allowCredentials: true
+      maxAge: "24h"
   # 나머지는 Frontend로 (정적 파일, React 앱)
   - match:
     - uri:
