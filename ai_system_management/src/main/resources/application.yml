@@ -2,6 +2,10 @@ spring:
   application:
     name: ai system management
 
+openai:
+  api:
+    key: ${OPENAI_API_KEY:}
+
 ---
 
 spring:

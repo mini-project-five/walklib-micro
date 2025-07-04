@@ -8,9 +8,7 @@ interface Book {
   cover: string;
   genre: string;
   price: number;
-  rating?: number;
   views?: number;
-  likes?: number;
   isNew?: boolean;
   isBestseller?: boolean;
 }

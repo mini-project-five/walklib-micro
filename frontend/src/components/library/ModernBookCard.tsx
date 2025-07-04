@@ -1,6 +1,6 @@
 
 import { Badge } from '@/components/ui/badge';
-import { Star, Eye, Heart } from 'lucide-react';
+import { Eye } from 'lucide-react';
 
 interface Book {
   id: number;
@@ -9,9 +9,7 @@ interface Book {
   cover: string;
   genre: string;
   price: number;
-  rating?: number;
   views?: number;
-  likes?: number;
   isNew?: boolean;
   isBestseller?: boolean;
 }
@@ -31,8 +29,26 @@ export const ModernBookCard = ({ book, onBookSelect }: ModernBookCardProps) => {
         <div className="relative bg-white rounded-2xl border border-gray-100 overflow-hidden hover:border-gray-200 transition-all duration-500">
           {/* Book Cover */}
           <div className="relative aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 group-hover:from-gray-200 group-hover:to-gray-300 transition-all duration-500">
-            <div className="absolute inset-0 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-500">
-              {book.cover}
+            {/* 실제 이미지 URL인지 확인 후 이미지 또는 이모지 표시 */}
+            {book.cover && (book.cover.startsWith('http') || book.cover.startsWith('data:')) ? (
+              <img 
+                src={book.cover} 
+                alt={book.title}
+                className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                onError={(e) => {
+                  // 이미지 로드 실패 시 기본 이모지로 대체
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  target.nextElementSibling?.classList.remove('hidden');
+                }}
+              />
+            ) : null}
+            
+            {/* 이모지 fallback */}
+            <div className={`absolute inset-0 flex items-center justify-center text-6xl group-hover:scale-110 transition-transform duration-500 ${
+              book.cover && (book.cover.startsWith('http') || book.cover.startsWith('data:')) ? 'hidden' : ''
+            }`}>
+              {book.cover || '📖'}
             </div>
             
             {/* Overlay gradient */}
@@ -54,14 +70,10 @@ export const ModernBookCard = ({ book, onBookSelect }: ModernBookCardProps) => {
 
             {/* Hover Stats */}
             <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-              <div className="flex items-center justify-between text-white text-xs">
+              <div className="flex items-center justify-center text-white text-xs">
                 <div className="flex items-center space-x-1">
                   <Eye className="h-3 w-3" />
-                  <span>{book.views?.toLocaleString() || '0'}</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Heart className="h-3 w-3" />
-                  <span>{book.likes?.toLocaleString() || '0'}</span>
+                  <span>{book.views?.toLocaleString() || '0'} 조회</span>
                 </div>
               </div>
             </div>
@@ -76,32 +88,13 @@ export const ModernBookCard = ({ book, onBookSelect }: ModernBookCardProps) => {
               <p className="text-xs text-gray-500 font-medium">{book.author}</p>
             </div>
 
-            {/* Rating */}
-            {book.rating && (
-              <div className="flex items-center space-x-1">
-                <div className="flex items-center">
-                  {[...Array(5)].map((_, i) => (
-                    <Star 
-                      key={i} 
-                      className={`h-3 w-3 ${
-                        i < Math.floor(book.rating!) 
-                          ? 'text-yellow-400 fill-current' 
-                          : 'text-gray-300'
-                      }`} 
-                    />
-                  ))}
-                </div>
-                <span className="text-xs text-gray-500">{book.rating}</span>
-              </div>
-            )}
-
             {/* Genre and Price */}
             <div className="flex items-center justify-between">
               <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full font-medium">
                 {book.genre}
               </span>
               <div className="flex items-center space-x-1">
-                <span className="text-xs font-bold text-indigo-600">🪙 {book.price}</span>
+                <span className="text-xs font-bold text-indigo-600">💰 {book.price.toLocaleString()}P</span>
               </div>
             </div>
           </div>

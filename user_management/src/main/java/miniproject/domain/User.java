@@ -26,7 +26,17 @@ public class User {
 
     private String userName;
 
+    private String userType; // 'reader' 또는 'author'
+
+    // private Integer coins; // 포인트는 별도 서비스에서 관리
+
+    private Boolean isSubscribed; // 구독 여부
+
     private Boolean isKtCustomer;
+    
+    private Boolean ktAuthRequested; // KT 인증 요청 여부
+    
+    private Boolean ktAuthApproved; // KT 인증 승인 여부 (admin이 승인)
 
     private String role;
 

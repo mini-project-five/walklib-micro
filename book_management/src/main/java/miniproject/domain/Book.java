@@ -26,14 +26,29 @@ public class Book {
 
     private Long authorId;
 
+    @Lob
+    private String content; // 원고 내용
+
+    @Lob
+    private String coverImage; // 표지 이미지 URL
+
     private Integer viewCount;
 
     private Boolean isBestseller;
 
-    private String status;
+    private String status; // DRAFT, PUBLISHED, DELETED
+
+    private Date createdAt;
+
+    private Date publishedAt;
 
     @PostPersist
     public void onPostPersist() {
+        // 생성 시간 설정
+        if (this.createdAt == null) {
+            this.createdAt = new Date();
+        }
+        
         BookRegistered bookRegistered = new BookRegistered(this);
         bookRegistered.publishAfterCommit();
 
@@ -41,6 +56,19 @@ public class Book {
             this
         );
         designatedAsBestseller.publishAfterCommit();
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (this.createdAt == null) {
+            this.createdAt = new Date();
+        }
+        if (this.viewCount == null) {
+            this.viewCount = 0;
+        }
+        if (this.isBestseller == null) {
+            this.isBestseller = false;
+        }
     }
 
     public static BookRepository repository() {

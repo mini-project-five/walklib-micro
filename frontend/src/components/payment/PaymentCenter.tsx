@@ -5,44 +5,65 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import { subscriptionAPI, pointAPI } from '@/services/api';
 
 interface PaymentCenterProps {
   user: any;
-  coins: number;
+  points: number; // coins → points 변경
   isSubscribed: boolean;
   onBack: () => void;
-  onPaymentSuccess: (type: 'coin' | 'subscription', amount?: number) => void;
+  onPaymentSuccess: (type: 'point' | 'subscription', amount?: number) => void; // 'coin' → 'point' 변경
 }
 
-export const PaymentCenter = ({ user, coins, isSubscribed, onBack, onPaymentSuccess }: PaymentCenterProps) => {
+export const PaymentCenter = ({ user, points, isSubscribed, onBack, onPaymentSuccess }: PaymentCenterProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleCoinPurchase = async (amount: number, price: number) => {
+  const handlePointPurchase = async (amount: number, price: number) => {
+    if (!user?.userId) {
+      toast.error('사용자 정보가 없습니다.');
+      return;
+    }
+
     setIsProcessing(true);
     
-    // Simulate payment process
-    setTimeout(() => {
-      onPaymentSuccess('coin', amount);
-      toast.success(`${amount}코인이 충전되었습니다!`);
+    try {
+      // 실제 포인트 충전 API 호출
+      await pointAPI.chargePoints(user.userId, amount);
+      onPaymentSuccess('point', amount);
+      toast.success(`${amount}포인트가 충전되었습니다!`);
+    } catch (error) {
+      console.error('포인트 충전 실패:', error);
+      toast.error('포인트 충전에 실패했습니다. 다시 시도해주세요.');
+    } finally {
       setIsProcessing(false);
-    }, 1500);
+    }
   };
 
   const handleSubscription = async () => {
+    if (!user?.userId) {
+      toast.error('사용자 정보가 없습니다.');
+      return;
+    }
+
     setIsProcessing(true);
     
-    // Simulate subscription process
-    setTimeout(() => {
+    try {
+      // 실제 구독 API 호출
+      await subscriptionAPI.subscribe(user.userId);
       onPaymentSuccess('subscription');
       toast.success('프리미엄 구독이 시작되었습니다!');
+    } catch (error) {
+      console.error('구독 신청 실패:', error);
+      toast.error('구독 신청에 실패했습니다. 다시 시도해주세요.');
+    } finally {
       setIsProcessing(false);
-    }, 1500);
+    }
   };
 
-  const coinPackages = [
-    { amount: 10, price: 1200, popular: false },
-    { amount: 50, price: 5500, popular: true },
-    { amount: 100, price: 10000, popular: false },
+  const pointPackages = [
+    { amount: 1000, price: 1200, popular: false },
+    { amount: 5000, price: 5500, popular: true },
+    { amount: 10000, price: 10000, popular: false },
   ];
 
   return (
@@ -59,10 +80,10 @@ export const PaymentCenter = ({ user, coins, isSubscribed, onBack, onPaymentSucc
               <ArrowLeft className="h-5 w-5 mr-2" />
               서재로 돌아가기
             </Button>
-            <h1 className="text-xl font-light text-gray-800">코인 충전소</h1>
+            <h1 className="text-xl font-light text-gray-800">포인트 충전소</h1>
             <div className="flex items-center space-x-2 text-sm">
-              <span className="text-gray-600">보유 코인:</span>
-              <Badge variant="outline" className="font-medium">🪙 {coins}</Badge>
+              <span className="text-gray-600">보유 포인트:</span>
+              <Badge variant="outline" className="font-medium">💰 {points}</Badge>
             </div>
           </div>
         </div>
@@ -117,75 +138,96 @@ export const PaymentCenter = ({ user, coins, isSubscribed, onBack, onPaymentSucc
           </Card>
         )}
 
-        {/* Coin Packages */}
-        <div className="space-y-6">
-          <div className="text-center space-y-2">
-            <h2 className="text-2xl font-light text-gray-800">코인 충전</h2>
-            <p className="text-gray-600">작품 한 편당 10코인이 필요해요</p>
-          </div>
+        {/* Point Packages - 구독 중이 아닐 때만 표시 */}
+        {!isSubscribed && (
+          <div className="space-y-6">
+            <div className="text-center space-y-2">
+              <h2 className="text-2xl font-light text-gray-800">포인트 충전</h2>
+              <p className="text-gray-600">작품 한 편당 1,000포인트가 필요해요</p>
+            </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {coinPackages.map((pkg) => (
-              <Card 
-                key={pkg.amount} 
-                className={`relative bg-white/80 backdrop-blur-sm border transition-all duration-300 hover:scale-105 ${
-                  pkg.popular 
-                    ? 'border-amber-400 ring-2 ring-amber-400/20' 
-                    : 'border-gray-200/50 hover:border-amber-300'
-                }`}
-              >
-                {pkg.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <Badge className="bg-amber-500 text-white px-3 py-1">인기</Badge>
-                  </div>
-                )}
-                
-                <CardHeader className="text-center pb-4">
-                  <div className="text-4xl mb-2">🪙</div>
-                  <CardTitle className="text-2xl font-bold text-gray-800">
-                    {pkg.amount} 코인
-                  </CardTitle>
-                  <p className="text-3xl font-bold text-amber-600">
-                    ₩{pkg.price.toLocaleString()}
-                  </p>
-                </CardHeader>
-                
-                <CardContent className="pt-0">
-                  <div className="space-y-3 mb-6">
-                    <div className="text-sm text-gray-600 text-center">
-                      작품 {Math.floor(pkg.amount / 10)}편 열람 가능
+            <div className="grid md:grid-cols-3 gap-6">
+              {pointPackages.map((pkg) => (
+                <Card 
+                  key={pkg.amount} 
+                  className={`relative bg-white/80 backdrop-blur-sm border transition-all duration-300 hover:scale-105 ${
+                    pkg.popular 
+                      ? 'border-amber-400 ring-2 ring-amber-400/20' 
+                      : 'border-gray-200/50 hover:border-amber-300'
+                  }`}
+                >
+                  {pkg.popular && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                      <Badge className="bg-amber-500 text-white px-3 py-1">인기</Badge>
                     </div>
-                    {pkg.amount >= 50 && (
-                      <div className="text-xs text-green-600 text-center font-medium">
-                        + 보너스 혜택 포함
-                      </div>
-                    )}
-                  </div>
+                  )}
                   
-                  <Button 
-                    onClick={() => handleCoinPurchase(pkg.amount, pkg.price)}
-                    disabled={isProcessing}
-                    className={`w-full py-3 rounded-xl font-medium transition-all duration-300 ${
-                      pkg.popular
-                        ? 'bg-amber-600 hover:bg-amber-700 text-white'
-                        : 'bg-gray-800 hover:bg-gray-900 text-white'
-                    }`}
-                  >
-                    <CreditCard className="h-4 w-4 mr-2" />
-                    {isProcessing ? '처리 중...' : '충전하기'}
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                  <CardHeader className="text-center pb-4">
+                    <div className="text-4xl mb-2">💰</div>
+                    <CardTitle className="text-2xl font-bold text-gray-800">
+                      {pkg.amount.toLocaleString()} 포인트
+                    </CardTitle>
+                    <p className="text-3xl font-bold text-amber-600">
+                      ₩{pkg.price.toLocaleString()}
+                    </p>
+                  </CardHeader>
+                  
+                  <CardContent className="pt-0">
+                    <div className="space-y-3 mb-6">
+                      <div className="text-sm text-gray-600 text-center">
+                        작품 {Math.floor(pkg.amount / 1000)}편 열람 가능
+                      </div>
+                      {pkg.amount >= 5000 && (
+                        <div className="text-xs text-green-600 text-center font-medium">
+                          + 보너스 혜택 포함
+                        </div>
+                      )}
+                    </div>
+                    
+                    <Button 
+                      onClick={() => handlePointPurchase(pkg.amount, pkg.price)}
+                      disabled={isProcessing}
+                      className={`w-full py-3 rounded-xl font-medium transition-all duration-300 ${
+                        pkg.popular
+                          ? 'bg-amber-600 hover:bg-amber-700 text-white'
+                          : 'bg-gray-800 hover:bg-gray-900 text-white'
+                      }`}
+                    >
+                      <CreditCard className="h-4 w-4 mr-2" />
+                      {isProcessing ? '처리 중...' : '충전하기'}
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* 구독 중일 때 포인트 충전 불가 안내 */}
+        {isSubscribed && (
+          <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50">
+            <CardContent className="p-8 text-center">
+              <div className="space-y-4">
+                <div className="text-4xl">👑</div>
+                <h3 className="text-xl font-semibold text-gray-800">프리미엄 구독 중</h3>
+                <p className="text-gray-600">
+                  구독 중에는 포인트 충전이 필요하지 않아요!<br/>
+                  모든 작품을 무제한으로 즐기세요.
+                </p>
+                <div className="text-sm text-gray-500">
+                  현재 보유 포인트: <span className="font-medium text-amber-600">{points}P</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Payment Info */}
         <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50">
           <CardContent className="p-6">
             <h3 className="font-semibold text-gray-800 mb-4">결제 안내</h3>
             <div className="space-y-2 text-sm text-gray-600">
-              <p>• 구매한 코인은 환불되지 않습니다</p>
+              <p>• 구매한 포인트는 환불되지 않습니다</p>
               <p>• 구독은 언제든지 해지할 수 있습니다</p>
               <p>• 결제 문의는 고객센터로 연락해주세요</p>
             </div>

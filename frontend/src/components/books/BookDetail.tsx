@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { ArrowLeft, User, Star, ChevronRight, ChevronLeft, X } from 'lucide-react';
+import { ArrowLeft, User, ChevronRight, ChevronLeft, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,49 +9,54 @@ import { useToast } from '@/hooks/use-toast';
 interface BookDetailProps {
   book: any;
   user: any;
-  coins: number;
+  points: number; // coins → points 변경
   isSubscribed: boolean;
   onBack: () => void;
   onPaymentNeeded: () => void;
-  onCoinsUpdate: (newCoins: number) => void;
+  onPointsUpdate: (usedPoints: number) => Promise<void>; // 포인트 사용 함수로 변경
 }
 
 export const BookDetail = ({ 
   book, 
-  user, 
-  coins, 
-  isSubscribed, 
-  onBack, 
+  user,
+  points, // coins → points 변경
+  isSubscribed,
+  onBack,
   onPaymentNeeded,
-  onCoinsUpdate 
+  onPointsUpdate // onCoinsUpdate → onPointsUpdate 변경
 }: BookDetailProps) => {
   const [isReading, setIsReading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [showRating, setShowRating] = useState(false);
-  const [userRating, setUserRating] = useState(0);
   const { toast } = useToast();
   
   const totalPages = 20;
   const progress = Math.round((currentPage / totalPages) * 100);
 
-  const bookContent = [
-    "이곳은 " + book.title + "의 첫 번째 페이지입니다. AI가 생성한 감각적이고 몰입도 높은 스토리가 독자들에게 깊은 인상을 남기며, 텍스트 가독성을 최우선으로 한 미니멀한 디자인으로 독서에만 집중할 수 있도록 구성되어 있습니다.",
-    
-    "각 문단은 적절한 여백과 함께 배치되어 있으며, 사용자의 눈의 피로를 최소화하고 몰입감을 극대화하는 타이포그래피를 사용합니다. 페이지를 넘기며 자연스럽게 이야기에 빠져들 수 있습니다.",
-    
-    "이 작품은 " + book.author + " 작가의 독특한 문체와 상상력이 돋보이는 작품으로, 독자들에게 새로운 세계로의 여행을 선사합니다. 매 페이지마다 새로운 발견이 있습니다.",
-    
-    "스토리는 점점 더 흥미진진해집니다. 주인공의 여정을 따라가며 독자들은 예상치 못한 반전과 감동을 경험하게 됩니다. 이제 중반부에 접어들면서 긴장감이 고조됩니다.",
-    
-    "클라이맥스가 다가오고 있습니다. 지금까지의 모든 복선들이 하나로 모이며 놀라운 진실이 밝혀집니다. 독자들은 숨을 고르며 다음 페이지를 기다리게 됩니다."
-  ];
+  const bookContent = book.content ? 
+    book.content.split('\n').filter(paragraph => paragraph.trim().length > 0).slice(0, 20) : 
+    [
+      "이곳은 " + book.title + "의 첫 번째 페이지입니다. AI가 생성한 감각적이고 몰입도 높은 스토리가 독자들에게 깊은 인상을 남기며, 텍스트 가독성을 최우선으로 한 미니멀한 디자인으로 독서에만 집중할 수 있도록 구성되어 있습니다.",
+      
+      "각 문단은 적절한 여백과 함께 배치되어 있으며, 사용자의 눈의 피로를 최소화하고 몰입감을 극대화하는 타이포그래피를 사용합니다. 페이지를 넘기며 자연스럽게 이야기에 빠져들 수 있습니다.",
+      
+      "이 작품은 " + (book.author || '알 수 없는 작가') + " 작가의 독특한 문체와 상상력이 돋보이는 작품으로, 독자들에게 새로운 세계로의 여행을 선사합니다. 매 페이지마다 새로운 발견이 있습니다.",
+      
+      "스토리는 점점 더 흥미진진해집니다. 주인공의 여정을 따라가며 독자들은 예상치 못한 반전과 감동을 경험하게 됩니다. 이제 중반부에 접어들면서 긴장감이 고조됩니다.",
+      
+      "클라이맥스가 다가오고 있습니다. 지금까지의 모든 복선들이 하나로 모이며 놀라운 진실이 밝혀집니다. 독자들은 숨을 고르며 다음 페이지를 기다리게 됩니다."
+    ];
 
-  const handleReadBook = () => {
+  const handleReadBook = async () => {
     if (isSubscribed) {
       setIsReading(true);
-    } else if (coins >= 10) {
-      onCoinsUpdate(coins - 10);
-      setIsReading(true);
+    } else if (points >= 1000) { // 1000포인트 필요
+      try {
+        await onPointsUpdate(1000); // 1000포인트 사용
+        setIsReading(true);
+      } catch (error) {
+        console.error('포인트 차감 실패:', error);
+        onPaymentNeeded();
+      }
     } else {
       onPaymentNeeded();
     }
@@ -61,8 +66,12 @@ export const BookDetail = ({
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     } else {
-      // 책을 다 읽었을 때 별점 평가 모달 표시
-      setShowRating(true);
+      // 책을 다 읽었을 때
+      toast({
+        title: "독서 완료!",
+        description: `${book.title}을(를) 모두 읽으셨습니다.`,
+      });
+      setIsReading(false);
     }
   };
 
@@ -72,76 +81,10 @@ export const BookDetail = ({
     }
   };
 
-  const handleRatingSubmit = () => {
-    if (userRating === 0) {
-      toast({
-        title: "별점을 선택해주세요",
-        description: "1점부터 5점까지 평가해주세요.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    toast({
-      title: "평가해주셔서 감사합니다!",
-      description: `${book.title}에 ${userRating}점을 주셨습니다.`,
-    });
-    
-    setShowRating(false);
-    setIsReading(false);
-  };
-
   const getCurrentPageContent = () => {
     const contentIndex = Math.floor((currentPage - 1) / 4);
     return bookContent[contentIndex] || "계속되는 흥미진진한 이야기...";
   };
-
-  if (showRating) {
-    return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-        <Card className="w-full max-w-md bg-white">
-          <CardContent className="p-6 text-center">
-            <h3 className="text-xl font-semibold mb-4">책을 어떠셨나요?</h3>
-            <p className="text-gray-600 mb-6">"{book.title}"에 대한 평가를 남겨주세요</p>
-            
-            <div className="flex justify-center space-x-2 mb-6">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  onClick={() => setUserRating(star)}
-                  className="transition-colors"
-                >
-                  <Star
-                    className={`h-8 w-8 ${
-                      star <= userRating 
-                        ? 'text-yellow-400 fill-current' 
-                        : 'text-gray-300'
-                    }`}
-                  />
-                </button>
-              ))}
-            </div>
-            
-            <div className="flex space-x-3">
-              <Button
-                variant="outline"
-                onClick={() => setShowRating(false)}
-                className="flex-1"
-              >
-                나중에
-              </Button>
-              <Button
-                onClick={handleRatingSubmit}
-                className="flex-1 bg-amber-600 hover:bg-amber-700 text-white"
-              >
-                평가하기
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   if (isReading) {
     return (
@@ -270,14 +213,8 @@ export const BookDetail = ({
             </button>
           </div>
 
-          {/* Rating & Genre */}
+          {/* Genre */}
           <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-1">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className={`h-4 w-4 ${i < 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
-              ))}
-              <span className="text-sm text-gray-600 ml-2">4.2 (128 리뷰)</span>
-            </div>
             <Badge variant="secondary">{book.genre}</Badge>
           </div>
 
@@ -302,11 +239,16 @@ export const BookDetail = ({
             onClick={handleReadBook}
             className="w-full bg-amber-700 hover:bg-amber-800 text-white py-4 text-lg font-medium rounded-xl transition-all duration-300 hover:scale-[1.02]"
           >
-            {isSubscribed ? '무제한 열람하기' : `🪙 ${book.price} 코인으로 열람하기`}
+            {isSubscribed ? '👑 프리미엄으로 무제한 열람하기' : `💰 1,000 포인트로 열람하기`}
           </Button>
-          {!isSubscribed && coins < 10 && (
+          {!isSubscribed && points < 1000 && (
             <p className="text-center text-sm text-amber-700 mt-2">
-              코인이 부족합니다. 충전이 필요해요!
+              포인트가 부족합니다. 충전이 필요해요!
+            </p>
+          )}
+          {isSubscribed && (
+            <p className="text-center text-sm text-green-600 mt-2">
+              구독 중이므로 포인트 차감 없이 자유롭게 읽을 수 있어요!
             </p>
           )}
         </div>

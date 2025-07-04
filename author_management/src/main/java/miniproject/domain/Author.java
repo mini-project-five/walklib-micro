@@ -27,7 +27,7 @@ public class Author {
 
     private String introduction;
 
-    private Long authorPassword;
+    private String authorPassword;
 
     private String realName;
 

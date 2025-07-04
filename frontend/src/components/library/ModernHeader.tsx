@@ -1,5 +1,5 @@
 
-import { Search, User, LogOut, Coins } from 'lucide-react';
+import { Search, User, LogOut, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -12,7 +12,7 @@ import {
 
 interface ModernHeaderProps {
   user: any;
-  coins: number;
+  points: number; 
   isSubscribed: boolean;
   onPaymentClick: () => void;
   onLogout: () => void;
@@ -20,7 +20,7 @@ interface ModernHeaderProps {
 
 export const ModernHeader = ({ 
   user, 
-  coins, 
+  points, 
   isSubscribed, 
   onPaymentClick, 
   onLogout 
@@ -58,14 +58,19 @@ export const ModernHeader = ({
               </Badge>
             )}
 
-            {/* Coins */}
+            {/* Points */}
             <Button
               variant="outline"
               onClick={onPaymentClick}
-              className="flex items-center space-x-2 bg-white/50 backdrop-blur-sm border-amber-200 hover:bg-amber-50 hover:border-amber-300 transition-all duration-200"
+              disabled={isSubscribed} // 구독 중일 때 비활성화
+              className={`flex items-center space-x-2 bg-white/50 backdrop-blur-sm border-amber-200 transition-all duration-200 ${
+                isSubscribed 
+                  ? 'opacity-60 cursor-not-allowed' 
+                  : 'hover:bg-amber-50 hover:border-amber-300'
+              }`}
             >
-              <Coins className="h-4 w-4 text-amber-600" />
-              <span className="font-medium text-amber-700">🪙 {coins}</span>
+              <DollarSign className="h-4 w-4 text-amber-600" />
+              <span className="font-medium text-blue-700">{points}P</span>
             </Button>
 
             {/* User Menu */}
@@ -88,9 +93,13 @@ export const ModernHeader = ({
                   <p className="text-xs text-gray-500">{user?.email}</p>
                 </div>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={onPaymentClick}>
-                  <Coins className="mr-2 h-4 w-4" />
-                  코인 충전
+                <DropdownMenuItem 
+                  onClick={isSubscribed ? undefined : onPaymentClick}
+                  disabled={isSubscribed}
+                  className={isSubscribed ? 'opacity-50 cursor-not-allowed' : ''}
+                >
+                  <DollarSign className="mr-2 h-4 w-4" />
+                  {isSubscribed ? '포인트 충전 (구독 중)' : '포인트 충전'}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={onLogout} className="text-red-600">

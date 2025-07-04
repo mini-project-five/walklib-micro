@@ -21,3 +21,4 @@ public class AiController {
     AiRepository aiRepository;
 }
 //>>> Clean Arch / Inbound Adaptor
+//>>> Clean Arch / Inbound Adaptor

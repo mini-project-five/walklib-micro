@@ -24,14 +24,25 @@ public class Subscription {
 
     private Long userId;
 
-    private String status;
-
+    private String status; // "ACTIVE", "INACTIVE", "EXPIRED"
+    
+    private String planType; // "PREMIUM" (월 9,900원)
+    
+    private Integer monthlyFee; // 월 요금
+    
     private Date startDate;
 
     private Date endDate;
+    
+    private Date createdAt;
 
     @PostPersist
     public void onPostPersist() {
+        // 생성 시간 설정
+        if (this.createdAt == null) {
+            this.createdAt = new Date();
+        }
+        
         SubscriptionActivated subscriptionActivated = new SubscriptionActivated(
             this
         );
@@ -41,6 +52,22 @@ public class Subscription {
             this
         );
         subscriptionCanceled.publishAfterCommit();
+    }
+
+    @PrePersist
+    public void prePersist() {
+        if (this.createdAt == null) {
+            this.createdAt = new Date();
+        }
+    }
+    
+    // 구독이 활성화되어 있는지 확인
+    public boolean isActive() {
+        if (!"ACTIVE".equals(this.status)) {
+            return false;
+        }
+        Date now = new Date();
+        return now.before(this.endDate);
     }
 
     public static SubscriptionRepository repository() {

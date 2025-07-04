@@ -5,15 +5,15 @@ spring:
 #<<< API Gateway / Routes
       routes:
         - id: user management
-          uri: http://localhost:8082
+          uri: http://localhost:8081
           predicates:
             - Path=/users/**, 
         - id: point management
-          uri: http://localhost:8083
+          uri: http://localhost:8090
           predicates:
             - Path=/points/**, /pointLists/**
         - id: subscription management
-          uri: http://localhost:8084
+          uri: http://localhost:8091
           predicates:
             - Path=/subscriptions/**, 
         - id: book management
@@ -29,9 +29,9 @@ spring:
           predicates:
             - Path=/manuscripts/**, /manuscriptLists/**
         - id: ai system management
-          uri: http://localhost:8088
+          uri: http://localhost:8089
           predicates:
-            - Path=/ais/**, 
+            - Path=/ai/**, /ais/**
         - id: frontend
           uri: http://localhost:8080
           predicates:

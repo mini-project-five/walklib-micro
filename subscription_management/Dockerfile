@@ -1,4 +1,4 @@
-FROM openjdk:15-jdk-alpine
+FROM openjdk:17-jdk-slim
 COPY target/*SNAPSHOT.jar app.jar
 EXPOSE 8080
 ENV TZ=Asia/Seoul

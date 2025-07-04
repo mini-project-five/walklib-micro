@@ -14,4 +14,12 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
     path = "manuscripts"
 )
 public interface ManuscriptRepository
-    extends PagingAndSortingRepository<Manuscript, Long> {}
+    extends PagingAndSortingRepository<Manuscript, Long> {
+    
+    // 작가별 원고 조회
+    List<Manuscript> findByAuthorId(Long authorId);
+    
+    // 모든 원고 조회
+    @Query("SELECT m FROM Manuscript m")
+    List<Manuscript> findAllManuscripts();
+}

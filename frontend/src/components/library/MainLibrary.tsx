@@ -1,12 +1,12 @@
 
 import { useState } from 'react';
-import { Search, User, Coins, Crown, LogOut } from 'lucide-react';
+import { Search, User, DollarSign, Crown, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BookCarousel } from './BookCarousel';
 
 interface MainLibraryProps {
   user: any;
-  coins: number;
+  points: number; // coins → points로 변경
   isSubscribed: boolean;
   onBookSelect: (book: any) => void;
   onPaymentClick: () => void;
@@ -16,7 +16,7 @@ interface MainLibraryProps {
 
 export const MainLibrary = ({ 
   user, 
-  coins, 
+  points, // coins → points로 변경
   isSubscribed, 
   onBookSelect, 
   onPaymentClick, 
@@ -106,8 +106,8 @@ export const MainLibrary = ({
                 onClick={onPaymentClick}
                 className="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-full transition-colors"
               >
-                <Coins className="h-4 w-4" />
-                <span className="text-sm font-medium">🪙 {coins} 코인</span>
+                <DollarSign className="h-4 w-4" />
+                <span className="text-sm font-medium">💰 {points} 포인트</span>
               </button>
             )}
           </div>
