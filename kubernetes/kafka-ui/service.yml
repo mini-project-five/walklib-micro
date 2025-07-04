@@ -10,3 +10,4 @@ spec:
       nodePort: 30093
   selector:
     app: kafka-ui
+  type: LoadBalancer
