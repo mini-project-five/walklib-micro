@@ -40,7 +40,7 @@ public class SubscriptionEventPublisher {
             event.put("eventType", "SUBSCRIPTION_PAYMENT_REQUEST");
             event.put("timestamp", System.currentTimeMillis());
 
-            MessageChannel outputChannel = processor.output();
+            MessageChannel outputChannel = processor.outboundTopic();
             outputChannel.send(MessageBuilder
                 .withPayload(event)
                 .setHeader("type", "SubscriptionPaymentRequest")
@@ -68,7 +68,7 @@ public class SubscriptionEventPublisher {
             event.put("eventType", "SUBSCRIPTION_ACTIVATED");
             event.put("timestamp", System.currentTimeMillis());
 
-            MessageChannel outputChannel = processor.output();
+            MessageChannel outputChannel = processor.outboundTopic();
             outputChannel.send(MessageBuilder
                 .withPayload(event)
                 .setHeader("type", "SubscriptionActivated")
@@ -94,7 +94,7 @@ public class SubscriptionEventPublisher {
             event.put("eventType", "SUBSCRIPTION_CANCELED");
             event.put("timestamp", System.currentTimeMillis());
 
-            MessageChannel outputChannel = processor.output();
+            MessageChannel outputChannel = processor.outboundTopic();
             outputChannel.send(MessageBuilder
                 .withPayload(event)
                 .setHeader("type", "SubscriptionCanceled")
@@ -122,7 +122,7 @@ public class SubscriptionEventPublisher {
             event.put("eventType", "SUBSCRIPTION_RENEWAL_REQUEST");
             event.put("timestamp", System.currentTimeMillis());
 
-            MessageChannel outputChannel = processor.output();
+            MessageChannel outputChannel = processor.outboundTopic();
             outputChannel.send(MessageBuilder
                 .withPayload(event)
                 .setHeader("type", "SubscriptionRenewalRequest")
@@ -150,7 +150,7 @@ public class SubscriptionEventPublisher {
             event.put("eventType", "SUBSCRIPTION_SUSPENDED");
             event.put("timestamp", System.currentTimeMillis());
 
-            MessageChannel outputChannel = processor.output();
+            MessageChannel outputChannel = processor.outboundTopic();
             outputChannel.send(MessageBuilder
                 .withPayload(event)
                 .setHeader("type", "SubscriptionSuspended")

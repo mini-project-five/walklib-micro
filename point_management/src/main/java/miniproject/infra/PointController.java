@@ -153,9 +153,6 @@ public class PointController {
         } catch (InsufficientPointsException | IllegalArgumentException e) {
             // 이미 GlobalExceptionHandler에서 처리되므로 재던짐
             throw e;
-        } catch (NumberFormatException e) {
-            logger.warn("Invalid number format in point usage request: {}", e.getMessage());
-            throw e;
         } catch (Exception e) {
             logger.error("Unexpected error during point usage: {}", e.getMessage(), e);
             throw new RuntimeException("포인트 사용 처리 중 시스템 오류가 발생했습니다.");
