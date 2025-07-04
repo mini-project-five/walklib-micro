@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: ai system management
+  name: ai-system-management
   labels:
-    app: ai system management
+    app: ai-system-management
 spec:
   ports:
     - port: 8080
       targetPort: 8080
   selector:
-    app: ai system management
+    app: ai-system-management

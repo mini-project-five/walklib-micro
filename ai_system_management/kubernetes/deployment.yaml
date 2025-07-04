@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ai system management
+  name: ai-system-management
   labels:
-    app: ai system management
+    app: ai-system-management
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: ai system management
+      app: ai-system-management
   template:
     metadata:
       labels:
-        app: ai system management
+        app: ai-system-management
     spec:
       containers:
-        - name: ai system management
-          image: "username/ai system management:latest"
+        - name: ai-system-management
+          image: "lmo2914/ai-m:latest"
           ports:
             - containerPort: 8080
           readinessProbe:

@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: content writing management
+  name: content-writing-management
   labels:
-    app: content writing management
+    app: content-writing-management
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: content writing management
+      app: content-writing-management
   template:
     metadata:
       labels:
-        app: content writing management
+        app: content-writing-management
     spec:
       containers:
-        - name: content writing management
-          image: "username/content writing management:latest"
+        - name: content-writing-management
+          image: "lmo2914/content-m:latest"
           ports:
             - containerPort: 8080
           readinessProbe:

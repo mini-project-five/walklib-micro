@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: subscription management
+  name: subscription-management
   labels:
-    app: subscription management
+    app: subscription-management
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: subscription management
+      app: subscription-management
   template:
     metadata:
       labels:
-        app: subscription management
+        app: subscription-management
     spec:
       containers:
-        - name: subscription management
-          image: "username/subscription management:latest"
+        - name: subscription-management
+          image: "lmo2914/subs-m:latest"
           ports:
             - containerPort: 8080
           readinessProbe:

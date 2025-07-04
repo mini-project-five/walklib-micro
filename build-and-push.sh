@@ -14,6 +14,8 @@ SERVICES=(
   "book_management ${DOCKER_USERNAME}/book-m bookManagement 8085"
   "author_management ${DOCKER_USERNAME}/author-m authorManagement 8086"
   "ai_system_management ${DOCKER_USERNAME}/ai-m aiSystemManagement 8088"
+  "gateway ${DOCKER_USERNAME}/gateway gateway 8080"
+  "frontend ${DOCKER_USERNAME}/frontend frontend 3000"
 )
 
 echo "🔐 Docker Hub 로그인을 확인합니다..."
@@ -37,12 +39,10 @@ for SERVICE in "${SERVICES[@]}"; do
 
   # 도커 이미지 빌드
   echo "🐳 Docker 이미지 빌드 중..."
-  docker build -t "$IMAGE:latest" . || { echo "❌ Docker 빌드 실패: $DIR"; exit 1; }
+  docker buildx build --platform linux/amd64 -t "$IMAGE:latest" --push . || { echo "❌ Docker 빌드 실패: $DIR"; exit 1; }
 
-  # Docker Hub에 푸시
-  echo "⬆️ Docker Hub에 푸시 중..."
-  docker push "$IMAGE:latest" || { echo "❌ Docker 푸시 실패: $DIR"; exit 1; }
-  echo "✅ ${IMAGE}:latest 푸시 완료"
+  # buildx로 이미 푸시까지 완료됨
+  echo "✅ ${IMAGE}:latest 빌드 및 푸시 완료 (linux/amd64)"
 
   # 기존 컨테이너 삭제
   docker rm -f "$CONTAINER" 2>/dev/null

@@ -1,7 +1,4 @@
-server:
-  port: 8089
-
-spring:
+pring:
   application:
     name: ai system management
 
@@ -50,6 +47,9 @@ logging:
     org.hibernate.type: trace
     org.springframework.cloud: debug
 
+server:
+  port: 8081
+
 ---
 
 spring:
@@ -82,4 +82,5 @@ spring:
           destination: miniproject
           contentType: application/json
 
-
+server:
+  port: 8080

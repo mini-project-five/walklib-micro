@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: book management
+  name: book-management
   labels:
-    app: book management
+    app: book-management
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: book management
+      app: book-management
   template:
     metadata:
       labels:
-        app: book management
+        app: book-management
     spec:
       containers:
-        - name: book management
-          image: "username/book management:latest"
+        - name: book-management
+          image: "lmo2914/book-m:latest"
           ports:
             - containerPort: 8080
           readinessProbe:
